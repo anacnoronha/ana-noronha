@@ -260,36 +260,31 @@ const BrandPortal = () => {
                   </div>
                 </div>
                 
-                {/* Google Form Embed */}
-                <div className="rounded-lg overflow-hidden border border-[#E5E5DF]">
-                  <iframe 
-                    src="https://docs.google.com/forms/d/e/1FAIpQLSeY9YWd0ZHh2rDqR9Z6vL1TrKo9a6/viewform?embedded=true"
-                    width="100%" 
-                    height="800" 
-                    frameBorder="0" 
-                    marginHeight="0" 
-                    marginWidth="0"
-                    title="Formulário de Candidatura"
-                    className="bg-white"
-                    data-testid="google-form-iframe"
-                  >
-                    A carregar formulário...
-                  </iframe>
-                </div>
-
-                <div className="mt-4 p-4 bg-[#F2F2ED] rounded-lg text-center">
-                  <p className="text-sm text-[#66665E]">
-                    O formulário de candidatura oficial está disponível em:
+                {/* Google Form Link */}
+                <div className="rounded-lg border border-[#E5E5DF] p-8 text-center bg-[#FAFAF7]">
+                  <div className="w-16 h-16 rounded-full bg-[#8C3B20]/10 flex items-center justify-center mx-auto mb-6">
+                    <ArrowSquareOut size={32} className="text-[#8C3B20]" />
+                  </div>
+                  <h3 className="font-['Outfit'] text-xl font-medium text-[#1A1A1A] mb-2">
+                    Formulário de Candidatura
+                  </h3>
+                  <p className="text-[#66665E] mb-6 max-w-md mx-auto">
+                    O formulário de candidatura oficial está disponível no Google Forms. 
+                    Clique no botão abaixo para aceder e preencher a sua candidatura.
                   </p>
                   <a 
-                    href="https://forms.gle/L1GtV3AY7xTrKo9a6" 
+                    href="https://docs.google.com/forms/d/1uJfYt2h3G0E9hLhnbn3TEEyZq5A-4qMAOfE7hpxjux0/viewform" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-[#8C3B20] text-white rounded-md hover:bg-[#A14A2E] transition-colors"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#8C3B20] text-white rounded-md hover:bg-[#A14A2E] transition-colors text-lg font-medium"
+                    data-testid="google-form-link"
                   >
-                    <ArrowSquareOut size={18} />
+                    <ArrowSquareOut size={20} />
                     Abrir Formulário de Candidatura
                   </a>
+                  <p className="text-sm text-[#66665E] mt-4">
+                    Abre numa nova janela
+                  </p>
                 </div>
               </CardContent>
             </Card>

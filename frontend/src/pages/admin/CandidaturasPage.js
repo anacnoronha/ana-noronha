@@ -58,14 +58,17 @@ const CandidaturasPage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [edicaoFilter, setEdicaoFilter] = useState('all');
   const [selectedCandidatura, setSelectedCandidatura] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [categorias, setCategorias] = useState([]);
+  const [edicoes, setEdicoes] = useState([]);
 
   useEffect(() => {
     fetchCandidaturas();
     fetchCategorias();
+    fetchEdicoes();
   }, []);
 
   const fetchCandidaturas = async () => {
@@ -76,6 +79,15 @@ const CandidaturasPage = () => {
       toast.error('Erro ao carregar candidaturas');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEdicoes = async () => {
+    try {
+      const response = await axios.get(`${API}/edicoes`);
+      setEdicoes(response.data);
+    } catch (error) {
+      console.error('Error fetching editions:', error);
     }
   };
 
@@ -152,8 +164,20 @@ const CandidaturasPage = () => {
                          c.email?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || c.decisao_curadoria === statusFilter;
     const matchesCategory = categoryFilter === 'all' || c.categoria === categoryFilter;
-    return matchesSearch && matchesStatus && matchesCategory;
+    const matchesEdicao = edicaoFilter === 'all' || c.edicao === edicaoFilter;
+    return matchesSearch && matchesStatus && matchesCategory && matchesEdicao;
   });
+
+  // Stats
+  const stats = {
+    total: candidaturas.length,
+    aprovadas: candidaturas.filter(c => c.decisao_curadoria === 'Aprovada').length,
+    pendentes: candidaturas.filter(c => c.decisao_curadoria === 'Pendente').length,
+    rejeitadas: candidaturas.filter(c => c.decisao_curadoria === 'Rejeitada').length,
+    listaEspera: candidaturas.filter(c => c.decisao_curadoria === 'Lista de Espera').length,
+    ed12: candidaturas.filter(c => c.edicao === '12ª Edição').length,
+    ed13: candidaturas.filter(c => c.edicao === '13ª Edição').length
+  };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
@@ -174,8 +198,40 @@ const CandidaturasPage = () => {
               Candidaturas
             </h1>
             <p className="text-[#66665E] mt-1">
-              Gestão de candidaturas ao Mercado no Castelo 2025
+              Gestão de candidaturas ao Mercado no Castelo
             </p>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.total}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Total</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#43523D]">{stats.aprovadas}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Aprovadas</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#C98D26]">{stats.pendentes}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Pendentes</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#D32F2F]">{stats.rejeitadas}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Rejeitadas</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#8C3B20]">{stats.listaEspera}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Lista Espera</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.ed12}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">12ª Ed.</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.ed13}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">13ª Ed.</p>
           </div>
         </div>
 
@@ -193,8 +249,18 @@ const CandidaturasPage = () => {
                   data-testid="search-input"
                 />
               </div>
+              <Select value={edicaoFilter} onValueChange={setEdicaoFilter}>
+                <SelectTrigger className="w-full md:w-40 border-[#E5E5DF]" data-testid="edicao-filter">
+                  <SelectValue placeholder="Edição" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as edições</SelectItem>
+                  <SelectItem value="12ª Edição">12ª Edição</SelectItem>
+                  <SelectItem value="13ª Edição">13ª Edição</SelectItem>
+                </SelectContent>
+              </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48 border-[#E5E5DF]" data-testid="status-filter">
+                <SelectTrigger className="w-full md:w-40 border-[#E5E5DF]" data-testid="status-filter">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -206,7 +272,7 @@ const CandidaturasPage = () => {
                 </SelectContent>
               </Select>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-full md:w-48 border-[#E5E5DF]" data-testid="category-filter">
+                <SelectTrigger className="w-full md:w-40 border-[#E5E5DF]" data-testid="category-filter">
                   <SelectValue placeholder="Categoria" />
                 </SelectTrigger>
                 <SelectContent>
@@ -230,7 +296,7 @@ const CandidaturasPage = () => {
                     <TableHead className="text-[#66665E] font-semibold">Marca</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Responsável</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Categoria</TableHead>
-                    <TableHead className="text-[#66665E] font-semibold">Data</TableHead>
+                    <TableHead className="text-[#66665E] font-semibold">Edição</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Estado</TableHead>
                     <TableHead className="text-[#66665E] font-semibold text-right">Ações</TableHead>
                   </TableRow>
@@ -256,9 +322,13 @@ const CandidaturasPage = () => {
                         data-testid={`candidatura-row-${c.id}`}
                       >
                         <TableCell className="font-medium text-[#1A1A1A]">{c.nome_marca}</TableCell>
-                        <TableCell className="text-[#66665E]">{c.responsavel}</TableCell>
-                        <TableCell className="text-[#66665E]">{c.categoria}</TableCell>
-                        <TableCell className="text-[#66665E]">{formatDate(c.data_entrada)}</TableCell>
+                        <TableCell className="text-[#66665E] text-sm">{c.responsavel}</TableCell>
+                        <TableCell className="text-[#66665E] text-sm">{c.categoria}</TableCell>
+                        <TableCell>
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-[#F2F2ED] text-[#1A1A1A]">
+                            {c.edicao || '-'}
+                          </span>
+                        </TableCell>
                         <TableCell>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[c.decisao_curadoria] || 'status-pending'}`}>
                             {c.decisao_curadoria || 'Pendente'}
