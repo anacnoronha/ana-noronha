@@ -60,7 +60,7 @@ class MNCAPITester:
             "POST",
             "auth/login",
             200,
-            data={"email": "admin@mnc.pt", "password": "Admin123!"}
+            data={"email": "admin@mnc.pt", "password": "Admin123"}
         )
         if success and 'token' in response:
             self.admin_token = response['token']
@@ -75,7 +75,7 @@ class MNCAPITester:
             "POST",
             "auth/login",
             200,
-            data={"email": "marca@test.pt", "password": "Marca123!"}
+            data={"email": "marca@test.pt", "password": "Marca123"}
         )
         if success and 'token' in response:
             self.brand_token = response['token']

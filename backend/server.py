@@ -13,6 +13,8 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import httpx
+import asyncio
+import resend
 from enum import Enum
 
 ROOT_DIR = Path(__file__).parent
@@ -26,8 +28,13 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ.get('JWT_SECRET_KEY', 'mnc2025_secret')
 JWT_ALGORITHM = "HS256"
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 
-app = FastAPI(title="Mercado no Castelo 2025 API")
+# Initialize Resend
+resend.api_key = RESEND_API_KEY
+
+app = FastAPI(title="Mercado no Castelo API")
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
 
@@ -209,6 +216,93 @@ def create_token(user_id: str, role: str) -> str:
         "exp": datetime.now(timezone.utc) + timedelta(days=7)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+# ============== EMAIL HELPERS ==============
+async def send_email(to_email: str, subject: str, html_content: str, marca: str = None):
+    """Send email using Resend API"""
+    try:
+        params = {
+            "from": f"Mercado no Castelo <{SENDER_EMAIL}>",
+            "to": [to_email],
+            "subject": subject,
+            "html": html_content
+        }
+        response = resend.Emails.send(params)
+        logger.info(f"Email sent to {to_email}: {response}")
+        
+        # Log communication
+        if marca:
+            com_doc = {
+                "id": f"com_{uuid.uuid4().hex[:12]}",
+                "marca": marca,
+                "tipo_email": subject,
+                "data": datetime.now(timezone.utc).isoformat(),
+                "conteudo": f"Email enviado para {to_email}",
+                "enviado": True
+            }
+            await db.comunicacao.insert_one(com_doc)
+        
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send email: {e}")
+        return False
+
+def get_candidatura_confirmation_email(nome_marca: str, responsavel: str):
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <img src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png" alt="Mercado no Castelo" style="height: 50px; margin-bottom: 20px;">
+        <h2 style="color: #8C3B20;">Candidatura Recebida!</h2>
+        <p>Olá {responsavel},</p>
+        <p>Recebemos a candidatura da marca <strong>{nome_marca}</strong> para o Mercado no Castelo.</p>
+        <p>A sua candidatura está agora em análise pela nossa equipa de curadoria. Iremos avaliar o seu projeto com base nos nossos critérios de qualidade, sustentabilidade e adequação ao evento.</p>
+        <p>Receberá uma resposta no prazo de 7 dias úteis.</p>
+        <br>
+        <p>Com os melhores cumprimentos,</p>
+        <p><strong>Equipa Mercado no Castelo</strong></p>
+        <hr style="border: none; border-top: 1px solid #E5E5DF; margin: 20px 0;">
+        <p style="font-size: 12px; color: #66665E;">
+            <a href="https://www.instagram.com/mercado_no_castelo/" style="color: #8C3B20;">Instagram</a> | 
+            <a href="https://www.mercadonocastelo.pt" style="color: #8C3B20;">Website</a>
+        </p>
+    </div>
+    """
+
+def get_approval_email(nome_marca: str, responsavel: str, valor: float):
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <img src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png" alt="Mercado no Castelo" style="height: 50px; margin-bottom: 20px;">
+        <h2 style="color: #43523D;">Parabéns! Candidatura Aprovada!</h2>
+        <p>Olá {responsavel},</p>
+        <p>Temos o prazer de informar que a candidatura da marca <strong>{nome_marca}</strong> foi <strong style="color: #43523D;">APROVADA</strong> para participar no Mercado no Castelo!</p>
+        <p>A nossa equipa de curadoria ficou impressionada com o vosso projeto e acreditamos que será uma excelente adição ao evento.</p>
+        <h3 style="color: #8C3B20;">Próximos Passos:</h3>
+        <ol>
+            <li>Receberá o contrato de participação por email</li>
+            <li>Valor de participação: <strong>€{valor:.2f}</strong></li>
+            <li>Envie os materiais de comunicação (fotos, logótipo, texto)</li>
+        </ol>
+        <p>Entraremos em contacto brevemente com mais detalhes.</p>
+        <br>
+        <p>Bem-vindo à família Mercado no Castelo!</p>
+        <p><strong>Equipa Mercado no Castelo</strong></p>
+    </div>
+    """
+
+def get_rejection_email(nome_marca: str, responsavel: str):
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <img src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png" alt="Mercado no Castelo" style="height: 50px; margin-bottom: 20px;">
+        <h2 style="color: #8C3B20;">Resultado da Candidatura</h2>
+        <p>Olá {responsavel},</p>
+        <p>Agradecemos o interesse da marca <strong>{nome_marca}</strong> em participar no Mercado no Castelo.</p>
+        <p>Após uma análise cuidadosa, lamentamos informar que nesta edição não nos foi possível incluir a vossa marca no evento.</p>
+        <p>Esta decisão não reflete a qualidade do vosso trabalho, mas sim as limitações de espaço e a necessidade de manter um equilíbrio entre as diferentes categorias.</p>
+        <p>Encorajamos vivamente a candidatura em futuras edições!</p>
+        <br>
+        <p>Com os melhores cumprimentos,</p>
+        <p><strong>Equipa Mercado no Castelo</strong></p>
+    </div>
+    """
 
 async def get_current_user(request: Request, credentials: HTTPAuthorizationCredentials = Depends(security)) -> Optional[User]:
     token = None
@@ -447,6 +541,15 @@ async def create_candidatura(data: CandidaturaCreate, user: User = Depends(requi
     doc.update(ai_analysis)
     
     await db.candidaturas.insert_one(doc)
+    
+    # Send confirmation email
+    asyncio.create_task(send_email(
+        to_email=data.email,
+        subject="Candidatura Recebida - Mercado no Castelo",
+        html_content=get_candidatura_confirmation_email(data.nome_marca, data.responsavel),
+        marca=data.nome_marca
+    ))
+    
     return candidatura
 
 @api_router.put("/candidaturas/{id}")
@@ -474,19 +577,46 @@ async def approve_candidatura(id: str, user: User = Depends(require_admin)):
     if not doc:
         raise HTTPException(status_code=404, detail="Candidatura não encontrada")
     
-    await db.candidaturas.update_one({"id": id}, {"$set": {"decisao_curadoria": CandidaturaStatus.APPROVED.value, "estado_geral": "Aprovada"}})
+    valor_final = doc.get("valor_final", 250)  # Default value
+    await db.candidaturas.update_one({"id": id}, {"$set": {"decisao_curadoria": CandidaturaStatus.APPROVED.value, "estado_geral": "Aprovada", "valor_final": valor_final}})
     
     marca_aprovada = MarcaAprovada(
         marca=doc["nome_marca"],
         responsavel=doc["responsavel"],
         email=doc["email"],
         categoria=doc["categoria"],
-        valor_final=doc.get("valor_final", 0),
+        valor_final=valor_final,
         candidatura_id=id
     )
     await db.marcas_aprovadas.insert_one(marca_aprovada.model_dump())
     
+    # Send approval email
+    asyncio.create_task(send_email(
+        to_email=doc["email"],
+        subject="Candidatura Aprovada! - Mercado no Castelo",
+        html_content=get_approval_email(doc["nome_marca"], doc["responsavel"], valor_final),
+        marca=doc["nome_marca"]
+    ))
+    
     return {"message": "Candidatura aprovada e marca adicionada"}
+
+@api_router.post("/candidaturas/{id}/reject")
+async def reject_candidatura(id: str, user: User = Depends(require_admin)):
+    doc = await db.candidaturas.find_one({"id": id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    await db.candidaturas.update_one({"id": id}, {"$set": {"decisao_curadoria": CandidaturaStatus.REJECTED.value, "estado_geral": "Rejeitada"}})
+    
+    # Send rejection email
+    asyncio.create_task(send_email(
+        to_email=doc["email"],
+        subject="Resultado da Candidatura - Mercado no Castelo",
+        html_content=get_rejection_email(doc["nome_marca"], doc["responsavel"]),
+        marca=doc["nome_marca"]
+    ))
+    
+    return {"message": "Candidatura rejeitada"}
 
 @api_router.delete("/candidaturas/{id}")
 async def delete_candidatura(id: str, user: User = Depends(require_admin)):
@@ -650,9 +780,64 @@ async def get_categorias():
         ]
     }
 
+# ============== EDICOES (Editions) ==============
+class Edicao(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: f"ed_{uuid.uuid4().hex[:12]}")
+    nome: str
+    data_inicio: Optional[str] = None
+    data_fim: Optional[str] = None
+    local: str
+    estado: str = "Planeada"  # Planeada, Ativa, Concluída
+    google_form_url: Optional[str] = None
+    notas: Optional[str] = None
+
+@api_router.get("/edicoes")
+async def get_edicoes(user: User = Depends(require_auth)):
+    docs = await db.edicoes.find({}, {"_id": 0}).to_list(100)
+    return docs
+
+@api_router.post("/edicoes")
+async def create_edicao(data: Edicao, user: User = Depends(require_admin)):
+    await db.edicoes.insert_one(data.model_dump())
+    return data
+
+@api_router.put("/edicoes/{id}")
+async def update_edicao(id: str, data: dict, user: User = Depends(require_admin)):
+    data.pop('_id', None)
+    data.pop('id', None)
+    result = await db.edicoes.update_one({"id": id}, {"$set": data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Edição não encontrada")
+    return {"message": "Edição atualizada"}
+
+# ============== SEND EMAIL ENDPOINT ==============
+class EmailRequest(BaseModel):
+    to_email: str
+    subject: str
+    template: str  # confirmation, approval, rejection, custom
+    marca: str
+    responsavel: str
+    valor: Optional[float] = 0
+    custom_content: Optional[str] = None
+
+@api_router.post("/email/send")
+async def send_email_endpoint(data: EmailRequest, user: User = Depends(require_admin)):
+    if data.template == "confirmation":
+        html = get_candidatura_confirmation_email(data.marca, data.responsavel)
+    elif data.template == "approval":
+        html = get_approval_email(data.marca, data.responsavel, data.valor)
+    elif data.template == "rejection":
+        html = get_rejection_email(data.marca, data.responsavel)
+    else:
+        html = data.custom_content or f"<p>{data.marca}</p>"
+    
+    success = await send_email(data.to_email, data.subject, html, data.marca)
+    return {"success": success, "message": "Email enviado" if success else "Falha no envio"}
+
 @api_router.get("/")
 async def root():
-    return {"message": "Mercado no Castelo 2025 API", "version": "1.0.0"}
+    return {"message": "Mercado no Castelo API", "version": "1.0.0"}
 
 app.include_router(api_router)
 
