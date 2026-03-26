@@ -1,0 +1,86 @@
+{
+  "theme": "Light",
+  "archetype": "Archetype 1 (Organic & Earthy)",
+  "emotional_tone": "Grounded, warm, structured, trustworthy. Merges Portuguese heritage with modern efficient event management.",
+  "colors": {
+    "background": "#FAFAF7",
+    "surface": "#FFFFFF",
+    "surface_muted": "#F2F2ED",
+    "primary": "#8C3B20",
+    "primary_hover": "#A14A2E",
+    "secondary": "#43523D",
+    "secondary_hover": "#506349",
+    "accent": "#C98D26",
+    "text_primary": "#1A1A1A",
+    "text_muted": "#66665E",
+    "border": "#E5E5DF",
+    "error": "#D32F2F",
+    "success": "#43523D",
+    "glass": "bg-[#FAFAF7]/80 backdrop-blur-xl"
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Outfit",
+      "body": "IBM Plex Sans",
+      "mono": "JetBrains Mono"
+    },
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight font-light text-[#1A1A1A]",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-medium text-[#1A1A1A]",
+      "h3": "text-xl sm:text-2xl font-medium text-[#1A1A1A]",
+      "h4": "text-lg sm:text-xl font-medium text-[#1A1A1A]",
+      "body": "text-base text-[#1A1A1A] leading-relaxed",
+      "small_label": "text-xs tracking-[0.2em] uppercase text-[#66665E] font-semibold"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Use generous spacing: p-6, p-8, p-12. Internal padding for bordered containers must be p-6 or p-8.",
+    "admin_dashboard_grid": "Control Room Mode: grid-cols-1 md:grid-cols-3 lg:grid-cols-4, gap-4 or gap-6. Every pixel utilized. h-full on children.",
+    "brand_portal_grid": "Bento Grid Mode: grid-cols-1 md:grid-cols-8 lg:grid-cols-12, wide gaps (gap-8). Mix wide spans and tall spans for asymmetry.",
+    "alignment": "Left-align paragraphs, inputs, labels, tables. Center-align hero text or empty states."
+  },
+  "surfaces_and_components": {
+    "cards": "Flat background (#FFFFFF), 1px solid border (#E5E5DF), no shadow. Hover: -translate-y-1, shadow-lg, border color darkens.",
+    "headers": "Crystal Glass: backdrop-blur-xl bg-[#FAFAF7]/80, 1px bottom border (#E5E5DF).",
+    "buttons": "Primary buttons: bg-[#8C3B20] text-white hover:bg-[#A14A2E]. Secondary buttons: border border-[#E5E5DF] text-[#1A1A1A] hover:bg-[#F2F2ED]. No extreme border-radius, use rounded-md (6px).",
+    "inputs": "Shadcn standard inputs customized: border-[#E5E5DF], focus:ring-2 focus:ring-[#8C3B20]/20 focus:border-[#8C3B20].",
+    "tables": "Shadcn tables with border-collapse, subtle bottom border on rows (#E5E5DF), hover row bg (#F2F2ED/50).",
+    "charts": "Shadcn/Recharts using Primary (#8C3B20), Secondary (#43523D), Accent (#C98D26)."
+  },
+  "motion_and_interactions": {
+    "hover_states": "All interactive elements must change background and explicitly set text color on hover. E.g., hover:bg-[#A14A2E] hover:text-white.",
+    "transitions": "Use specific properties: transition-colors duration-200 ease-in-out, transition-transform duration-200 ease-in-out.",
+    "focus": "Focus states must have high contrast rings."
+  },
+  "media": {
+    "icons": "@phosphor-icons/react (Duotone or Regular weight for elegant, clear UI). Install via: yarn add @phosphor-icons/react",
+    "images": {
+      "login_background": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/1f325410-4d7a-4645-9b51-d086186ec0bc/images/fcddca724d7830cbda6ea36c370fae9f7e2cc6d25fe8ca29939b20f314e624b3.png",
+        "description": "Abstract terracotta and stone textured background for Auth/Login pages."
+      },
+      "dashboard_header_texture": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/1f325410-4d7a-4645-9b51-d086186ec0bc/images/1d3f221eb2768be31a301692f31242d3f7085402af851e00b78463964a3f6eb9.png",
+        "description": "Minimalist header background for premium brand portal feel."
+      },
+      "brand_portal_hero": {
+        "url": "https://images.pexels.com/photos/2573973/pexels-photo-2573973.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Sines Castle at sunset, representing the Mercado no Castelo event location."
+      },
+      "sustainability_hero": {
+        "url": "https://images.pexels.com/photos/794556/pexels-photo-794556.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Braganca Castle view for sustainability or logistics sections."
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use standard HTML tags and pure Tailwind CSS for structural layouts instead of restricting to Shadcn cards if advanced asymmetry is needed.",
+    "Use Shadcn UI for interactive components (Forms, Tables, Dialogs, Select, Tabs, Calendar) but customize border radiuses (rounded-md) and colors to match the earthy palette.",
+    "DO NOT use generic colors like blue-500 or slate-900. Stick strictly to the defined hex codes (Terracotta, Moss Green, Sand, Off-white).",
+    "Always apply 'data-testid' to interactive elements for testing.",
+    "Ensure high contrast and accessibility. Use the specific text_muted and text_primary hex codes.",
+    "For the Admin dashboard, use a dense 'Control Room' grid layout. For the Brand portal, use a looser, more editorial 'Bento' grid.",
+    "Avoid using a hamburger menu on desktop viewports. Ensure all navigation is explicitly visible on desktop.",
+    "Do not use HTML inputs like type='date' or <select>. Always use Shadcn's equivalent components."
+  ]
+}
