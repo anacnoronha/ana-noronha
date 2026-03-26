@@ -641,11 +641,12 @@ async def get_dashboard_stats(user: User = Depends(require_admin)):
 async def get_categorias():
     return {
         "categorias": [
-            "Alimentação", "Artesanato", "Bebidas", "Cerâmica", "Cosmética Natural",
-            "Decoração", "Design", "Joalharia", "Moda", "Plantas", "Têxtil", "Outros"
+            "Moda", "Decoração", "Alimentação", "Lifestyle", 
+            "Joalharia", "Cerâmica", "Têxtil", "Cosmética Natural",
+            "Artesanato", "Design", "Plantas", "Outros"
         ],
         "opcoes_participacao": [
-            "Stand Standard", "Stand Premium", "Stand Duplo", "Food Truck", "Expositor"
+            "Stand Individual", "Stand Partilhado", "Food Court", "Expositor"
         ]
     }
 

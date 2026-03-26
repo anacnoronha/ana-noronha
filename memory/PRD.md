@@ -1,16 +1,18 @@
-# Mercado no Castelo 2025 - PRD (Product Requirements Document)
+# Mercado no Castelo - PRD (Product Requirements Document)
 
 ## Original Problem Statement
-Build a complete management platform for "Mercado no Castelo 2025" (MNC) - a Portuguese artisanal market event. The platform needs:
-- Admin dashboard for management team (curators)
-- Brand portal for brands to submit and track applications
-- All management modules (Candidaturas, Marcas Aprovadas, Logística, Comunicação, Sustentabilidade, Social Media, Patrocinadores)
-- AI integration with Claude Sonnet for automatic application analysis
-- Authentication: JWT + Google OAuth
+Build a complete management platform for "Mercado no Castelo" - a Portuguese artisanal market event based in Northern Portugal (Braga region), founded in 2022. The platform uses the official branding and content from mercadonocastelo.pt.
+
+## About the Event
+- **Founded:** 2022 by a group of friends with diverse backgrounds
+- **Mission:** Create a space where design, entrepreneurship and sustainability meet
+- **Focus:** Smart buying - durable products made in fair conditions
+- **Location:** Historic and inspiring locations in Northern Portugal (Braga, Porto)
+- **Categories:** Moda, Decoração, Alimentação, Lifestyle
 
 ## User Personas
-1. **Admin/Curator** - Event organizers who manage applications, approve brands, track logistics, communicate with brands, and manage sponsors
-2. **Brand Owner** - Artisans/businesses who want to participate in the market, submit applications, track status
+1. **Admin/Curator** - Event organizers who manage applications, approve brands, track logistics
+2. **Brand Owner** - Artists and entrepreneurs who want to participate in the market
 
 ## Core Requirements (Static)
 - Multi-user authentication (JWT + Google OAuth)

@@ -146,10 +146,11 @@ const BrandPortal = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/portal" className="flex items-center gap-2">
-              <CastleTurret size={32} weight="duotone" className="text-[#8C3B20]" />
-              <span className="font-['Outfit'] text-xl font-semibold text-[#1A1A1A]">
-                MNC 2025
-              </span>
+              <img 
+                src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png/v1/fill/w_160,h_50,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/MNC%20LOGO.png" 
+                alt="MNC"
+                className="h-8"
+              />
             </Link>
             <div className="flex items-center gap-4">
               <span className="text-sm text-[#66665E] hidden sm:block">{user?.email}</span>
@@ -170,7 +171,7 @@ const BrandPortal = () => {
       {/* Hero */}
       <div 
         className="relative h-64 bg-cover bg-center"
-        style={{ backgroundImage: `url(https://images.pexels.com/photos/2573973/pexels-photo-2573973.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)` }}
+        style={{ backgroundImage: `url(https://static.wixstatic.com/media/a5b410_8f56cd12ca8a4e3394f8568ed5e892df~mv2.jpeg/v1/fill/w_1904,h_992,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/a5b410_8f56cd12ca8a4e3394f8568ed5e892df~mv2.jpeg)` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A1A1A]/80 to-[#1A1A1A]/40" />
         <div className="absolute inset-0 flex items-center">

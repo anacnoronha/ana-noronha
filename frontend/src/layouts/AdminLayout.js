@@ -70,10 +70,11 @@ const AdminLayout = ({ children }) => {
               {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
             </button>
             <Link to="/admin" className="flex items-center gap-2">
-              <CastleTurret size={32} weight="duotone" className="text-[#8C3B20]" />
-              <span className="hidden sm:block font-['Outfit'] text-xl font-semibold text-[#1A1A1A]">
-                MNC 2025
-              </span>
+              <img 
+                src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png/v1/fill/w_160,h_50,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/MNC%20LOGO.png" 
+                alt="MNC"
+                className="h-8"
+              />
             </Link>
           </div>
 

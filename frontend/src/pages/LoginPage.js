@@ -55,13 +55,14 @@ const LoginPage = () => {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <CastleTurret size={40} weight="duotone" className="text-[#8C3B20]" />
-              <h1 className="font-['Outfit'] text-3xl font-semibold text-[#1A1A1A]">
-                Mercado no Castelo
-              </h1>
+              <img 
+                src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png/v1/fill/w_160,h_50,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/MNC%20LOGO.png" 
+                alt="Mercado no Castelo"
+                className="h-12"
+              />
             </div>
             <p className="text-[#66665E] font-['IBM_Plex_Sans']">
-              Plataforma de Gestão 2025
+              Plataforma de Gestão
             </p>
           </div>
 
@@ -264,16 +265,16 @@ const LoginPage = () => {
       <div 
         className="hidden lg:flex flex-1 bg-cover bg-center relative"
         style={{ 
-          backgroundImage: `url(https://static.prod-images.emergentagent.com/jobs/1f325410-4d7a-4645-9b51-d086186ec0bc/images/fcddca724d7830cbda6ea36c370fae9f7e2cc6d25fe8ca29939b20f314e624b3.png)`
+          backgroundImage: `url(https://static.wixstatic.com/media/a5b410_8f56cd12ca8a4e3394f8568ed5e892df~mv2.jpeg/v1/fill/w_1904,h_992,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/a5b410_8f56cd12ca8a4e3394f8568ed5e892df~mv2.jpeg)`
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAFAF7]/20 to-transparent" />
         <div className="absolute bottom-8 left-8 right-8 p-6 glass-header rounded-lg">
           <h2 className="font-['Outfit'] text-2xl font-semibold text-[#1A1A1A] mb-2">
-            Mercado no Castelo 2025
+            Mercado no Castelo
           </h2>
           <p className="text-[#66665E]">
-            O maior mercado de marcas artesanais e sustentáveis de Portugal
+            Design, empreendedorismo e sustentabilidade num só espaço
           </p>
         </div>
       </div>
