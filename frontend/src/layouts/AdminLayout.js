@@ -16,7 +16,8 @@ import {
   X,
   CaretDown,
   User,
-  ChartBar
+  ChartBar,
+  Tag
 } from '@phosphor-icons/react';
 import { Button } from '../components/ui/button';
 import {
@@ -35,6 +36,7 @@ const navItems = [
   { path: '/admin/comunicacao', label: 'Comunicação', icon: EnvelopeSimple },
   { path: '/admin/sustentabilidade', label: 'Sustentabilidade', icon: Leaf },
   { path: '/admin/socialmedia', label: 'Social Media', icon: InstagramLogo },
+  { path: '/admin/precos', label: 'Tabela de Preços', icon: Tag },
   { path: '/admin/patrocinadores', label: 'Patrocinadores', icon: CurrencyEur },
 ];
 

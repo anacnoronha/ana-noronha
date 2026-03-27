@@ -164,19 +164,57 @@ const CandidaturasPage = () => {
                          c.email?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || c.decisao_curadoria === statusFilter;
     const matchesCategory = categoryFilter === 'all' || c.categoria === categoryFilter;
-    const matchesEdicao = edicaoFilter === 'all' || c.edicao === edicaoFilter;
+    
+    // Improved edition filter - check both edicao field and opcao_participacao
+    let matchesEdicao = edicaoFilter === 'all';
+    if (!matchesEdicao) {
+      const opcao = c.opcao_participacao?.toLowerCase() || '';
+      const edicao = c.edicao?.toLowerCase() || '';
+      
+      if (edicaoFilter === '12ª Edição') {
+        matchesEdicao = (edicao.includes('12') && !edicao.includes('13')) || 
+                       (opcao.includes('12') && !opcao.includes('13'));
+      } else if (edicaoFilter === '13ª Edição') {
+        matchesEdicao = (edicao.includes('13') && !edicao.includes('12')) ||
+                       (opcao.includes('13') && !opcao.includes('12'));
+      } else if (edicaoFilter === '12ª + 13ª Edição') {
+        matchesEdicao = (edicao.includes('12') && edicao.includes('13')) ||
+                       (opcao.includes('12') && opcao.includes('13'));
+      }
+    }
+    
     return matchesSearch && matchesStatus && matchesCategory && matchesEdicao;
   });
 
-  // Stats
+  // Stats - improved counting based on opcao_participacao
+  const countByEdition = (arr, edition) => {
+    return arr.filter(c => {
+      const opcao = c.opcao_participacao?.toLowerCase() || '';
+      const edicao = c.edicao?.toLowerCase() || '';
+      
+      if (edition === '12') {
+        return (edicao.includes('12') && !edicao.includes('13')) || 
+               (opcao.includes('12') && !opcao.includes('13'));
+      } else if (edition === '13') {
+        return (edicao.includes('13') && !edicao.includes('12')) ||
+               (opcao.includes('13') && !opcao.includes('12'));
+      } else if (edition === 'both') {
+        return (edicao.includes('12') && edicao.includes('13')) ||
+               (opcao.includes('12') && opcao.includes('13'));
+      }
+      return false;
+    }).length;
+  };
+
   const stats = {
     total: candidaturas.length,
     aprovadas: candidaturas.filter(c => c.decisao_curadoria === 'Aprovada').length,
     pendentes: candidaturas.filter(c => c.decisao_curadoria === 'Pendente').length,
     rejeitadas: candidaturas.filter(c => c.decisao_curadoria === 'Rejeitada').length,
     listaEspera: candidaturas.filter(c => c.decisao_curadoria === 'Lista de Espera').length,
-    ed12: candidaturas.filter(c => c.edicao === '12ª Edição').length,
-    ed13: candidaturas.filter(c => c.edicao === '13ª Edição').length
+    ed12: countByEdition(candidaturas, '12'),
+    ed13: countByEdition(candidaturas, '13'),
+    edAmbas: countByEdition(candidaturas, 'both')
   };
 
   const formatDate = (dateStr) => {
@@ -186,6 +224,26 @@ const CandidaturasPage = () => {
       month: '2-digit', 
       year: 'numeric' 
     });
+  };
+
+  // Format edition for display
+  const formatEdicao = (candidatura) => {
+    const opcao = candidatura.opcao_participacao || '';
+    const edicao = candidatura.edicao || '';
+    
+    // Check if both editions
+    if ((opcao.includes('12') && opcao.includes('13')) || (edicao.includes('12') && edicao.includes('13'))) {
+      return { text: '12ª + 13ª', color: 'bg-[#43523D] text-white' };
+    }
+    // Check if 12th only
+    if (opcao.includes('12') || edicao.includes('12')) {
+      return { text: '12ª Ed.', color: 'bg-[#8C3B20] text-white' };
+    }
+    // Check if 13th only
+    if (opcao.includes('13') || edicao.includes('13')) {
+      return { text: '13ª Ed.', color: 'bg-[#C98D26] text-white' };
+    }
+    return { text: '-', color: 'bg-[#F2F2ED] text-[#1A1A1A]' };
   };
 
   return (
@@ -204,7 +262,7 @@ const CandidaturasPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
           <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
             <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.total}</p>
             <p className="text-xs text-[#66665E] uppercase tracking-wider">Total</p>
@@ -233,6 +291,10 @@ const CandidaturasPage = () => {
             <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.ed13}</p>
             <p className="text-xs text-[#66665E] uppercase tracking-wider">13ª Ed.</p>
           </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#43523D]">{stats.edAmbas}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Ambas Ed.</p>
+          </div>
         </div>
 
         {/* Filters */}
@@ -250,13 +312,14 @@ const CandidaturasPage = () => {
                 />
               </div>
               <Select value={edicaoFilter} onValueChange={setEdicaoFilter}>
-                <SelectTrigger className="w-full md:w-40 border-[#E5E5DF]" data-testid="edicao-filter">
+                <SelectTrigger className="w-full md:w-48 border-[#E5E5DF]" data-testid="edicao-filter">
                   <SelectValue placeholder="Edição" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as edições</SelectItem>
                   <SelectItem value="12ª Edição">12ª Edição</SelectItem>
                   <SelectItem value="13ª Edição">13ª Edição</SelectItem>
+                  <SelectItem value="12ª + 13ª Edição">12ª + 13ª Edição</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -325,9 +388,14 @@ const CandidaturasPage = () => {
                         <TableCell className="text-[#66665E] text-sm">{c.responsavel}</TableCell>
                         <TableCell className="text-[#66665E] text-sm">{c.categoria}</TableCell>
                         <TableCell>
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-[#F2F2ED] text-[#1A1A1A]">
-                            {c.edicao || '-'}
-                          </span>
+                          {(() => {
+                            const ed = formatEdicao(c);
+                            return (
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${ed.color}`}>
+                                {ed.text}
+                              </span>
+                            );
+                          })()}
                         </TableCell>
                         <TableCell>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[c.decisao_curadoria] || 'status-pending'}`}>

@@ -18,6 +18,7 @@ import ComunicacaoPage from './pages/admin/ComunicacaoPage';
 import SustentabilidadePage from './pages/admin/SustentabilidadePage';
 import SocialMediaPage from './pages/admin/SocialMediaPage';
 import PatrocinadoresPage from './pages/admin/PatrocinadoresPage';
+import PrecosPage from './pages/admin/PrecosPage';
 
 import './App.css';
 
@@ -173,6 +174,14 @@ const AppRouter = () => {
         element={
           <ProtectedRoute adminOnly>
             <PatrocinadoresPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/precos" 
+        element={
+          <ProtectedRoute adminOnly>
+            <PrecosPage />
           </ProtectedRoute>
         } 
       />

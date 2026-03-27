@@ -112,6 +112,11 @@ class Candidatura(BaseModel):
     contrato_pdf: Optional[str] = None
     comprovativo_pagamento: Optional[str] = None
     user_id: Optional[str] = None
+    edicao: Optional[str] = None
+    edicao_id: Optional[str] = None
+    fonte: Optional[str] = None
+    comentarios: Optional[str] = None
+    pagamento: Optional[str] = None
 
 class CandidaturaCreate(BaseModel):
     nome_marca: str
@@ -201,6 +206,19 @@ class Patrocinador(BaseModel):
     data_pagamento: Optional[str] = None
     notas: Optional[str] = None
     categoria: Optional[str] = None
+
+class TabelaPrecos(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: f"preco_{uuid.uuid4().hex[:12]}")
+    nome: str  # e.g., "Stand Individual", "Stand Partilhado"
+    descricao: Optional[str] = None
+    valor_base: float  # Valor sem IVA
+    iva_percentagem: float = 23.0  # IVA em Portugal
+    valor_iva: float = 0
+    valor_total: float = 0
+    inclui: Optional[str] = None  # O que está incluído
+    edicao: Optional[str] = None  # Edição específica ou "Todas"
+    ativo: bool = True
 
 # ============== AUTH HELPERS ==============
 def hash_password(password: str) -> str:
@@ -834,6 +852,123 @@ async def send_email_endpoint(data: EmailRequest, user: User = Depends(require_a
     
     success = await send_email(data.to_email, data.subject, html, data.marca)
     return {"success": success, "message": "Email enviado" if success else "Falha no envio"}
+
+# ============== TABELA DE PREÇOS ==============
+@api_router.get("/precos")
+async def get_precos():
+    """Get all active price options - public endpoint for brand portal"""
+    docs = await db.tabela_precos.find({"ativo": True}, {"_id": 0}).to_list(100)
+    return docs
+
+@api_router.get("/precos/all")
+async def get_all_precos(user: User = Depends(require_admin)):
+    """Get all price options including inactive - admin only"""
+    docs = await db.tabela_precos.find({}, {"_id": 0}).to_list(100)
+    return docs
+
+@api_router.post("/precos")
+async def create_preco(data: TabelaPrecos, user: User = Depends(require_admin)):
+    # Calculate IVA and total
+    data.valor_iva = round(data.valor_base * (data.iva_percentagem / 100), 2)
+    data.valor_total = round(data.valor_base + data.valor_iva, 2)
+    await db.tabela_precos.insert_one(data.model_dump())
+    return data
+
+@api_router.put("/precos/{id}")
+async def update_preco(id: str, data: dict, user: User = Depends(require_admin)):
+    data.pop('_id', None)
+    data.pop('id', None)
+    # Recalculate if valor_base changes
+    if 'valor_base' in data:
+        iva_perc = data.get('iva_percentagem', 23.0)
+        data['valor_iva'] = round(data['valor_base'] * (iva_perc / 100), 2)
+        data['valor_total'] = round(data['valor_base'] + data['valor_iva'], 2)
+    result = await db.tabela_precos.update_one({"id": id}, {"$set": data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Preço não encontrado")
+    return {"message": "Preço atualizado"}
+
+@api_router.delete("/precos/{id}")
+async def delete_preco(id: str, user: User = Depends(require_admin)):
+    result = await db.tabela_precos.delete_one({"id": id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Preço não encontrado")
+    return {"message": "Preço eliminado"}
+
+@api_router.post("/precos/seed")
+async def seed_precos(user: User = Depends(require_admin)):
+    """Seed initial pricing data based on the provided price table"""
+    # Check if already seeded
+    existing = await db.tabela_precos.count_documents({})
+    if existing > 0:
+        return {"message": "Tabela de preços já existe", "count": existing}
+    
+    # Price options based on the Excel file data
+    precos = [
+        {
+            "id": "preco_stand_individual",
+            "nome": "Stand Individual",
+            "descricao": "Espaço individual para exposição de produtos",
+            "valor_base": 300.00,
+            "iva_percentagem": 23.0,
+            "valor_iva": 69.00,
+            "valor_total": 369.00,
+            "inclui": "Mesa, 2 cadeiras, acesso a eletricidade",
+            "edicao": "Todas",
+            "ativo": True
+        },
+        {
+            "id": "preco_stand_partilhado",
+            "nome": "Stand Partilhado",
+            "descricao": "Espaço partilhado com outra marca",
+            "valor_base": 310.00,
+            "iva_percentagem": 23.0,
+            "valor_iva": 71.30,
+            "valor_total": 381.30,
+            "inclui": "Mesa partilhada, 1 cadeira, acesso a eletricidade",
+            "edicao": "Todas",
+            "ativo": True
+        },
+        {
+            "id": "preco_stand_premium",
+            "nome": "Stand Premium",
+            "descricao": "Espaço premium com localização privilegiada",
+            "valor_base": 495.00,
+            "iva_percentagem": 23.0,
+            "valor_iva": 113.85,
+            "valor_total": 608.85,
+            "inclui": "Mesa grande, 3 cadeiras, localização premium, eletricidade",
+            "edicao": "Todas",
+            "ativo": True
+        },
+        {
+            "id": "preco_food_court",
+            "nome": "Food Court",
+            "descricao": "Espaço na área de alimentação",
+            "valor_base": 500.00,
+            "iva_percentagem": 23.0,
+            "valor_iva": 115.00,
+            "valor_total": 615.00,
+            "inclui": "Espaço food court, mesa, cadeiras, eletricidade, água",
+            "edicao": "Todas",
+            "ativo": True
+        },
+        {
+            "id": "preco_expositor_grande",
+            "nome": "Expositor Grande",
+            "descricao": "Espaço grande para exposição",
+            "valor_base": 600.00,
+            "iva_percentagem": 23.0,
+            "valor_iva": 138.00,
+            "valor_total": 738.00,
+            "inclui": "2 mesas, 4 cadeiras, espaço grande, eletricidade",
+            "edicao": "Todas",
+            "ativo": True
+        }
+    ]
+    
+    await db.tabela_precos.insert_many(precos)
+    return {"message": "Tabela de preços criada", "count": len(precos)}
 
 @api_router.get("/")
 async def root():
