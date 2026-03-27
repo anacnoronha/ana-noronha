@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -14,7 +14,13 @@ import {
   CalendarCheck,
   MapPin,
   InstagramLogo,
-  ArrowSquareOut
+  ArrowSquareOut,
+  Upload,
+  Image,
+  Receipt,
+  Camera,
+  Spinner,
+  Trash
 } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
@@ -27,6 +33,13 @@ const BrandPortal = () => {
   const [edicoes, setEdicoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('candidaturas');
+  const [uploadingFile, setUploadingFile] = useState(null);
+  const [selectedCandidatura, setSelectedCandidatura] = useState(null);
+  const [materiais, setMateriais] = useState(null);
+  
+  const comprovantivoRef = useRef(null);
+  const logotipoRef = useRef(null);
+  const fotosRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -66,6 +79,95 @@ const BrandPortal = () => {
       case 'Rejeitada': return 'status-rejected';
       case 'Lista de Espera': return 'status-waitlist';
       default: return 'status-pending';
+    }
+  };
+
+  const fetchMateriais = async (candidaturaId) => {
+    try {
+      const response = await axios.get(`${API}/candidatura/${candidaturaId}/materiais`);
+      setMateriais(response.data);
+    } catch (error) {
+      console.error('Error fetching materiais:', error);
+    }
+  };
+
+  const handleSelectCandidatura = async (candidatura) => {
+    setSelectedCandidatura(candidatura);
+    await fetchMateriais(candidatura.id);
+    setActiveTab('materiais');
+  };
+
+  const handleUploadComprovativo = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !selectedCandidatura) return;
+    
+    setUploadingFile('comprovativo');
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await axios.post(
+        `${API}/upload/comprovativo/${selectedCandidatura.id}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      toast.success(response.data.message);
+      await fetchMateriais(selectedCandidatura.id);
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao enviar comprovativo');
+    } finally {
+      setUploadingFile(null);
+    }
+  };
+
+  const handleUploadLogotipo = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !selectedCandidatura) return;
+    
+    setUploadingFile('logotipo');
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await axios.post(
+        `${API}/upload/logotipo/${selectedCandidatura.id}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      toast.success(response.data.message);
+      await fetchMateriais(selectedCandidatura.id);
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao enviar logótipo');
+    } finally {
+      setUploadingFile(null);
+    }
+  };
+
+  const handleUploadFotos = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !selectedCandidatura) return;
+    
+    setUploadingFile('fotos');
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    
+    try {
+      const response = await axios.post(
+        `${API}/upload/fotos/${selectedCandidatura.id}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      toast.success(response.data.message);
+      await fetchMateriais(selectedCandidatura.id);
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao enviar fotos');
+    } finally {
+      setUploadingFile(null);
     }
   };
 
@@ -132,14 +234,23 @@ const BrandPortal = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-[#F2F2ED] mb-8">
+          <TabsList className="grid w-full grid-cols-4 bg-[#F2F2ED] mb-8">
             <TabsTrigger 
               value="candidaturas" 
               className="data-[state=active]:bg-[#8C3B20] data-[state=active]:text-white"
               data-testid="tab-candidaturas"
             >
               <FileText size={18} className="mr-2" />
-              Minhas Candidaturas
+              Candidaturas
+            </TabsTrigger>
+            <TabsTrigger 
+              value="materiais" 
+              className="data-[state=active]:bg-[#8C3B20] data-[state=active]:text-white"
+              data-testid="tab-materiais"
+              disabled={!selectedCandidatura}
+            >
+              <Upload size={18} className="mr-2" />
+              Materiais
             </TabsTrigger>
             <TabsTrigger 
               value="candidatar" 
@@ -155,7 +266,7 @@ const BrandPortal = () => {
               data-testid="tab-edicoes"
             >
               <CalendarCheck size={18} className="mr-2" />
-              Próximas Edições
+              Edições
             </TabsTrigger>
           </TabsList>
 
@@ -224,10 +335,170 @@ const BrandPortal = () => {
                             <span className="text-[#1A1A1A] font-medium">{c.recomendacao_ia}</span>
                           </div>
                         )}
+
+                        {/* Button to upload materials - only for approved brands */}
+                        {c.decisao_curadoria === 'Aprovada' && (
+                          <div className="mt-4 pt-4 border-t border-[#E5E5DF]">
+                            <Button
+                              onClick={() => handleSelectCandidatura(c)}
+                              className="bg-[#43523D] hover:bg-[#506349] text-white"
+                              data-testid={`upload-materiais-btn-${c.id}`}
+                            >
+                              <Upload size={18} className="mr-2" />
+                              Enviar Materiais
+                            </Button>
+                            <div className="flex gap-3 mt-2 text-xs text-[#66665E]">
+                              <span className={c.comprovativo_pagamento ? 'text-[#43523D]' : ''}>
+                                {c.comprovativo_pagamento ? '✓' : '○'} Comprovativo
+                              </span>
+                              <span className={c.logotipo_enviado ? 'text-[#43523D]' : ''}>
+                                {c.logotipo_enviado ? '✓' : '○'} Logótipo
+                              </span>
+                              <span className={c.fotos_enviadas ? 'text-[#43523D]' : ''}>
+                                {c.fotos_enviadas ? '✓' : '○'} Fotos
+                              </span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Materiais Tab - File Uploads */}
+          <TabsContent value="materiais">
+            <Card className="bg-white border border-[#E5E5DF]">
+              <CardHeader>
+                <CardTitle className="font-['Outfit'] text-xl font-medium text-[#1A1A1A] flex items-center gap-2">
+                  <Upload size={24} className="text-[#43523D]" />
+                  Enviar Materiais - {selectedCandidatura?.nome_marca}
+                </CardTitle>
+                <p className="text-sm text-[#66665E] mt-1">
+                  Envie o comprovativo de pagamento, logótipo e fotos da sua marca para participar no Mercado no Castelo.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Hidden file inputs */}
+                <input type="file" ref={comprovantivoRef} onChange={handleUploadComprovativo} accept=".jpg,.jpeg,.png,.pdf" className="hidden" />
+                <input type="file" ref={logotipoRef} onChange={handleUploadLogotipo} accept=".jpg,.jpeg,.png,.gif,.webp" className="hidden" />
+                <input type="file" ref={fotosRef} onChange={handleUploadFotos} accept=".jpg,.jpeg,.png,.gif,.webp" multiple className="hidden" />
+
+                {/* Comprovativo de Pagamento */}
+                <div className="border border-[#E5E5DF] rounded-lg p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${materiais?.comprovativo_pagamento ? 'bg-[#43523D]' : 'bg-[#F2F2ED]'}`}>
+                        <Receipt size={24} className={materiais?.comprovativo_pagamento ? 'text-white' : 'text-[#66665E]'} />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-[#1A1A1A]">Comprovativo de Pagamento</h4>
+                        <p className="text-sm text-[#66665E]">PDF ou imagem do comprovativo de transferência bancária</p>
+                        {materiais?.comprovativo_pagamento && (
+                          <p className="text-xs text-[#43523D] mt-1">✓ Enviado em {new Date(materiais.comprovativo_data).toLocaleDateString('pt-PT')}</p>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => comprovantivoRef.current?.click()}
+                      disabled={uploadingFile === 'comprovativo'}
+                      className={materiais?.comprovativo_pagamento ? 'bg-[#66665E] hover:bg-[#555]' : 'bg-[#8C3B20] hover:bg-[#A14A2E]'}
+                    >
+                      {uploadingFile === 'comprovativo' ? (
+                        <><Spinner size={18} className="mr-2 animate-spin" /> A enviar...</>
+                      ) : materiais?.comprovativo_pagamento ? (
+                        <><Upload size={18} className="mr-2" /> Substituir</>
+                      ) : (
+                        <><Upload size={18} className="mr-2" /> Enviar</>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Logótipo */}
+                <div className="border border-[#E5E5DF] rounded-lg p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${materiais?.logotipo_enviado ? 'bg-[#43523D]' : 'bg-[#F2F2ED]'}`}>
+                        <Image size={24} className={materiais?.logotipo_enviado ? 'text-white' : 'text-[#66665E]'} />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-[#1A1A1A]">Logótipo da Marca</h4>
+                        <p className="text-sm text-[#66665E]">Imagem em alta resolução (PNG, JPG)</p>
+                        {materiais?.logotipo_url && (
+                          <a href={`${process.env.REACT_APP_BACKEND_URL}${materiais.logotipo_url}`} target="_blank" rel="noopener noreferrer" className="text-xs text-[#8C3B20] mt-1 hover:underline">Ver logótipo enviado</a>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => logotipoRef.current?.click()}
+                      disabled={uploadingFile === 'logotipo'}
+                      className={materiais?.logotipo_enviado ? 'bg-[#66665E] hover:bg-[#555]' : 'bg-[#8C3B20] hover:bg-[#A14A2E]'}
+                    >
+                      {uploadingFile === 'logotipo' ? (
+                        <><Spinner size={18} className="mr-2 animate-spin" /> A enviar...</>
+                      ) : materiais?.logotipo_enviado ? (
+                        <><Upload size={18} className="mr-2" /> Substituir</>
+                      ) : (
+                        <><Upload size={18} className="mr-2" /> Enviar</>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Fotos */}
+                <div className="border border-[#E5E5DF] rounded-lg p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${materiais?.fotos_enviadas ? 'bg-[#43523D]' : 'bg-[#F2F2ED]'}`}>
+                        <Camera size={24} className={materiais?.fotos_enviadas ? 'text-white' : 'text-[#66665E]'} />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-[#1A1A1A]">Fotos dos Produtos</h4>
+                        <p className="text-sm text-[#66665E]">Até 10 fotos em alta resolução para divulgação</p>
+                        {materiais?.fotos_urls?.length > 0 && (
+                          <p className="text-xs text-[#43523D] mt-1">✓ {materiais.fotos_urls.length} foto(s) enviada(s)</p>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => fotosRef.current?.click()}
+                      disabled={uploadingFile === 'fotos'}
+                      className="bg-[#8C3B20] hover:bg-[#A14A2E]"
+                    >
+                      {uploadingFile === 'fotos' ? (
+                        <><Spinner size={18} className="mr-2 animate-spin" /> A enviar...</>
+                      ) : (
+                        <><Upload size={18} className="mr-2" /> Adicionar Fotos</>
+                      )}
+                    </Button>
+                  </div>
+                  
+                  {/* Photo grid */}
+                  {materiais?.fotos_urls?.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-4">
+                      {materiais.fotos_urls.map((url, idx) => (
+                        <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-[#E5E5DF]">
+                          <img 
+                            src={`${process.env.REACT_APP_BACKEND_URL}${url}`} 
+                            alt={`Foto ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveTab('candidaturas')}
+                  className="border-[#E5E5DF]"
+                >
+                  ← Voltar às Candidaturas
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>

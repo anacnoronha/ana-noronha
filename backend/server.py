@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, UploadFile, File
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, UploadFile, File, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,8 +17,11 @@ import httpx
 import asyncio
 import resend
 from enum import Enum
+import shutil
 
 ROOT_DIR = Path(__file__).parent
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
@@ -235,6 +239,26 @@ def create_token(user_id: str, role: str) -> str:
         "exp": datetime.now(timezone.utc) + timedelta(days=7)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+# ============== FILE UPLOAD HELPERS ==============
+ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf'}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+def validate_file(file: UploadFile) -> bool:
+    """Validate file extension and size"""
+    ext = Path(file.filename).suffix.lower()
+    return ext in ALLOWED_EXTENSIONS
+
+async def save_upload_file(file: UploadFile, candidatura_id: str, file_type: str) -> str:
+    """Save uploaded file and return the path"""
+    ext = Path(file.filename).suffix.lower()
+    unique_name = f"{candidatura_id}_{file_type}_{uuid.uuid4().hex[:8]}{ext}"
+    file_path = UPLOAD_DIR / unique_name
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    return f"/api/uploads/{unique_name}"
 
 # ============== EMAIL HELPERS ==============
 async def send_email(to_email: str, subject: str, html_content: str, marca: str = None):
@@ -1107,6 +1131,114 @@ async def seed_precos(user: User = Depends(require_admin)):
     
     await db.tabela_precos.insert_many(precos)
     return {"message": "Tabela de preços criada", "count": len(precos)}
+
+# ============== FILE UPLOADS ==============
+@api_router.post("/upload/comprovativo/{candidatura_id}")
+async def upload_comprovativo(
+    candidatura_id: str, 
+    file: UploadFile = File(...),
+    user: User = Depends(get_current_user)
+):
+    """Upload payment receipt"""
+    if not validate_file(file):
+        raise HTTPException(status_code=400, detail="Formato de ficheiro não permitido. Use: JPG, PNG, GIF, WEBP ou PDF")
+    
+    # Check if candidatura exists
+    candidatura = await db.candidaturas.find_one({"id": candidatura_id})
+    if not candidatura:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    file_url = await save_upload_file(file, candidatura_id, "comprovativo")
+    
+    # Update candidatura with the file reference
+    await db.candidaturas.update_one(
+        {"id": candidatura_id},
+        {"$set": {"comprovativo_pagamento": file_url, "comprovativo_data": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"success": True, "url": file_url, "message": "Comprovativo enviado com sucesso"}
+
+@api_router.post("/upload/logotipo/{candidatura_id}")
+async def upload_logotipo(
+    candidatura_id: str, 
+    file: UploadFile = File(...),
+    user: User = Depends(get_current_user)
+):
+    """Upload brand logo"""
+    if not validate_file(file):
+        raise HTTPException(status_code=400, detail="Formato de ficheiro não permitido. Use: JPG, PNG, GIF, WEBP ou PDF")
+    
+    candidatura = await db.candidaturas.find_one({"id": candidatura_id})
+    if not candidatura:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    file_url = await save_upload_file(file, candidatura_id, "logotipo")
+    
+    await db.candidaturas.update_one(
+        {"id": candidatura_id},
+        {"$set": {"logotipo_url": file_url, "logotipo_enviado": True}}
+    )
+    
+    return {"success": True, "url": file_url, "message": "Logótipo enviado com sucesso"}
+
+@api_router.post("/upload/fotos/{candidatura_id}")
+async def upload_fotos(
+    candidatura_id: str, 
+    files: List[UploadFile] = File(...),
+    user: User = Depends(get_current_user)
+):
+    """Upload brand photos (multiple)"""
+    candidatura = await db.candidaturas.find_one({"id": candidatura_id})
+    if not candidatura:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    if len(files) > 10:
+        raise HTTPException(status_code=400, detail="Máximo de 10 fotos permitidas")
+    
+    uploaded_urls = []
+    for i, file in enumerate(files):
+        if not validate_file(file):
+            continue
+        file_url = await save_upload_file(file, candidatura_id, f"foto_{i}")
+        uploaded_urls.append(file_url)
+    
+    # Get existing photos and append new ones
+    existing_photos = candidatura.get("fotos_urls", [])
+    all_photos = existing_photos + uploaded_urls
+    
+    await db.candidaturas.update_one(
+        {"id": candidatura_id},
+        {"$set": {"fotos_urls": all_photos, "fotos_enviadas": True}}
+    )
+    
+    return {"success": True, "urls": uploaded_urls, "total": len(all_photos), "message": f"{len(uploaded_urls)} foto(s) enviada(s) com sucesso"}
+
+@api_router.get("/uploads/{filename}")
+async def get_upload(filename: str):
+    """Serve uploaded files"""
+    from fastapi.responses import FileResponse
+    file_path = UPLOAD_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Ficheiro não encontrado")
+    return FileResponse(file_path)
+
+@api_router.get("/candidatura/{candidatura_id}/materiais")
+async def get_candidatura_materiais(candidatura_id: str, user: User = Depends(get_current_user)):
+    """Get all materials uploaded for a candidatura"""
+    candidatura = await db.candidaturas.find_one({"id": candidatura_id}, {"_id": 0})
+    if not candidatura:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    return {
+        "candidatura_id": candidatura_id,
+        "nome_marca": candidatura.get("nome_marca"),
+        "comprovativo_pagamento": candidatura.get("comprovativo_pagamento"),
+        "comprovativo_data": candidatura.get("comprovativo_data"),
+        "logotipo_url": candidatura.get("logotipo_url"),
+        "logotipo_enviado": candidatura.get("logotipo_enviado", False),
+        "fotos_urls": candidatura.get("fotos_urls", []),
+        "fotos_enviadas": candidatura.get("fotos_enviadas", False)
+    }
 
 @api_router.get("/")
 async def root():

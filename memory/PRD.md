@@ -32,6 +32,7 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 | Social Media | ✅ | 3 records |
 | AI Analysis | ✅ | Claude Sonnet 4.5 |
 | Email Templates | ✅ | IBAN: PT50 0023 0000 4562 4816 3089 4 |
+| **Upload Materiais** | ✅ | Comprovativo, Logótipo, Fotos (Portal Marca) |
 
 ### 📊 CURRENT DATA
 - **72 candidaturas** (36 aprovadas, 23 rejeitadas, 13 lista espera)
@@ -47,10 +48,10 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 | Dados de Faturação | Parcial | NIFs/Moradas nos Excel (separador "faturação") |
 
 ### 🔜 NEXT FEATURES (P2)
-- [ ] Upload de ficheiros (contratos, comprovativos)
 - [ ] Exportação PDF/Excel de relatórios
 - [ ] Notificações WhatsApp/SMS
 - [ ] Página pública do evento
+- [ ] Importar dados de faturação (NIFs/Moradas) dos Excel
 
 ## Technology Stack
 - Frontend: React 18, Tailwind CSS, Shadcn UI, Phosphor Icons, Recharts
@@ -77,6 +78,8 @@ All endpoints prefixed with `/api/`:
 - Patrocinadores: `/patrocinadores` (CRUD)
 - Preços: `/precos` (Read), `/precos/all` (Admin)
 - Email: `/email/send`, `/email/pending-approval`, `/email/bulk-send`
+- Upload: `/upload/comprovativo/{id}`, `/upload/logotipo/{id}`, `/upload/fotos/{id}`
+- Materiais: `/candidatura/{id}/materiais`, `/uploads/{filename}`
 
 ## Payment Details (for emails)
 - **IBAN:** PT50 0023 0000 4562 4816 3089 4
