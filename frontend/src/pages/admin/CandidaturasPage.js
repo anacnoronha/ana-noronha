@@ -16,7 +16,10 @@ import {
   EnvelopeSimple,
   Check,
   PaperPlaneTilt,
-  Spinner
+  Spinner,
+  Receipt,
+  Money,
+  FileText
 } from '@phosphor-icons/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -60,6 +63,7 @@ const statusColors = {
 const pagamentoColors = {
   'Por Pagar': 'bg-[#FFF3E0] text-[#E65100]',
   'Pago': 'bg-[#E8F5E9] text-[#2E7D32]',
+  'Pago Parcialmente': 'bg-[#FFF8E1] text-[#F9A825]',
   'Recusado p/Mc': 'bg-[#FFEBEE] text-[#C62828]'
 };
 
@@ -79,6 +83,22 @@ const CandidaturasPage = () => {
   const [bulkEmailModalOpen, setBulkEmailModalOpen] = useState(false);
   const [pendingEmails, setPendingEmails] = useState({ count: 0, candidaturas: [] });
   const [sendingBulk, setSendingBulk] = useState(false);
+  // Payment and billing state
+  const [pagamentoModalOpen, setPagamentoModalOpen] = useState(false);
+  const [faturacaoModalOpen, setFaturacaoModalOpen] = useState(false);
+  const [valorPagamento, setValorPagamento] = useState('');
+  const [metodoPagamento, setMetodoPagamento] = useState('Transferência');
+  const [notasPagamento, setNotasPagamento] = useState('');
+  const [dadosFaturacao, setDadosFaturacao] = useState({
+    nome_fiscal: '',
+    nif: '',
+    morada_fiscal: '',
+    localidade: '',
+    codigo_postal: ''
+  });
+  const [savingPagamento, setSavingPagamento] = useState(false);
+  const [savingFaturacao, setSavingFaturacao] = useState(false);
+  const [sendingFatura, setSendingFatura] = useState(false);
 
   useEffect(() => {
     fetchCandidaturas();
@@ -226,6 +246,96 @@ const CandidaturasPage = () => {
       toast.error('Erro ao enviar emails em massa');
     } finally {
       setSendingBulk(false);
+    }
+  };
+
+  // Payment functions
+  const handleOpenPagamentoModal = (candidatura) => {
+    setSelectedCandidatura(candidatura);
+    setValorPagamento('');
+    setMetodoPagamento('Transferência');
+    setNotasPagamento('');
+    setPagamentoModalOpen(true);
+  };
+
+  const handleRegistarPagamento = async () => {
+    if (!valorPagamento || parseFloat(valorPagamento) <= 0) {
+      toast.error('Por favor insira um valor válido');
+      return;
+    }
+    
+    setSavingPagamento(true);
+    try {
+      const response = await axios.post(`${API}/candidaturas/${selectedCandidatura.id}/pagamento`, {
+        valor_pago: parseFloat(valorPagamento),
+        metodo: metodoPagamento,
+        notas: notasPagamento
+      });
+      toast.success(response.data.message);
+      fetchCandidaturas();
+      setPagamentoModalOpen(false);
+      // Update selected candidatura
+      setSelectedCandidatura(prev => ({
+        ...prev,
+        valor_pago: response.data.valor_pago_total,
+        valor_em_falta: response.data.valor_em_falta,
+        pagamento: response.data.estado
+      }));
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao registar pagamento');
+    } finally {
+      setSavingPagamento(false);
+    }
+  };
+
+  // Billing functions
+  const handleOpenFaturacaoModal = (candidatura) => {
+    setSelectedCandidatura(candidatura);
+    setDadosFaturacao({
+      nome_fiscal: candidatura.nome_fiscal || candidatura.nome_marca || '',
+      nif: candidatura.nif || '',
+      morada_fiscal: candidatura.morada_fiscal || '',
+      localidade: candidatura.localidade || '',
+      codigo_postal: candidatura.codigo_postal || ''
+    });
+    setFaturacaoModalOpen(true);
+  };
+
+  const handleSaveFaturacao = async () => {
+    if (!dadosFaturacao.nif) {
+      toast.error('O NIF é obrigatório');
+      return;
+    }
+    
+    setSavingFaturacao(true);
+    try {
+      await axios.put(`${API}/candidaturas/${selectedCandidatura.id}/faturacao`, dadosFaturacao);
+      toast.success('Dados de faturação guardados');
+      fetchCandidaturas();
+      setFaturacaoModalOpen(false);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao guardar dados');
+    } finally {
+      setSavingFaturacao(false);
+    }
+  };
+
+  const handleEnviarFatura = async (candidatura) => {
+    if (!candidatura.nif) {
+      toast.error('Preencha os dados de faturação primeiro');
+      handleOpenFaturacaoModal(candidatura);
+      return;
+    }
+    
+    setSendingFatura(true);
+    try {
+      const response = await axios.post(`${API}/candidaturas/${candidatura.id}/enviar-fatura`);
+      toast.success(response.data.message);
+      fetchCandidaturas();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao enviar fatura');
+    } finally {
+      setSendingFatura(false);
     }
   };
 
@@ -438,6 +548,7 @@ const CandidaturasPage = () => {
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="Por Pagar">Por Pagar</SelectItem>
+                  <SelectItem value="Pago Parcialmente">Pago Parcialmente</SelectItem>
                   <SelectItem value="Pago">Pago</SelectItem>
                   <SelectItem value="Recusado p/Mc">Recusado</SelectItem>
                 </SelectContent>
@@ -458,6 +569,7 @@ const CandidaturasPage = () => {
                     <TableHead className="text-[#66665E] font-semibold">Edição</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Estado</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Pagamento</TableHead>
+                    <TableHead className="text-[#66665E] font-semibold text-center">Faturação</TableHead>
                     <TableHead className="text-[#66665E] font-semibold text-center">Email</TableHead>
                     <TableHead className="text-[#66665E] font-semibold text-right">Ações</TableHead>
                   </TableRow>
@@ -465,13 +577,13 @@ const CandidaturasPage = () => {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8">
+                      <TableCell colSpan={8} className="text-center py-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#8C3B20] mx-auto"></div>
                       </TableCell>
                     </TableRow>
                   ) : filteredCandidaturas.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-[#66665E]">
+                      <TableCell colSpan={8} className="text-center py-8 text-[#66665E]">
                         Nenhuma candidatura encontrada
                       </TableCell>
                     </TableRow>
@@ -504,15 +616,53 @@ const CandidaturasPage = () => {
                             value={c.pagamento || 'Por Pagar'} 
                             onValueChange={(value) => handleUpdatePagamento(c.id, value)}
                           >
-                            <SelectTrigger className={`w-28 h-7 text-xs border-0 ${pagamentoColors[c.pagamento] || pagamentoColors['Por Pagar']}`}>
+                            <SelectTrigger className={`w-32 h-7 text-xs border-0 ${pagamentoColors[c.pagamento] || pagamentoColors['Por Pagar']}`}>
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="Por Pagar">Por Pagar</SelectItem>
+                              <SelectItem value="Pago Parcialmente">Parcialmente</SelectItem>
                               <SelectItem value="Pago">Pago</SelectItem>
                               <SelectItem value="Recusado p/Mc">Recusado</SelectItem>
                             </SelectContent>
                           </Select>
+                          {c.valor_pago > 0 && (
+                            <span className="text-[10px] text-[#66665E] ml-1">
+                              {c.valor_pago}€
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => handleOpenPagamentoModal(c)}
+                              className="w-6 h-6 rounded-full flex items-center justify-center bg-[#F2F2ED] text-[#66665E] hover:bg-[#E5E5DF] transition-colors"
+                              title="Registar pagamento"
+                            >
+                              <Money size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenFaturacaoModal(c)}
+                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+                                c.nif ? 'bg-[#43523D] text-white' : 'bg-[#F2F2ED] text-[#66665E] hover:bg-[#E5E5DF]'
+                              }`}
+                              title={c.nif ? 'Editar faturação' : 'Adicionar faturação'}
+                            >
+                              <Receipt size={14} />
+                            </button>
+                            {c.nif && !c.fatura_enviada && (
+                              <button
+                                onClick={() => handleEnviarFatura(c)}
+                                className="w-6 h-6 rounded-full flex items-center justify-center bg-[#8C3B20] text-white hover:bg-[#A14A2E] transition-colors"
+                                title="Enviar fatura"
+                              >
+                                <FileText size={14} />
+                              </button>
+                            )}
+                            {c.fatura_enviada && (
+                              <span className="text-[10px] text-[#43523D]">✓</span>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="text-center">
                           <button
@@ -851,6 +1001,193 @@ const CandidaturasPage = () => {
                       <PaperPlaneTilt size={16} className="mr-2" />
                       Enviar {pendingEmails.count} Emails
                     </>
+                  )}
+                </Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Pagamento Modal */}
+        <Dialog open={pagamentoModalOpen} onOpenChange={setPagamentoModalOpen}>
+          <DialogContent className="max-w-md bg-white">
+            <DialogHeader>
+              <DialogTitle className="font-['Outfit'] text-xl font-semibold text-[#1A1A1A] flex items-center gap-2">
+                <Money size={24} className="text-[#43523D]" />
+                Registar Pagamento
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="bg-[#F2F2ED] rounded-lg p-4">
+                <p className="text-sm text-[#66665E]">Marca</p>
+                <p className="font-semibold text-[#1A1A1A]">{selectedCandidatura?.nome_marca}</p>
+                <div className="grid grid-cols-3 gap-4 mt-3 text-sm">
+                  <div>
+                    <p className="text-[#66665E]">Valor Total</p>
+                    <p className="font-semibold">{selectedCandidatura?.valor_final?.toFixed(2) || '0.00'}€</p>
+                  </div>
+                  <div>
+                    <p className="text-[#66665E]">Já Pago</p>
+                    <p className="font-semibold text-[#43523D]">{selectedCandidatura?.valor_pago?.toFixed(2) || '0.00'}€</p>
+                  </div>
+                  <div>
+                    <p className="text-[#66665E]">Em Falta</p>
+                    <p className="font-semibold text-[#E65100]">{(selectedCandidatura?.valor_em_falta || (selectedCandidatura?.valor_final - (selectedCandidatura?.valor_pago || 0)))?.toFixed(2) || '0.00'}€</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-[#66665E]">Valor do Pagamento (€)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={valorPagamento}
+                  onChange={(e) => setValorPagamento(e.target.value)}
+                  placeholder="0.00"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label className="text-[#66665E]">Método</Label>
+                <Select value={metodoPagamento} onValueChange={setMetodoPagamento}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Transferência">Transferência Bancária</SelectItem>
+                    <SelectItem value="MBWay">MBWay</SelectItem>
+                    <SelectItem value="Numerário">Numerário</SelectItem>
+                    <SelectItem value="Outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-[#66665E]">Notas (opcional)</Label>
+                <Input
+                  value={notasPagamento}
+                  onChange={(e) => setNotasPagamento(e.target.value)}
+                  placeholder="Referência, data, etc."
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setPagamentoModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleRegistarPagamento}
+                disabled={savingPagamento}
+                className="bg-[#43523D] hover:bg-[#506349] text-white"
+              >
+                {savingPagamento ? (
+                  <><Spinner size={16} className="mr-2 animate-spin" /> A guardar...</>
+                ) : (
+                  <><Money size={16} className="mr-2" /> Registar Pagamento</>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Faturação Modal */}
+        <Dialog open={faturacaoModalOpen} onOpenChange={setFaturacaoModalOpen}>
+          <DialogContent className="max-w-md bg-white">
+            <DialogHeader>
+              <DialogTitle className="font-['Outfit'] text-xl font-semibold text-[#1A1A1A] flex items-center gap-2">
+                <Receipt size={24} className="text-[#8C3B20]" />
+                Dados de Faturação
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="bg-[#F2F2ED] rounded-lg p-3">
+                <p className="font-semibold text-[#1A1A1A]">{selectedCandidatura?.nome_marca}</p>
+                <p className="text-sm text-[#66665E]">{selectedCandidatura?.email}</p>
+              </div>
+
+              <div>
+                <Label className="text-[#66665E]">Nome Fiscal / Empresa *</Label>
+                <Input
+                  value={dadosFaturacao.nome_fiscal}
+                  onChange={(e) => setDadosFaturacao({...dadosFaturacao, nome_fiscal: e.target.value})}
+                  placeholder="Nome completo ou empresa"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label className="text-[#66665E]">NIF *</Label>
+                <Input
+                  value={dadosFaturacao.nif}
+                  onChange={(e) => setDadosFaturacao({...dadosFaturacao, nif: e.target.value})}
+                  placeholder="123456789"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label className="text-[#66665E]">Morada</Label>
+                <Input
+                  value={dadosFaturacao.morada_fiscal}
+                  onChange={(e) => setDadosFaturacao({...dadosFaturacao, morada_fiscal: e.target.value})}
+                  placeholder="Rua, número, etc."
+                  className="mt-1"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-[#66665E]">Localidade</Label>
+                  <Input
+                    value={dadosFaturacao.localidade}
+                    onChange={(e) => setDadosFaturacao({...dadosFaturacao, localidade: e.target.value})}
+                    placeholder="Lisboa"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-[#66665E]">Código Postal</Label>
+                  <Input
+                    value={dadosFaturacao.codigo_postal}
+                    onChange={(e) => setDadosFaturacao({...dadosFaturacao, codigo_postal: e.target.value})}
+                    placeholder="1000-001"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="flex gap-2">
+              <Button variant="outline" onClick={() => setFaturacaoModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSaveFaturacao}
+                disabled={savingFaturacao}
+                className="bg-[#43523D] hover:bg-[#506349] text-white"
+              >
+                {savingFaturacao ? (
+                  <><Spinner size={16} className="mr-2 animate-spin" /> A guardar...</>
+                ) : (
+                  'Guardar'
+                )}
+              </Button>
+              {selectedCandidatura?.nif && !selectedCandidatura?.fatura_enviada && (
+                <Button 
+                  onClick={() => { setFaturacaoModalOpen(false); handleEnviarFatura(selectedCandidatura); }}
+                  disabled={sendingFatura}
+                  className="bg-[#8C3B20] hover:bg-[#A14A2E] text-white"
+                >
+                  {sendingFatura ? (
+                    <><Spinner size={16} className="mr-2 animate-spin" /> A enviar...</>
+                  ) : (
+                    <><FileText size={16} className="mr-2" /> Enviar Fatura</>
                   )}
                 </Button>
               )}

@@ -122,6 +122,19 @@ class Candidatura(BaseModel):
     comentarios: Optional[str] = None
     pagamento: Optional[str] = None
     email_confirmado: bool = False
+    # Payment tracking
+    valor_pago: float = 0
+    valor_em_falta: Optional[float] = None
+    data_ultimo_pagamento: Optional[str] = None
+    # Billing/Faturação
+    nome_fiscal: Optional[str] = None
+    nif: Optional[str] = None
+    morada_fiscal: Optional[str] = None
+    localidade: Optional[str] = None
+    codigo_postal: Optional[str] = None
+    fatura_enviada: bool = False
+    fatura_numero: Optional[str] = None
+    fatura_data: Optional[str] = None
 
 class CandidaturaCreate(BaseModel):
     nome_marca: str
@@ -1014,6 +1027,195 @@ async def send_bulk_emails(data: BulkEmailRequest, user: User = Depends(require_
         "failed": failed,
         "results": results
     }
+
+# ============== PAGAMENTOS E FATURAÇÃO ==============
+class RegistarPagamentoRequest(BaseModel):
+    valor_pago: float
+    metodo: Optional[str] = "Transferência"
+    notas: Optional[str] = None
+
+class DadosFaturacaoRequest(BaseModel):
+    nome_fiscal: str
+    nif: str
+    morada_fiscal: Optional[str] = None
+    localidade: Optional[str] = None
+    codigo_postal: Optional[str] = None
+
+@api_router.post("/candidaturas/{id}/pagamento")
+async def registar_pagamento(id: str, data: RegistarPagamentoRequest, user: User = Depends(require_admin)):
+    """Register a payment for a candidatura"""
+    doc = await db.candidaturas.find_one({"id": id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    valor_atual = doc.get("valor_pago", 0) or 0
+    novo_valor_pago = valor_atual + data.valor_pago
+    valor_total = doc.get("valor_final", 0) or 0
+    valor_em_falta = max(0, valor_total - novo_valor_pago)
+    
+    # Determine payment status
+    if novo_valor_pago >= valor_total:
+        novo_status = "Pago"
+    elif novo_valor_pago > 0:
+        novo_status = "Pago Parcialmente"
+    else:
+        novo_status = "Por Pagar"
+    
+    update_data = {
+        "valor_pago": novo_valor_pago,
+        "valor_em_falta": valor_em_falta,
+        "pagamento": novo_status,
+        "data_ultimo_pagamento": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.candidaturas.update_one({"id": id}, {"$set": update_data})
+    
+    # Log payment in comunicacao
+    await db.comunicacao.insert_one({
+        "id": f"com_{uuid.uuid4().hex[:12]}",
+        "marca_id": id,
+        "marca": doc.get("nome_marca"),
+        "tipo": "Pagamento",
+        "assunto": f"Pagamento registado: {data.valor_pago}€",
+        "conteudo": f"Valor: {data.valor_pago}€ | Método: {data.metodo} | Total pago: {novo_valor_pago}€ | Em falta: {valor_em_falta}€",
+        "data_envio": datetime.now(timezone.utc).isoformat(),
+        "estado": "Registado",
+        "notas": data.notas
+    })
+    
+    return {
+        "success": True,
+        "message": f"Pagamento de {data.valor_pago}€ registado",
+        "valor_pago_total": novo_valor_pago,
+        "valor_em_falta": valor_em_falta,
+        "estado": novo_status
+    }
+
+@api_router.put("/candidaturas/{id}/faturacao")
+async def atualizar_faturacao(id: str, data: DadosFaturacaoRequest, user: User = Depends(require_admin)):
+    """Update billing data for a candidatura"""
+    doc = await db.candidaturas.find_one({"id": id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    await db.candidaturas.update_one(
+        {"id": id},
+        {"$set": {
+            "nome_fiscal": data.nome_fiscal,
+            "nif": data.nif,
+            "morada_fiscal": data.morada_fiscal,
+            "localidade": data.localidade,
+            "codigo_postal": data.codigo_postal
+        }}
+    )
+    
+    return {"success": True, "message": "Dados de faturação atualizados"}
+
+def get_fatura_email(nome_marca: str, responsavel: str, dados_faturacao: dict, valor_total: float, fatura_numero: str):
+    """Generate invoice email template"""
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #FAFAF8;">
+        <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <img src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png" alt="Mercado no Castelo" style="height: 60px; margin-bottom: 20px;">
+            
+            <h2 style="color: #8C3B20; margin-bottom: 20px;">Fatura Proforma #{fatura_numero}</h2>
+            
+            <p style="color: #1A1A1A;">Olá <strong>{responsavel}</strong>,</p>
+            
+            <p style="color: #1A1A1A;">Segue em anexo a fatura proforma relativa à participação da marca <strong style="color: #8C3B20;">{nome_marca}</strong> no Mercado no Castelo.</p>
+            
+            <div style="background-color: #F2F2ED; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #1A1A1A; margin-top: 0;">Dados de Faturação</h3>
+                <p style="margin: 5px 0;"><strong>Nome/Empresa:</strong> {dados_faturacao.get('nome_fiscal', nome_marca)}</p>
+                <p style="margin: 5px 0;"><strong>NIF:</strong> {dados_faturacao.get('nif', 'N/A')}</p>
+                <p style="margin: 5px 0;"><strong>Morada:</strong> {dados_faturacao.get('morada_fiscal', 'N/A')}</p>
+                <p style="margin: 5px 0;"><strong>Localidade:</strong> {dados_faturacao.get('localidade', '')} {dados_faturacao.get('codigo_postal', '')}</p>
+            </div>
+            
+            <div style="background-color: #E8F5E9; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #43523D;">
+                <h3 style="color: #43523D; margin-top: 0;">Valor a Pagar</h3>
+                <p style="font-size: 24px; font-weight: bold; color: #1A1A1A; margin: 10px 0;">{valor_total:.2f}€</p>
+                <p style="margin: 5px 0; font-size: 13px; color: #66665E;">(IVA incluído à taxa legal)</p>
+            </div>
+            
+            <div style="background-color: #FFF3E0; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #E65100;">
+                <h3 style="color: #E65100; margin-top: 0;">Dados para Pagamento</h3>
+                <p style="margin: 5px 0;"><strong>IBAN:</strong> PT50 0023 0000 4562 4816 3089 4</p>
+                <p style="margin: 5px 0;"><strong>Titular:</strong> Ana Noronha</p>
+                <p style="margin: 5px 0;"><strong>Referência:</strong> {fatura_numero}</p>
+            </div>
+            
+            <p style="color: #66665E; font-size: 13px;">Após efetuar o pagamento, por favor envie o comprovativo para <a href="mailto:geral@mercadonocastelo.pt" style="color: #8C3B20;">geral@mercadonocastelo.pt</a></p>
+            
+            <p style="color: #1A1A1A; margin-top: 30px;">Com os melhores cumprimentos,<br><strong>Equipa Mercado no Castelo</strong></p>
+        </div>
+    </div>
+    """
+
+@api_router.post("/candidaturas/{id}/enviar-fatura")
+async def enviar_fatura(id: str, user: User = Depends(require_admin)):
+    """Generate and send invoice to brand"""
+    doc = await db.candidaturas.find_one({"id": id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    # Check if billing data exists
+    if not doc.get("nif"):
+        raise HTTPException(status_code=400, detail="Dados de faturação em falta. Por favor preencha o NIF primeiro.")
+    
+    # Generate invoice number
+    fatura_numero = f"MNC-{datetime.now().strftime('%Y%m%d')}-{id[-6:].upper()}"
+    
+    dados_faturacao = {
+        "nome_fiscal": doc.get("nome_fiscal", doc.get("nome_marca")),
+        "nif": doc.get("nif"),
+        "morada_fiscal": doc.get("morada_fiscal"),
+        "localidade": doc.get("localidade"),
+        "codigo_postal": doc.get("codigo_postal")
+    }
+    
+    valor_total = doc.get("valor_final", 0)
+    
+    html = get_fatura_email(
+        doc["nome_marca"],
+        doc["responsavel"],
+        dados_faturacao,
+        valor_total,
+        fatura_numero
+    )
+    
+    success = await send_email(
+        doc["email"],
+        f"Fatura Proforma #{fatura_numero} - Mercado no Castelo",
+        html,
+        doc["nome_marca"]
+    )
+    
+    if success:
+        await db.candidaturas.update_one(
+            {"id": id},
+            {"$set": {
+                "fatura_enviada": True,
+                "fatura_numero": fatura_numero,
+                "fatura_data": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Log in comunicacao
+        await db.comunicacao.insert_one({
+            "id": f"com_{uuid.uuid4().hex[:12]}",
+            "marca_id": id,
+            "marca": doc.get("nome_marca"),
+            "tipo": "Fatura",
+            "assunto": f"Fatura #{fatura_numero} enviada",
+            "conteudo": f"Fatura proforma enviada para {doc['email']} | Valor: {valor_total}€",
+            "data_envio": datetime.now(timezone.utc).isoformat(),
+            "estado": "Enviado"
+        })
+        
+        return {"success": True, "message": f"Fatura #{fatura_numero} enviada com sucesso", "fatura_numero": fatura_numero}
+    else:
+        raise HTTPException(status_code=500, detail="Erro ao enviar fatura por email")
 
 # ============== TABELA DE PREÇOS ==============
 @api_router.get("/precos")
