@@ -286,24 +286,68 @@ def get_candidatura_confirmation_email(nome_marca: str, responsavel: str):
     </div>
     """
 
-def get_approval_email(nome_marca: str, responsavel: str, valor: float):
+def get_approval_email(nome_marca: str, responsavel: str, valor: float, opcao_participacao: str = ""):
+    """Generate approval email with payment details"""
+    # Extract price info from opcao_participacao if available
+    preco_info = ""
+    if opcao_participacao:
+        if "467,40" in opcao_participacao or "467.40" in opcao_participacao:
+            preco_info = "467,40€ (380,00€ + IVA)"
+        elif "888,06" in opcao_participacao or "888.06" in opcao_participacao:
+            preco_info = "888,06€ (722,00€ + IVA)"
+        elif "853,01" in opcao_participacao or "853.01" in opcao_participacao:
+            preco_info = "853,01€ (693,50€ + IVA)"
+        elif "430,50" in opcao_participacao or "430.50" in opcao_participacao:
+            preco_info = "430,50€ (350,00€ + IVA)"
+    
+    if not preco_info:
+        preco_info = f"{valor:.2f}€"
+    
     return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <img src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png" alt="Mercado no Castelo" style="height: 50px; margin-bottom: 20px;">
-        <h2 style="color: #43523D;">Parabéns! Candidatura Aprovada!</h2>
-        <p>Olá {responsavel},</p>
-        <p>Temos o prazer de informar que a candidatura da marca <strong>{nome_marca}</strong> foi <strong style="color: #43523D;">APROVADA</strong> para participar no Mercado no Castelo!</p>
-        <p>A nossa equipa de curadoria ficou impressionada com o vosso projeto e acreditamos que será uma excelente adição ao evento.</p>
-        <h3 style="color: #8C3B20;">Próximos Passos:</h3>
-        <ol>
-            <li>Receberá o contrato de participação por email</li>
-            <li>Valor de participação: <strong>€{valor:.2f}</strong></li>
-            <li>Envie os materiais de comunicação (fotos, logótipo, texto)</li>
-        </ol>
-        <p>Entraremos em contacto brevemente com mais detalhes.</p>
-        <br>
-        <p>Bem-vindo à família Mercado no Castelo!</p>
-        <p><strong>Equipa Mercado no Castelo</strong></p>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #FAFAF8;">
+        <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <img src="https://static.wixstatic.com/media/a5b410_2db3a7b04bac4e4e9584ac58bbe4acc3~mv2.png" alt="Mercado no Castelo" style="height: 60px; margin-bottom: 20px;">
+            
+            <h2 style="color: #43523D; margin-bottom: 20px;">Parabéns! A sua candidatura foi aprovada!</h2>
+            
+            <p style="color: #1A1A1A;">Olá <strong>{responsavel}</strong>,</p>
+            
+            <p style="color: #1A1A1A;">Temos o prazer de informar que a marca <strong style="color: #8C3B20;">{nome_marca}</strong> foi <strong style="color: #43523D;">APROVADA</strong> para participar no Mercado no Castelo!</p>
+            
+            <div style="background-color: #F2F2ED; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #8C3B20; margin-top: 0;">Detalhes da Participação</h3>
+                <p style="margin: 5px 0;"><strong>Opção:</strong> {opcao_participacao or 'Espaço Base'}</p>
+                <p style="margin: 5px 0;"><strong>Valor Total:</strong> {preco_info}</p>
+            </div>
+            
+            <div style="background-color: #E8F5E9; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #43523D;">
+                <h3 style="color: #43523D; margin-top: 0;">Dados para Pagamento</h3>
+                <p style="margin: 5px 0;"><strong>IBAN:</strong> PT50 0035 0446 00000000000 00</p>
+                <p style="margin: 5px 0;"><strong>Titular:</strong> Mercado no Castelo, Unipessoal Lda</p>
+                <p style="margin: 5px 0;"><strong>Referência:</strong> {nome_marca[:20]}</p>
+                <p style="margin: 10px 0 0 0; font-size: 13px; color: #66665E;">Por favor envie o comprovativo de pagamento para <a href="mailto:geral@mercadonocastelo.pt" style="color: #8C3B20;">geral@mercadonocastelo.pt</a></p>
+            </div>
+            
+            <h3 style="color: #8C3B20;">Próximos Passos:</h3>
+            <ol style="color: #1A1A1A; line-height: 1.8;">
+                <li>Efetue o pagamento através dos dados acima</li>
+                <li>Envie o comprovativo de pagamento por email</li>
+                <li>Envie os materiais de comunicação (fotos HD, logótipo, texto descritivo)</li>
+                <li>Aguarde confirmação e informações logísticas</li>
+            </ol>
+            
+            <p style="color: #1A1A1A;">Bem-vindo à família Mercado no Castelo!</p>
+            
+            <p style="color: #1A1A1A; margin-top: 30px;">Com os melhores cumprimentos,<br><strong>Equipa Mercado no Castelo</strong></p>
+            
+            <hr style="border: none; border-top: 1px solid #E5E5DF; margin: 30px 0 20px 0;">
+            
+            <p style="font-size: 12px; color: #66665E; text-align: center;">
+                <a href="https://www.instagram.com/mercado_no_castelo/" style="color: #8C3B20; text-decoration: none;">Instagram</a> | 
+                <a href="https://www.mercadonocastelo.pt" style="color: #8C3B20; text-decoration: none;">Website</a> |
+                <a href="mailto:geral@mercadonocastelo.pt" style="color: #8C3B20; text-decoration: none;">geral@mercadonocastelo.pt</a>
+            </p>
+        </div>
     </div>
     """
 
@@ -613,9 +657,12 @@ async def approve_candidatura(id: str, user: User = Depends(require_admin)):
     asyncio.create_task(send_email(
         to_email=doc["email"],
         subject="Candidatura Aprovada! - Mercado no Castelo",
-        html_content=get_approval_email(doc["nome_marca"], doc["responsavel"], valor_final),
+        html_content=get_approval_email(doc["nome_marca"], doc["responsavel"], valor_final, doc.get("opcao_participacao", "")),
         marca=doc["nome_marca"]
     ))
+    
+    # Mark email as sent
+    await db.candidaturas.update_one({"id": id}, {"$set": {"email_confirmado": True}})
     
     return {"message": "Candidatura aprovada e marca adicionada"}
 
@@ -853,6 +900,80 @@ async def send_email_endpoint(data: EmailRequest, user: User = Depends(require_a
     
     success = await send_email(data.to_email, data.subject, html, data.marca)
     return {"success": success, "message": "Email enviado" if success else "Falha no envio"}
+
+# ============== BULK EMAIL ==============
+class BulkEmailRequest(BaseModel):
+    template: str  # approval, rejection
+    candidatura_ids: Optional[List[str]] = None  # If None, send to all pending
+
+@api_router.get("/email/pending-approval")
+async def get_pending_approval_emails(user: User = Depends(require_admin)):
+    """Get list of approved candidaturas that haven't received confirmation email"""
+    docs = await db.candidaturas.find(
+        {"decisao_curadoria": "Aprovada", "email_confirmado": {"$ne": True}},
+        {"_id": 0, "id": 1, "nome_marca": 1, "responsavel": 1, "email": 1, "opcao_participacao": 1, "valor_final": 1}
+    ).to_list(500)
+    return {"count": len(docs), "candidaturas": docs}
+
+@api_router.post("/email/bulk-send")
+async def send_bulk_emails(data: BulkEmailRequest, user: User = Depends(require_admin)):
+    """Send emails in bulk to approved candidaturas"""
+    # Get candidaturas to email
+    query = {"decisao_curadoria": "Aprovada", "email_confirmado": {"$ne": True}}
+    if data.candidatura_ids:
+        query["id"] = {"$in": data.candidatura_ids}
+    
+    docs = await db.candidaturas.find(query, {"_id": 0}).to_list(500)
+    
+    if not docs:
+        return {"success": False, "message": "Nenhuma candidatura pendente de email", "sent": 0, "failed": 0}
+    
+    sent = 0
+    failed = 0
+    results = []
+    
+    for doc in docs:
+        try:
+            if data.template == "approval":
+                html = get_approval_email(
+                    doc["nome_marca"], 
+                    doc["responsavel"], 
+                    doc.get("valor_final", 0),
+                    doc.get("opcao_participacao", "")
+                )
+                subject = "Candidatura Aprovada! - Mercado no Castelo"
+            elif data.template == "rejection":
+                html = get_rejection_email(doc["nome_marca"], doc["responsavel"])
+                subject = "Resultado da Candidatura - Mercado no Castelo"
+            else:
+                continue
+            
+            success = await send_email(doc["email"], subject, html, doc["nome_marca"])
+            
+            if success:
+                # Mark as email sent
+                await db.candidaturas.update_one(
+                    {"id": doc["id"]},
+                    {"$set": {"email_confirmado": True}}
+                )
+                sent += 1
+                results.append({"id": doc["id"], "marca": doc["nome_marca"], "status": "sent"})
+            else:
+                failed += 1
+                results.append({"id": doc["id"], "marca": doc["nome_marca"], "status": "failed"})
+                
+        except Exception as e:
+            logger.error(f"Error sending email to {doc['email']}: {e}")
+            failed += 1
+            results.append({"id": doc["id"], "marca": doc["nome_marca"], "status": "error", "error": str(e)})
+    
+    return {
+        "success": sent > 0,
+        "message": f"Enviados {sent} emails, {failed} falharam",
+        "sent": sent,
+        "failed": failed,
+        "results": results
+    }
 
 # ============== TABELA DE PREÇOS ==============
 @api_router.get("/precos")

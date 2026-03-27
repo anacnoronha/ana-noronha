@@ -28,7 +28,13 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 
 ## What's Been Implemented
 
-### 27 Mar 2025 - Payment & Email Management
+### 27 Mar 2025 - Bulk Email & Payment Management
+- **Bulk Email Functionality**:
+  - New "Enviar Emails em Massa" button in Candidaturas page
+  - Modal showing pending approval emails count
+  - Preview of brands to receive emails
+  - One-click bulk send with automatic email_confirmado update
+  - Enhanced approval email template with IBAN and payment details
 - **Imported real data from Excel files** (BD_UPDATE_12ED.xlsx & BD_UPDATE_13ed.xlsx):
   - Payment statuses (Por Pagar, Recusado p/Mc) for 72 candidaturas
   - Email confirmation status (36 brands with email already sent)
@@ -81,9 +87,9 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 - [x] Email confirmation tracking
 - [x] Pricing table with real values
 
-### P1 (High Priority) - In Progress
-- [ ] Custom email templates integration with Resend (templates provided by user as images)
-- [ ] E2E test of email workflow (change status to Aprovada and verify email sent)
+### P1 (High Priority) - DONE
+- [x] Custom email templates integration with Resend (enhanced with IBAN, prices, payment details)
+- [x] Bulk email sending functionality
 
 ### P2 (Medium Priority) - Future
 - [ ] File upload for contracts/materials
@@ -111,3 +117,4 @@ All endpoints are prefixed with `/api/`
 - Social Media: `/socialmedia` (CRUD)
 - Patrocinadores: `/patrocinadores` (CRUD)
 - Preços: `/precos` (Read), `/precos/all` (Admin)
+- Email: `/email/send`, `/email/pending-approval`, `/email/bulk-send`

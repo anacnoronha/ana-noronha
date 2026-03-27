@@ -14,7 +14,9 @@ import {
   Funnel,
   CurrencyEur,
   EnvelopeSimple,
-  Check
+  Check,
+  PaperPlaneTilt,
+  Spinner
 } from '@phosphor-icons/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -74,6 +76,9 @@ const CandidaturasPage = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [categorias, setCategorias] = useState([]);
   const [edicoes, setEdicoes] = useState([]);
+  const [bulkEmailModalOpen, setBulkEmailModalOpen] = useState(false);
+  const [pendingEmails, setPendingEmails] = useState({ count: 0, candidaturas: [] });
+  const [sendingBulk, setSendingBulk] = useState(false);
 
   useEffect(() => {
     fetchCandidaturas();
@@ -181,6 +186,46 @@ const CandidaturasPage = () => {
       }
     } catch (error) {
       toast.error('Erro ao atualizar estado do email');
+    }
+  };
+
+  const fetchPendingEmails = async () => {
+    try {
+      const response = await axios.get(`${API}/email/pending-approval`);
+      setPendingEmails(response.data);
+    } catch (error) {
+      console.error('Error fetching pending emails:', error);
+    }
+  };
+
+  const handleOpenBulkEmailModal = async () => {
+    await fetchPendingEmails();
+    setBulkEmailModalOpen(true);
+  };
+
+  const handleSendBulkEmails = async () => {
+    if (pendingEmails.count === 0) {
+      toast.info('Não há emails pendentes para enviar');
+      return;
+    }
+    
+    setSendingBulk(true);
+    try {
+      const response = await axios.post(`${API}/email/bulk-send`, { template: 'approval' });
+      if (response.data.success) {
+        toast.success(`${response.data.sent} emails enviados com sucesso!`);
+        if (response.data.failed > 0) {
+          toast.warning(`${response.data.failed} emails falharam`);
+        }
+        fetchCandidaturas();
+        setBulkEmailModalOpen(false);
+      } else {
+        toast.error(response.data.message || 'Erro ao enviar emails');
+      }
+    } catch (error) {
+      toast.error('Erro ao enviar emails em massa');
+    } finally {
+      setSendingBulk(false);
     }
   };
 
@@ -300,6 +345,14 @@ const CandidaturasPage = () => {
               Gestão de candidaturas ao Mercado no Castelo
             </p>
           </div>
+          <Button
+            onClick={handleOpenBulkEmailModal}
+            className="bg-[#43523D] hover:bg-[#506349] text-white"
+            data-testid="bulk-email-btn"
+          >
+            <PaperPlaneTilt size={20} className="mr-2" />
+            Enviar Emails em Massa
+          </Button>
         </div>
 
         {/* Stats */}
@@ -699,6 +752,108 @@ const CandidaturasPage = () => {
                 <CheckCircle size={16} className="mr-2" />
                 Aprovar
               </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Bulk Email Modal */}
+        <Dialog open={bulkEmailModalOpen} onOpenChange={setBulkEmailModalOpen}>
+          <DialogContent className="max-w-lg bg-white">
+            <DialogHeader>
+              <DialogTitle className="font-['Outfit'] text-xl font-semibold text-[#1A1A1A] flex items-center gap-2">
+                <PaperPlaneTilt size={24} className="text-[#43523D]" />
+                Enviar Emails em Massa
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="bg-[#F2F2ED] rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#66665E]">Marcas aprovadas sem email enviado:</span>
+                  <span className="text-2xl font-semibold text-[#43523D]">{pendingEmails.count}</span>
+                </div>
+              </div>
+
+              {pendingEmails.count > 0 ? (
+                <>
+                  <p className="text-[#66665E] text-sm">
+                    Esta ação irá enviar um email de confirmação de aprovação para todas as marcas aprovadas que ainda não receberam comunicação.
+                  </p>
+                  
+                  <div className="bg-[#E8F5E9] border border-[#43523D]/20 rounded-lg p-4">
+                    <h4 className="font-semibold text-[#43523D] mb-2">O email inclui:</h4>
+                    <ul className="text-sm text-[#1A1A1A] space-y-1">
+                      <li>• Confirmação de aprovação</li>
+                      <li>• Detalhes da opção de participação</li>
+                      <li>• Valor a pagar (com IVA)</li>
+                      <li>• IBAN para transferência</li>
+                      <li>• Próximos passos</li>
+                    </ul>
+                  </div>
+
+                  <div className="max-h-40 overflow-y-auto border border-[#E5E5DF] rounded-lg">
+                    <table className="w-full text-sm">
+                      <thead className="bg-[#F2F2ED] sticky top-0">
+                        <tr>
+                          <th className="text-left p-2 text-[#66665E]">Marca</th>
+                          <th className="text-left p-2 text-[#66665E]">Email</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pendingEmails.candidaturas?.slice(0, 10).map((c) => (
+                          <tr key={c.id} className="border-t border-[#E5E5DF]">
+                            <td className="p-2 text-[#1A1A1A]">{c.nome_marca}</td>
+                            <td className="p-2 text-[#66665E] text-xs">{c.email}</td>
+                          </tr>
+                        ))}
+                        {pendingEmails.count > 10 && (
+                          <tr className="border-t border-[#E5E5DF]">
+                            <td colSpan={2} className="p-2 text-center text-[#66665E] text-xs">
+                              ... e mais {pendingEmails.count - 10} marcas
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <CheckCircle size={48} className="text-[#43523D] mx-auto mb-2" />
+                  <p className="text-[#1A1A1A] font-medium">Todas as marcas aprovadas já foram notificadas!</p>
+                  <p className="text-[#66665E] text-sm">Não há emails pendentes para enviar.</p>
+                </div>
+              )}
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setBulkEmailModalOpen(false)}
+                className="border-[#E5E5DF]"
+              >
+                Cancelar
+              </Button>
+              {pendingEmails.count > 0 && (
+                <Button
+                  onClick={handleSendBulkEmails}
+                  disabled={sendingBulk}
+                  className="bg-[#43523D] hover:bg-[#506349] text-white"
+                  data-testid="send-bulk-btn"
+                >
+                  {sendingBulk ? (
+                    <>
+                      <Spinner size={16} className="mr-2 animate-spin" />
+                      A enviar...
+                    </>
+                  ) : (
+                    <>
+                      <PaperPlaneTilt size={16} className="mr-2" />
+                      Enviar {pendingEmails.count} Emails
+                    </>
+                  )}
+                </Button>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
