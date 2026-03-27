@@ -26,29 +26,33 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 - Social media tracking
 - Sponsor/fiscal management
 
-## What's Been Implemented (26 Mar 2025)
+## What's Been Implemented
 
-### Backend (FastAPI + MongoDB)
+### 27 Mar 2025 - Payment & Email Management
+- **Imported real data from Excel files** (BD_UPDATE_12ED.xlsx & BD_UPDATE_13ed.xlsx):
+  - Payment statuses (Por Pagar, Recusado p/Mc) for 72 candidaturas
+  - Email confirmation status (36 brands with email already sent)
+- **Updated Pricing Table** with real values from Excel:
+  - 12.ª Edição - Espaço Base: 467.40€
+  - 13.ª Edição - Zona Exterior: 467.40€
+  - 13.ª Edição - Zona Interior: 430.50€
+  - 12.ª + 13.ª Edição - Zona Exterior: 888.06€
+  - 12.ª + 13.ª Edição - Zona Interior: 853.01€
+- **Added Payment Management in UI**:
+  - Inline dropdown to change payment status directly in table
+  - Payment filter to view "Por Pagar", "Pago", "Recusado"
+  - Stats cards showing payment counts
+- **Added Email Confirmation Tracking**:
+  - Toggle button to mark emails as sent/not sent
+  - Visual indicator (green check) for confirmed emails
+  - `email_confirmado` field added to Candidatura model
+
+### 26 Mar 2025 - Initial Build
 - Complete authentication system (JWT + Emergent Google OAuth)
-- All CRUD APIs for 7 modules:
-  - Candidaturas (Applications)
-  - Marcas Aprovadas (Approved Brands)
-  - Logística (Logistics)
-  - Comunicação (Communications)
-  - Sustentabilidade (Sustainability)
-  - Social Media
-  - Patrocinadores (Sponsors)
-- Dashboard statistics API
+- All CRUD APIs for 7 modules
 - AI analysis integration with Claude Sonnet 4.5
-- Approval workflow for candidaturas
-
-### Frontend (React + Tailwind + Shadcn UI)
-- Landing page with hero section and CTAs
-- Authentication pages (Login/Register with JWT + Google)
-- Admin Dashboard with KPI cards and charts
-- All 7 admin management pages
+- Admin Dashboard with KPI cards
 - Brand Portal for application submission
-- Earthy/terracotta color palette as per design guidelines
 
 ## Technology Stack
 - Frontend: React 18, Tailwind CSS, Shadcn UI, Phosphor Icons, Recharts
@@ -56,6 +60,14 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 - Database: MongoDB
 - AI: Claude Sonnet 4.5 via Emergent Integrations
 - Auth: JWT + Emergent Google OAuth
+- Email: Resend API (configured but custom templates pending)
+
+## Data Summary
+- **72 candidaturas** imported from real Excel data
+- **36 approved**, **23 rejected**, **13 waitlist**
+- **61 "Por Pagar"**, **11 "Recusado p/Mc"**
+- **36 emails already sent** (email_confirmado=true)
+- **5 price options** in tabela_precos
 
 ## Prioritized Backlog
 
@@ -64,28 +76,28 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 - [x] Application submission
 - [x] Admin dashboard
 - [x] All management modules
+- [x] Real data import from Excel
+- [x] Payment status management
+- [x] Email confirmation tracking
+- [x] Pricing table with real values
 
-### P1 (High Priority) - Future
-- [ ] Email notifications via SendGrid/Resend
-- [ ] File upload for contracts/materials (Object Storage)
-- [ ] Export reports to PDF/Excel
-- [ ] Bulk application import from CSV
+### P1 (High Priority) - In Progress
+- [ ] Custom email templates integration with Resend (templates provided by user as images)
+- [ ] E2E test of email workflow (change status to Aprovada and verify email sent)
 
 ### P2 (Medium Priority) - Future
+- [ ] File upload for contracts/materials
+- [ ] Export reports to PDF/Excel
 - [ ] Calendar integration for event scheduling
-- [ ] WhatsApp/SMS notifications
-- [ ] Public event page
-- [ ] Real-time notifications
 
 ### P3 (Nice to Have) - Future
 - [ ] Mobile responsive improvements
-- [ ] Dark mode
 - [ ] Multi-language support (PT/EN)
 - [ ] Analytics dashboard improvements
 
 ## Test Credentials
-- Admin: admin@mnc.pt / Admin123!
-- Brand: marca@test.pt / Marca123!
+- Admin: admin@mnc.pt / Admin123
+- Brand: marca@test.pt / Marca123
 
 ## API Endpoints Overview
 All endpoints are prefixed with `/api/`
@@ -98,3 +110,4 @@ All endpoints are prefixed with `/api/`
 - Sustentabilidade: `/sustentabilidade` (CRUD)
 - Social Media: `/socialmedia` (CRUD)
 - Patrocinadores: `/patrocinadores` (CRUD)
+- Preços: `/precos` (Read), `/precos/all` (Admin)
