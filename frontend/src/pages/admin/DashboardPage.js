@@ -8,8 +8,9 @@ import {
   Clock, 
   CheckCircle, 
   TrendUp,
-  Truck,
-  Leaf
+  EnvelopeSimple,
+  XCircle,
+  Hourglass
 } from '@phosphor-icons/react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { 
@@ -129,34 +130,55 @@ const DashboardPage = () => {
           <StatCard
             title="Candidaturas"
             value={stats?.total_candidaturas || 0}
-            subtitle={`${stats?.candidaturas_pendentes || 0} pendentes`}
+            subtitle={`${stats?.candidaturas_aprovadas || 0} aprovadas`}
             icon={FileText}
             color="bg-[#8C3B20]"
             delay={1}
           />
           <StatCard
-            title="Marcas Aprovadas"
-            value={stats?.total_marcas || 0}
-            subtitle={`${stats?.pagamentos_pendentes || 0} pagamentos pendentes`}
-            icon={Storefront}
+            title="Aprovadas"
+            value={stats?.candidaturas_aprovadas || 0}
+            subtitle={`${stats?.candidaturas_rejeitadas || 0} rejeitadas`}
+            icon={CheckCircle}
             color="bg-[#43523D]"
             delay={2}
           />
           <StatCard
-            title="Patrocinadores"
-            value={stats?.total_patrocinadores || 0}
-            subtitle={formatCurrency(stats?.receita_patrocinadores)}
+            title="Pagamentos"
+            value={stats?.pagamentos_pagos || 0}
+            subtitle={`${stats?.pagamentos_pendentes || 0} por pagar`}
             icon={CurrencyEur}
             color="bg-[#C98D26]"
             delay={3}
           />
           <StatCard
-            title="Receita Total"
-            value={formatCurrency(stats?.receita_total)}
-            icon={TrendUp}
+            title="Emails Enviados"
+            value={stats?.emails_enviados || 0}
+            subtitle={`${stats?.emails_pendentes || 0} pendentes`}
+            icon={EnvelopeSimple}
             color="bg-[#1A1A1A]"
             delay={4}
           />
+        </div>
+
+        {/* Secondary Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#C98D26]">{stats?.candidaturas_pendentes || 0}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Pendentes</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#8C3B20]">{stats?.candidaturas_lista_espera || 0}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Lista Espera</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#1A1A1A]">{stats?.ed_12 || 0}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">12ª Edição</p>
+          </div>
+          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
+            <p className="text-2xl font-semibold text-[#43523D]">{stats?.ed_13 || 0}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">13ª Edição</p>
+          </div>
         </div>
 
         {/* Charts */}

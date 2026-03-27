@@ -809,9 +809,18 @@ async def get_dashboard_stats(user: User = Depends(require_admin)):
     total_candidaturas = await db.candidaturas.count_documents({})
     candidaturas_pendentes = await db.candidaturas.count_documents({"decisao_curadoria": CandidaturaStatus.PENDING.value})
     candidaturas_aprovadas = await db.candidaturas.count_documents({"decisao_curadoria": CandidaturaStatus.APPROVED.value})
+    candidaturas_rejeitadas = await db.candidaturas.count_documents({"decisao_curadoria": CandidaturaStatus.REJECTED.value})
+    candidaturas_lista_espera = await db.candidaturas.count_documents({"decisao_curadoria": CandidaturaStatus.WAITLIST.value})
     total_marcas = await db.marcas_aprovadas.count_documents({})
-    pagamentos_pendentes = await db.marcas_aprovadas.count_documents({"estado_pagamento": PaymentStatus.PENDING.value})
+    pagamentos_pendentes = await db.candidaturas.count_documents({"pagamento": "Por Pagar"})
+    pagamentos_pagos = await db.candidaturas.count_documents({"pagamento": "Pago"})
+    emails_enviados = await db.candidaturas.count_documents({"email_confirmado": True})
+    emails_pendentes = await db.candidaturas.count_documents({"decisao_curadoria": "Aprovada", "email_confirmado": {"$ne": True}})
     total_patrocinadores = await db.patrocinadores.count_documents({})
+    
+    # Count by edition
+    ed_12 = await db.candidaturas.count_documents({"opcao_participacao": {"$regex": "12.*Ed", "$options": "i"}})
+    ed_13 = await db.candidaturas.count_documents({"opcao_participacao": {"$regex": "13.*Ed", "$options": "i"}})
     
     pipeline = [{"$group": {"_id": None, "total": {"$sum": "$valor_final"}}}]
     result = await db.marcas_aprovadas.aggregate(pipeline).to_list(1)
@@ -824,9 +833,16 @@ async def get_dashboard_stats(user: User = Depends(require_admin)):
         "total_candidaturas": total_candidaturas,
         "candidaturas_pendentes": candidaturas_pendentes,
         "candidaturas_aprovadas": candidaturas_aprovadas,
+        "candidaturas_rejeitadas": candidaturas_rejeitadas,
+        "candidaturas_lista_espera": candidaturas_lista_espera,
         "total_marcas": total_marcas,
         "pagamentos_pendentes": pagamentos_pendentes,
+        "pagamentos_pagos": pagamentos_pagos,
+        "emails_enviados": emails_enviados,
+        "emails_pendentes": emails_pendentes,
         "total_patrocinadores": total_patrocinadores,
+        "ed_12": ed_12,
+        "ed_13": ed_13,
         "receita_marcas": receita_marcas,
         "receita_patrocinadores": receita_patrocinadores,
         "receita_total": receita_marcas + receita_patrocinadores

@@ -14,51 +14,43 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 1. **Admin/Curator** - Event organizers who manage applications, approve brands, track logistics
 2. **Brand Owner** - Artists and entrepreneurs who want to participate in the market
 
-## Core Requirements (Static)
-- Multi-user authentication (JWT + Google OAuth)
-- Role-based access control (Admin vs Brand)
-- Application submission workflow
-- AI-powered application analysis
-- Contract and payment tracking
-- Logistics management
-- Communication history tracking
-- Sustainability scoring
-- Social media tracking
-- Sponsor/fiscal management
+## Current Platform Status (27 Mar 2025)
 
-## What's Been Implemented
+### ✅ FULLY FUNCTIONAL
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Authentication | ✅ | JWT + Google OAuth |
+| Dashboard | ✅ | KPIs, charts, statistics |
+| Candidaturas | ✅ | 72 real applications imported |
+| Gestão de Pagamento | ✅ | Inline dropdown, filters |
+| Email Tracking | ✅ | Toggle button, bulk send |
+| Tabela de Preços | ✅ | 5 real prices |
+| Marcas Aprovadas | ✅ | 3 brands |
+| Logística | ✅ | 3 records |
+| Comunicação | ✅ | 3 records |
+| Sustentabilidade | ✅ | 4 records |
+| Social Media | ✅ | 3 records |
+| AI Analysis | ✅ | Claude Sonnet 4.5 |
+| Email Templates | ✅ | IBAN: PT50 0023 0000 4562 4816 3089 4 |
 
-### 27 Mar 2025 - Bulk Email & Payment Management
-- **Bulk Email Functionality**:
-  - New "Enviar Emails em Massa" button in Candidaturas page
-  - Modal showing pending approval emails count
-  - Preview of brands to receive emails
-  - One-click bulk send with automatic email_confirmado update
-  - Enhanced approval email template with IBAN and payment details
-- **Imported real data from Excel files** (BD_UPDATE_12ED.xlsx & BD_UPDATE_13ed.xlsx):
-  - Payment statuses (Por Pagar, Recusado p/Mc) for 72 candidaturas
-  - Email confirmation status (36 brands with email already sent)
-- **Updated Pricing Table** with real values from Excel:
-  - 12.ª Edição - Espaço Base: 467.40€
-  - 13.ª Edição - Zona Exterior: 467.40€
-  - 13.ª Edição - Zona Interior: 430.50€
-  - 12.ª + 13.ª Edição - Zona Exterior: 888.06€
-  - 12.ª + 13.ª Edição - Zona Interior: 853.01€
-- **Added Payment Management in UI**:
-  - Inline dropdown to change payment status directly in table
-  - Payment filter to view "Por Pagar", "Pago", "Recusado"
-  - Stats cards showing payment counts
-- **Added Email Confirmation Tracking**:
-  - Toggle button to mark emails as sent/not sent
-  - Visual indicator (green check) for confirmed emails
-  - `email_confirmado` field added to Candidatura model
+### 📊 CURRENT DATA
+- **72 candidaturas** (36 aprovadas, 23 rejeitadas, 13 lista espera)
+- **61 por pagar**, 0 pagos
+- **36 emails enviados**, 1 pendente
+- **56 na 12ª Ed.**, 52 na 13ª Ed.
+- **0 patrocinadores** (confirmado pelo utilizador)
 
-### 26 Mar 2025 - Initial Build
-- Complete authentication system (JWT + Emergent Google OAuth)
-- All CRUD APIs for 7 modules
-- AI analysis integration with Claude Sonnet 4.5
-- Admin Dashboard with KPI cards
-- Brand Portal for application submission
+### ⚠️ NEEDS DATA/CONTENT
+| Item | Status | Action Required |
+|------|--------|-----------------|
+| Patrocinadores | Vazio | Aguardar confirmações reais |
+| Dados de Faturação | Parcial | NIFs/Moradas nos Excel (separador "faturação") |
+
+### 🔜 NEXT FEATURES (P2)
+- [ ] Upload de ficheiros (contratos, comprovativos)
+- [ ] Exportação PDF/Excel de relatórios
+- [ ] Notificações WhatsApp/SMS
+- [ ] Página pública do evento
 
 ## Technology Stack
 - Frontend: React 18, Tailwind CSS, Shadcn UI, Phosphor Icons, Recharts
@@ -66,47 +58,14 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 - Database: MongoDB
 - AI: Claude Sonnet 4.5 via Emergent Integrations
 - Auth: JWT + Emergent Google OAuth
-- Email: Resend API (configured but custom templates pending)
-
-## Data Summary
-- **72 candidaturas** imported from real Excel data
-- **36 approved**, **23 rejected**, **13 waitlist**
-- **61 "Por Pagar"**, **11 "Recusado p/Mc"**
-- **36 emails already sent** (email_confirmado=true)
-- **5 price options** in tabela_precos
-
-## Prioritized Backlog
-
-### P0 (Critical) - DONE
-- [x] User authentication
-- [x] Application submission
-- [x] Admin dashboard
-- [x] All management modules
-- [x] Real data import from Excel
-- [x] Payment status management
-- [x] Email confirmation tracking
-- [x] Pricing table with real values
-
-### P1 (High Priority) - DONE
-- [x] Custom email templates integration with Resend (enhanced with IBAN, prices, payment details)
-- [x] Bulk email sending functionality
-
-### P2 (Medium Priority) - Future
-- [ ] File upload for contracts/materials
-- [ ] Export reports to PDF/Excel
-- [ ] Calendar integration for event scheduling
-
-### P3 (Nice to Have) - Future
-- [ ] Mobile responsive improvements
-- [ ] Multi-language support (PT/EN)
-- [ ] Analytics dashboard improvements
+- Email: Resend API
 
 ## Test Credentials
 - Admin: admin@mnc.pt / Admin123
 - Brand: marca@test.pt / Marca123
 
-## API Endpoints Overview
-All endpoints are prefixed with `/api/`
+## API Endpoints
+All endpoints prefixed with `/api/`:
 - Auth: `/auth/register`, `/auth/login`, `/auth/session`, `/auth/me`, `/auth/logout`
 - Dashboard: `/dashboard/stats`
 - Candidaturas: `/candidaturas` (CRUD + analyze + approve)
@@ -118,3 +77,7 @@ All endpoints are prefixed with `/api/`
 - Patrocinadores: `/patrocinadores` (CRUD)
 - Preços: `/precos` (Read), `/precos/all` (Admin)
 - Email: `/email/send`, `/email/pending-approval`, `/email/bulk-send`
+
+## Payment Details (for emails)
+- **IBAN:** PT50 0023 0000 4562 4816 3089 4
+- **Titular:** Ana Noronha
