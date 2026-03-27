@@ -117,6 +117,7 @@ class Candidatura(BaseModel):
     fonte: Optional[str] = None
     comentarios: Optional[str] = None
     pagamento: Optional[str] = None
+    email_confirmado: bool = False
 
 class CandidaturaCreate(BaseModel):
     nome_marca: str

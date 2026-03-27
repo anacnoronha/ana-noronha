@@ -1,0 +1,73 @@
+{
+  "summary": "Completed testing of payment and email confirmation features. All backend APIs (16/16 tests passed) and frontend UI features working correctly. Payment filter, payment dropdown, and email toggle all functional.",
+  
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Dashboard",
+        "issues": ["Console warnings about chart dimensions (-1 width/height) - minor rendering issue on initial load"]
+      }
+    ]
+  },
+  
+  "test_report_links": [
+    "/app/backend/tests/test_payment_email_features.py",
+    "/app/test_reports/pytest/pytest_payment_email.xml"
+  ],
+  
+  "action_items": [],
+  
+  "critical_code_review_comments": [],
+  
+  "updated_files": [
+    "/app/backend/tests/test_payment_email_features.py"
+  ],
+  
+  "success_rate": {
+    "backend": "100% (16/16 tests passed)",
+    "frontend": "100% (all UI features working)"
+  },
+  
+  "test_credentials": {
+    "admin": "admin@mnc.pt / Admin123",
+    "brand": "marca@test.pt / Marca123"
+  },
+  
+  "seed_data_creation": "None - used existing 72 candidaturas from Excel import",
+  
+  "retest_needed": false,
+  
+  "should_main_agent_self_test": true,
+  
+  "context_for_next_testing_agent": "All payment and email features tested and working. 72 candidaturas in DB. 36 have email_confirmado=true. 61 have pagamento='Por Pagar', 11 have 'Recusado p/Mc'. 5 price options in tabela_precos with correct values (467.40€, 467.40€, 430.50€, 888.06€, 853.01€).",
+  
+  "features_tested": {
+    "backend_apis": [
+      "GET /api/precos - Returns 5 prices with correct values",
+      "GET /api/candidaturas - Returns email_confirmado field",
+      "PUT /api/candidaturas/{id} - Updates pagamento field",
+      "PUT /api/candidaturas/{id} - Updates email_confirmado field"
+    ],
+    "frontend_ui": [
+      "Payment filter dropdown filters candidaturas correctly (61 with 'Por Pagar')",
+      "Payment dropdown in table updates state and shows toast notification",
+      "Email toggle button toggles email_confirmado and shows toast notification",
+      "Stats update in real-time after changes"
+    ]
+  },
+  
+  "price_table_verification": {
+    "12ª Edição Base": "467.40€ ✓",
+    "13ª Edição Exterior": "467.40€ ✓",
+    "13ª Edição Interior": "430.50€ ✓",
+    "12ª + 13ª Edição Exterior": "888.06€ ✓",
+    "12ª + 13ª Edição Interior": "853.01€ ✓"
+  }
+}

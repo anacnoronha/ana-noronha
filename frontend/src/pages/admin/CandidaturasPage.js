@@ -11,7 +11,10 @@ import {
   Clock,
   Robot,
   CaretDown,
-  Funnel
+  Funnel,
+  CurrencyEur,
+  EnvelopeSimple,
+  Check
 } from '@phosphor-icons/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -52,6 +55,12 @@ const statusColors = {
   'Lista de Espera': 'status-waitlist'
 };
 
+const pagamentoColors = {
+  'Por Pagar': 'bg-[#FFF3E0] text-[#E65100]',
+  'Pago': 'bg-[#E8F5E9] text-[#2E7D32]',
+  'Recusado p/Mc': 'bg-[#FFEBEE] text-[#C62828]'
+};
+
 const CandidaturasPage = () => {
   const [candidaturas, setCandidaturas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +68,7 @@ const CandidaturasPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [edicaoFilter, setEdicaoFilter] = useState('all');
+  const [pagamentoFilter, setPagamentoFilter] = useState('all');
   const [selectedCandidatura, setSelectedCandidatura] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -147,6 +157,33 @@ const CandidaturasPage = () => {
     }
   };
 
+  const handleUpdatePagamento = async (id, novoPagamento) => {
+    try {
+      await axios.put(`${API}/candidaturas/${id}`, { pagamento: novoPagamento });
+      toast.success('Estado de pagamento atualizado');
+      fetchCandidaturas();
+      // Update selected if viewing
+      if (selectedCandidatura?.id === id) {
+        setSelectedCandidatura(prev => ({ ...prev, pagamento: novoPagamento }));
+      }
+    } catch (error) {
+      toast.error('Erro ao atualizar pagamento');
+    }
+  };
+
+  const handleToggleEmailConfirmado = async (id, currentValue) => {
+    try {
+      await axios.put(`${API}/candidaturas/${id}`, { email_confirmado: !currentValue });
+      toast.success(!currentValue ? 'Email marcado como enviado' : 'Email marcado como não enviado');
+      fetchCandidaturas();
+      if (selectedCandidatura?.id === id) {
+        setSelectedCandidatura(prev => ({ ...prev, email_confirmado: !currentValue }));
+      }
+    } catch (error) {
+      toast.error('Erro ao atualizar estado do email');
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm('Tem a certeza que deseja eliminar esta candidatura?')) return;
     try {
@@ -164,6 +201,7 @@ const CandidaturasPage = () => {
                          c.email?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || c.decisao_curadoria === statusFilter;
     const matchesCategory = categoryFilter === 'all' || c.categoria === categoryFilter;
+    const matchesPagamento = pagamentoFilter === 'all' || c.pagamento === pagamentoFilter;
     
     // Improved edition filter - check both edicao field and opcao_participacao
     let matchesEdicao = edicaoFilter === 'all';
@@ -183,7 +221,7 @@ const CandidaturasPage = () => {
       }
     }
     
-    return matchesSearch && matchesStatus && matchesCategory && matchesEdicao;
+    return matchesSearch && matchesStatus && matchesCategory && matchesEdicao && matchesPagamento;
   });
 
   // Stats - improved counting based on opcao_participacao
@@ -214,7 +252,10 @@ const CandidaturasPage = () => {
     listaEspera: candidaturas.filter(c => c.decisao_curadoria === 'Lista de Espera').length,
     ed12: countByEdition(candidaturas, '12'),
     ed13: countByEdition(candidaturas, '13'),
-    edAmbas: countByEdition(candidaturas, 'both')
+    edAmbas: countByEdition(candidaturas, 'both'),
+    porPagar: candidaturas.filter(c => c.pagamento === 'Por Pagar').length,
+    pagos: candidaturas.filter(c => c.pagamento === 'Pago').length,
+    emailEnviado: candidaturas.filter(c => c.email_confirmado === true).length
   };
 
   const formatDate = (dateStr) => {
@@ -262,7 +303,7 @@ const CandidaturasPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
             <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.total}</p>
             <p className="text-xs text-[#66665E] uppercase tracking-wider">Total</p>
@@ -280,20 +321,12 @@ const CandidaturasPage = () => {
             <p className="text-xs text-[#66665E] uppercase tracking-wider">Rejeitadas</p>
           </div>
           <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
-            <p className="text-2xl font-semibold text-[#8C3B20]">{stats.listaEspera}</p>
-            <p className="text-xs text-[#66665E] uppercase tracking-wider">Lista Espera</p>
+            <p className="text-2xl font-semibold text-[#E65100]">{stats.porPagar}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Por Pagar</p>
           </div>
           <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
-            <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.ed12}</p>
-            <p className="text-xs text-[#66665E] uppercase tracking-wider">12ª Ed.</p>
-          </div>
-          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
-            <p className="text-2xl font-semibold text-[#1A1A1A]">{stats.ed13}</p>
-            <p className="text-xs text-[#66665E] uppercase tracking-wider">13ª Ed.</p>
-          </div>
-          <div className="bg-white border border-[#E5E5DF] rounded-lg p-4 text-center">
-            <p className="text-2xl font-semibold text-[#43523D]">{stats.edAmbas}</p>
-            <p className="text-xs text-[#66665E] uppercase tracking-wider">Ambas Ed.</p>
+            <p className="text-2xl font-semibold text-[#2E7D32]">{stats.pagos}</p>
+            <p className="text-xs text-[#66665E] uppercase tracking-wider">Pagos</p>
           </div>
         </div>
 
@@ -345,6 +378,17 @@ const CandidaturasPage = () => {
                   ))}
                 </SelectContent>
               </Select>
+              <Select value={pagamentoFilter} onValueChange={setPagamentoFilter}>
+                <SelectTrigger className="w-full md:w-40 border-[#E5E5DF]" data-testid="pagamento-filter">
+                  <SelectValue placeholder="Pagamento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="Por Pagar">Por Pagar</SelectItem>
+                  <SelectItem value="Pago">Pago</SelectItem>
+                  <SelectItem value="Recusado p/Mc">Recusado</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
@@ -358,22 +402,23 @@ const CandidaturasPage = () => {
                   <TableRow className="border-b border-[#E5E5DF]">
                     <TableHead className="text-[#66665E] font-semibold">Marca</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Responsável</TableHead>
-                    <TableHead className="text-[#66665E] font-semibold">Categoria</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Edição</TableHead>
                     <TableHead className="text-[#66665E] font-semibold">Estado</TableHead>
+                    <TableHead className="text-[#66665E] font-semibold">Pagamento</TableHead>
+                    <TableHead className="text-[#66665E] font-semibold text-center">Email</TableHead>
                     <TableHead className="text-[#66665E] font-semibold text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={7} className="text-center py-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#8C3B20] mx-auto"></div>
                       </TableCell>
                     </TableRow>
                   ) : filteredCandidaturas.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-[#66665E]">
+                      <TableCell colSpan={7} className="text-center py-8 text-[#66665E]">
                         Nenhuma candidatura encontrada
                       </TableCell>
                     </TableRow>
@@ -386,7 +431,6 @@ const CandidaturasPage = () => {
                       >
                         <TableCell className="font-medium text-[#1A1A1A]">{c.nome_marca}</TableCell>
                         <TableCell className="text-[#66665E] text-sm">{c.responsavel}</TableCell>
-                        <TableCell className="text-[#66665E] text-sm">{c.categoria}</TableCell>
                         <TableCell>
                           {(() => {
                             const ed = formatEdicao(c);
@@ -401,6 +445,34 @@ const CandidaturasPage = () => {
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[c.decisao_curadoria] || 'status-pending'}`}>
                             {c.decisao_curadoria || 'Pendente'}
                           </span>
+                        </TableCell>
+                        <TableCell>
+                          <Select 
+                            value={c.pagamento || 'Por Pagar'} 
+                            onValueChange={(value) => handleUpdatePagamento(c.id, value)}
+                          >
+                            <SelectTrigger className={`w-28 h-7 text-xs border-0 ${pagamentoColors[c.pagamento] || pagamentoColors['Por Pagar']}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Por Pagar">Por Pagar</SelectItem>
+                              <SelectItem value="Pago">Pago</SelectItem>
+                              <SelectItem value="Recusado p/Mc">Recusado</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <button
+                            onClick={() => handleToggleEmailConfirmado(c.id, c.email_confirmado)}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+                              c.email_confirmado 
+                                ? 'bg-[#43523D] text-white' 
+                                : 'bg-[#F2F2ED] text-[#66665E] hover:bg-[#E5E5DF]'
+                            }`}
+                            title={c.email_confirmado ? 'Email enviado' : 'Email não enviado'}
+                          >
+                            {c.email_confirmado ? <Check size={14} weight="bold" /> : <EnvelopeSimple size={14} />}
+                          </button>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
@@ -474,7 +546,7 @@ const CandidaturasPage = () => {
                       <Label className="text-[#66665E] text-xs uppercase tracking-wider">Categoria</Label>
                       <p className="text-[#1A1A1A]">{selectedCandidatura.categoria}</p>
                     </div>
-                    <div>
+                    <div className="col-span-2">
                       <Label className="text-[#66665E] text-xs uppercase tracking-wider">Opção de Participação</Label>
                       <p className="text-[#1A1A1A]">{selectedCandidatura.opcao_participacao}</p>
                     </div>
@@ -483,6 +555,55 @@ const CandidaturasPage = () => {
                       <p className="text-[#1A1A1A]">{selectedCandidatura.origem_producao}</p>
                     </div>
                   </div>
+                  
+                  {/* Payment & Email Status Section */}
+                  <div className="bg-[#F2F2ED] rounded-lg p-4 mt-4">
+                    <h4 className="text-[#1A1A1A] font-semibold text-sm mb-3">Estado de Pagamento e Comunicação</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-[#66665E] text-xs uppercase tracking-wider">Pagamento</Label>
+                        <Select 
+                          value={selectedCandidatura.pagamento || 'Por Pagar'} 
+                          onValueChange={(value) => handleUpdatePagamento(selectedCandidatura.id, value)}
+                        >
+                          <SelectTrigger className={`w-full mt-1 ${pagamentoColors[selectedCandidatura.pagamento] || pagamentoColors['Por Pagar']}`}>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Por Pagar">Por Pagar</SelectItem>
+                            <SelectItem value="Pago">Pago</SelectItem>
+                            <SelectItem value="Recusado p/Mc">Recusado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-[#66665E] text-xs uppercase tracking-wider">Email de Confirmação</Label>
+                        <div className="mt-1 flex items-center gap-2">
+                          <button
+                            onClick={() => handleToggleEmailConfirmado(selectedCandidatura.id, selectedCandidatura.email_confirmado)}
+                            className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
+                              selectedCandidatura.email_confirmado 
+                                ? 'bg-[#43523D] text-white' 
+                                : 'bg-white border border-[#E5E5DF] text-[#66665E] hover:bg-[#F2F2ED]'
+                            }`}
+                          >
+                            {selectedCandidatura.email_confirmado ? (
+                              <>
+                                <Check size={16} weight="bold" />
+                                Enviado
+                              </>
+                            ) : (
+                              <>
+                                <EnvelopeSimple size={16} />
+                                Não Enviado
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <Label className="text-[#66665E] text-xs uppercase tracking-wider">Descrição da Marca</Label>
                     <p className="text-[#1A1A1A] mt-1">{selectedCandidatura.descricao_marca}</p>
