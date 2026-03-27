@@ -323,7 +323,7 @@ def get_approval_email(nome_marca: str, responsavel: str, valor: float, opcao_pa
             <div style="background-color: #E8F5E9; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #43523D;">
                 <h3 style="color: #43523D; margin-top: 0;">Dados para Pagamento</h3>
                 <p style="margin: 5px 0;"><strong>IBAN:</strong> PT50 0023 0000 4562 4816 3089 4</p>
-                <p style="margin: 5px 0;"><strong>Titular:</strong> Mercado no Castelo, Unipessoal Lda</p>
+                <p style="margin: 5px 0;"><strong>Titular:</strong> Ana Noronha</p>
                 <p style="margin: 5px 0;"><strong>Referência:</strong> {nome_marca[:20]}</p>
                 <p style="margin: 10px 0 0 0; font-size: 13px; color: #66665E;">Por favor envie o comprovativo de pagamento para <a href="mailto:geral@mercadonocastelo.pt" style="color: #8C3B20;">geral@mercadonocastelo.pt</a></p>
             </div>
