@@ -155,20 +155,39 @@ class CandidaturaCreate(BaseModel):
     opcao_participacao: str
 
 class MarcaAprovada(BaseModel):
-    model_config = ConfigDict(extra="ignore")
+    model_config = ConfigDict(extra="allow")
     id: str = Field(default_factory=lambda: f"marca_{uuid.uuid4().hex[:12]}")
+    candidatura_id: Optional[str] = None
     marca: str
     responsavel: str
     email: EmailStr
+    telemovel: Optional[str] = None
     categoria: str
-    valor_final: float
-    estado_pagamento: PaymentStatus = PaymentStatus.PENDING
+    opcao_participacao: Optional[str] = None
+    edicao: Optional[str] = None
+    valor_final: float = 0
+    estado_pagamento: Optional[str] = "Por Pagar"
+    valor_pago: float = 0
+    # Contract
     contrato_gerado: bool = False
     contrato_assinado: bool = False
-    pasta_drive: Optional[str] = None
+    contrato_url: Optional[str] = None
+    # Materials
+    logotipo_url: Optional[str] = None
+    logotipo_enviado: bool = False
+    fotos_urls: List[str] = []
+    fotos_enviadas: bool = False
+    comprovativo_pagamento: Optional[str] = None
     materiais_completos: bool = False
+    # Billing
+    nome_fiscal: Optional[str] = None
+    nif: Optional[str] = None
+    morada_fiscal: Optional[str] = None
+    fatura_enviada: bool = False
+    # Other
+    pasta_drive: Optional[str] = None
     notas_internas: Optional[str] = None
-    candidatura_id: Optional[str] = None
+    email_confirmado: bool = False
 
 class Logistica(BaseModel):
     model_config = ConfigDict(extra="ignore")

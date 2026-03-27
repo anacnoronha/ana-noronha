@@ -22,24 +22,51 @@ Build a complete management platform for "Mercado no Castelo" - a Portuguese art
 | Authentication | ✅ | JWT + Google OAuth |
 | Dashboard | ✅ | KPIs, charts, statistics |
 | Candidaturas | ✅ | 72 real applications imported |
-| Gestão de Pagamento | ✅ | Inline dropdown, filters |
+| Gestão de Pagamento | ✅ | Pago/Parcialmente/Por Pagar, tracking valores |
 | Email Tracking | ✅ | Toggle button, bulk send |
-| Tabela de Preços | ✅ | 5 real prices |
-| Marcas Aprovadas | ✅ | 3 brands |
+| **Tabela de Preços** | ✅ | **20 opções reais** (todas as combinações) |
+| **Marcas Aprovadas** | ✅ | **35 marcas sincronizadas** com upload materiais |
 | Logística | ✅ | 3 records |
 | Comunicação | ✅ | 3 records |
 | Sustentabilidade | ✅ | 4 records |
 | Social Media | ✅ | 3 records |
 | AI Analysis | ✅ | Claude Sonnet 4.5 |
 | Email Templates | ✅ | IBAN: PT50 0023 0000 4562 4816 3089 4 |
-| **Upload Materiais** | ✅ | Comprovativo, Logótipo, Fotos (Portal Marca) |
+| Upload Materiais | ✅ | Comprovativo, Logótipo, Fotos |
+| **Faturação** | ✅ | NIF, morada, envio de fatura |
+| **Contratos** | ✅ | Gerado/Assinado, link PDF |
 
 ### 📊 CURRENT DATA
-- **72 candidaturas** (36 aprovadas, 23 rejeitadas, 13 lista espera)
-- **61 por pagar**, 0 pagos
+- **72 candidaturas** (35 aprovadas, 23 rejeitadas, 13 lista espera)
+- **35 marcas aprovadas** sincronizadas
+- **61 por pagar**, 2 pagos
 - **36 emails enviados**, 1 pendente
-- **56 na 12ª Ed.**, 52 na 13ª Ed.
+- **20 opções de preço** (todas as combinações de edição, zona, mobiliário)
 - **0 patrocinadores** (confirmado pelo utilizador)
+
+### 📋 20 OPÇÕES DE PREÇO
+| Edição | Zona | Mobiliário | Valor Total |
+|--------|------|------------|-------------|
+| 12ª | Exterior | Sem mobiliário | 467,40€ |
+| 12ª | Exterior | Com Mesa | 522,75€ |
+| 12ª | Exterior | Com Cadeira | 479,70€ |
+| 12ª | Exterior | Mesa + Cadeira | 535,05€ |
+| 13ª | Interior | Sem mobiliário | 430,50€ |
+| 13ª | Interior | Com Mesa | 485,85€ |
+| 13ª | Interior | Com Cadeira | 442,80€ |
+| 13ª | Interior | Mesa + Cadeira | 498,15€ |
+| 13ª | Exterior | Sem mobiliário | 467,40€ |
+| 13ª | Exterior | Com Mesa | 522,75€ |
+| 13ª | Exterior | Com Cadeira | 479,70€ |
+| 13ª | Exterior | Mesa + Cadeira | 535,05€ |
+| 12ª + 13ª | Interior | Sem mobiliário | 853,00€ |
+| 12ª + 13ª | Interior | Com Mesa | 908,35€ |
+| 12ª + 13ª | Interior | Com Cadeira | 865,30€ |
+| 12ª + 13ª | Interior | Mesa + Cadeira | 920,65€ |
+| 12ª + 13ª | Exterior | Sem mobiliário | 888,06€ |
+| 12ª + 13ª | Exterior | Com Mesa | 943,41€ |
+| 12ª + 13ª | Exterior | Com Cadeira | 900,36€ |
+| 12ª + 13ª | Exterior | Mesa + Cadeira | 955,71€ |
 
 ### ⚠️ NEEDS DATA/CONTENT
 | Item | Status | Action Required |
