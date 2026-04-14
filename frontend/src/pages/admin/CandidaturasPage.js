@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import AdminLayout from '../../layouts/AdminLayout';
 import { 
@@ -19,7 +19,10 @@ import {
   Spinner,
   Receipt,
   Money,
-  FileText
+  FileText,
+  UploadSimple,
+  Table as TableIcon,
+  Warning
 } from '@phosphor-icons/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -99,6 +102,14 @@ const CandidaturasPage = () => {
   const [savingPagamento, setSavingPagamento] = useState(false);
   const [savingFaturacao, setSavingFaturacao] = useState(false);
   const [sendingFatura, setSendingFatura] = useState(false);
+  
+  // Excel import state
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importPreview, setImportPreview] = useState(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importApplying, setImportApplying] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     fetchCandidaturas();
