@@ -288,6 +288,28 @@ const CandidaturasPage = () => {
     }
   };
 
+  const handleResetPagamento = async () => {
+    setSavingPagamento(true);
+    try {
+      const response = await axios.put(`${API}/candidaturas/${selectedCandidatura.id}/reset-pagamento`, {
+        valor_pago: parseFloat(valorPagamento) || 0
+      });
+      toast.success(response.data.message);
+      fetchCandidaturas();
+      setPagamentoModalOpen(false);
+      setSelectedCandidatura(prev => ({
+        ...prev,
+        valor_pago: response.data.valor_pago,
+        valor_em_falta: response.data.valor_em_falta,
+        pagamento: response.data.estado
+      }));
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao alterar pagamento');
+    } finally {
+      setSavingPagamento(false);
+    }
+  };
+
   // Billing functions
   const handleOpenFaturacaoModal = (candidatura) => {
     setSelectedCandidatura(candidatura);
@@ -1074,11 +1096,39 @@ const CandidaturasPage = () => {
                   className="mt-1"
                 />
               </div>
+
+              {/* Quick actions */}
+              <div className="flex gap-2 pt-2 border-t border-[#E5E5DF]">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setValorPagamento('0')}
+                  className="text-xs border-[#D32F2F] text-[#D32F2F] hover:bg-red-50"
+                >
+                  Resetar para 0€
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setValorPagamento(String(selectedCandidatura?.valor_final || 0))}
+                  className="text-xs border-[#43523D] text-[#43523D] hover:bg-green-50"
+                >
+                  Marcar como Pago Total
+                </Button>
+              </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex gap-2">
               <Button variant="outline" onClick={() => setPagamentoModalOpen(false)}>
                 Cancelar
+              </Button>
+              <Button 
+                onClick={handleResetPagamento}
+                disabled={savingPagamento}
+                variant="outline"
+                className="border-[#C98D26] text-[#C98D26] hover:bg-amber-50"
+              >
+                Alterar Valor
               </Button>
               <Button 
                 onClick={handleRegistarPagamento}
@@ -1088,7 +1138,7 @@ const CandidaturasPage = () => {
                 {savingPagamento ? (
                   <><Spinner size={16} className="mr-2 animate-spin" /> A guardar...</>
                 ) : (
-                  <><Money size={16} className="mr-2" /> Registar Pagamento</>
+                  <><Money size={16} className="mr-2" /> Adicionar Pagamento</>
                 )}
               </Button>
             </DialogFooter>

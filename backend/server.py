@@ -8,7 +8,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Dict
 import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
@@ -18,6 +18,8 @@ import asyncio
 import resend
 from enum import Enum
 import shutil
+import pandas as pd
+import io
 
 ROOT_DIR = Path(__file__).parent
 UPLOAD_DIR = ROOT_DIR / "uploads"
@@ -189,17 +191,6 @@ class MarcaAprovada(BaseModel):
     notas_internas: Optional[str] = None
     email_confirmado: bool = False
 
-class Logistica(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: f"log_{uuid.uuid4().hex[:12]}")
-    marca: str
-    mesa: Optional[str] = None
-    cadeiras: Optional[str] = None
-    alojamento: Optional[str] = None
-    montagem: Optional[str] = None
-    desmontagem: Optional[str] = None
-    notas: Optional[str] = None
-
 class Comunicacao(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: f"com_{uuid.uuid4().hex[:12]}")
@@ -210,14 +201,50 @@ class Comunicacao(BaseModel):
     enviado: bool = False
 
 class Sustentabilidade(BaseModel):
-    model_config = ConfigDict(extra="ignore")
+    model_config = ConfigDict(extra="allow")
     id: str = Field(default_factory=lambda: f"sust_{uuid.uuid4().hex[:12]}")
+    marca_id: Optional[str] = None
     marca: str
-    grau_sustentabilidade: str
+    email: Optional[str] = None
+    categoria: Optional[str] = None
+    grau_sustentabilidade: Optional[str] = None
+    texto_sustentabilidade: Optional[str] = None
     texto: Optional[str] = None
     percentagem: Optional[float] = None
+    percentagem_sustentavel: Optional[float] = None
+    certificacoes: List[str] = []
+    materiais_eco: bool = False
+    producao_local: bool = False
+    embalagem_sustentavel: bool = False
+    pontuacao_geral: float = 0
     verificado: bool = False
     notas: Optional[str] = None
+
+class Logistica(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    id: str = Field(default_factory=lambda: f"log_{uuid.uuid4().hex[:12]}")
+    marca_id: Optional[str] = None
+    marca: str
+    email: Optional[str] = None
+    edicao: Optional[str] = None
+    opcao_participacao: Optional[str] = None
+    zona: Optional[str] = None
+    espaco_atribuido: Optional[str] = None
+    necessita_mesa: bool = False
+    necessita_cadeira: bool = False
+    necessita_eletricidade: bool = False
+    hora_montagem: str = "08:00"
+    hora_desmontagem: str = "20:00"
+    material_proprio: bool = True
+    necessidades_especiais: Optional[str] = None
+    notas_montagem: Optional[str] = None
+    estado: str = "Pendente"
+    check_in: bool = False
+    check_out: bool = False
+    # Payment status to filter
+    estado_pagamento: Optional[str] = None
+    valor_final: float = 0
+    valor_pago: float = 0
 
 class SocialMedia(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -763,10 +790,117 @@ async def update_marca(id: str, data: dict, user: User = Depends(require_admin))
     return {"message": "Marca atualizada"}
 
 # ============== LOGISTICA ROUTES ==============
-@api_router.get("/logistica", response_model=List[Logistica])
-async def get_logistica(user: User = Depends(require_admin)):
-    docs = await db.logistica.find({}, {"_id": 0}).to_list(1000)
+@api_router.get("/logistica")
+async def get_logistica(
+    edicao: Optional[str] = None,
+    apenas_pagos: bool = False,
+    user: User = Depends(require_admin)
+):
+    """Get logistics records, optionally filtered by edition and payment status"""
+    query = {}
+    
+    if edicao:
+        if edicao == "12":
+            query["edicao"] = {"$regex": "12.*Ed", "$not": {"$regex": "\\+"}}
+        elif edicao == "13":
+            query["edicao"] = {"$regex": "13.*Ed", "$not": {"$regex": "\\+"}}
+        elif edicao == "both":
+            query["edicao"] = {"$regex": "12.*\\+.*13|12.*13"}
+    
+    if apenas_pagos:
+        query["estado_pagamento"] = "Pago"
+    
+    docs = await db.logistica.find(query, {"_id": 0}).to_list(1000)
     return docs
+
+@api_router.get("/logistica/por-edicao")
+async def get_logistica_por_edicao(user: User = Depends(require_admin)):
+    """Get logistics records grouped by edition"""
+    docs = await db.logistica.find({}, {"_id": 0}).to_list(1000)
+    
+    ed_12 = [d for d in docs if '12' in str(d.get('edicao', '')) and '13' not in str(d.get('edicao', ''))]
+    ed_13 = [d for d in docs if '13' in str(d.get('edicao', '')) and '12' not in str(d.get('edicao', ''))]
+    ed_ambas = [d for d in docs if '12' in str(d.get('edicao', '')) and '13' in str(d.get('edicao', ''))]
+    
+    # Count paid
+    pagos_12 = len([d for d in ed_12 if d.get('estado_pagamento') == 'Pago'])
+    pagos_13 = len([d for d in ed_13 if d.get('estado_pagamento') == 'Pago'])
+    pagos_ambas = len([d for d in ed_ambas if d.get('estado_pagamento') == 'Pago'])
+    
+    return {
+        "12_edicao": {
+            "total": len(ed_12),
+            "pagos": pagos_12,
+            "marcas": ed_12
+        },
+        "13_edicao": {
+            "total": len(ed_13),
+            "pagos": pagos_13,
+            "marcas": ed_13
+        },
+        "ambas_edicoes": {
+            "total": len(ed_ambas),
+            "pagos": pagos_ambas,
+            "marcas": ed_ambas
+        }
+    }
+
+@api_router.post("/logistica/sync")
+async def sync_logistica(user: User = Depends(require_admin)):
+    """Sync logistics from approved candidaturas"""
+    await db.logistica.delete_many({})
+    
+    marcas = await db.marcas_aprovadas.find({}).to_list(500)
+    
+    logistica_records = []
+    for m in marcas:
+        opcao = m.get('opcao_participacao', '')
+        
+        # Determine zone
+        zona = 'Interior' if 'interior' in opcao.lower() else 'Exterior'
+        
+        # Determine edition
+        if '12' in opcao and '13' in opcao:
+            edicao = '12ª + 13ª Edição'
+        elif '13' in opcao:
+            edicao = '13ª Edição'
+        else:
+            edicao = '12ª Edição'
+        
+        # Check furniture needs
+        mesa = 'mesa' in opcao.lower()
+        cadeira = 'cadeira' in opcao.lower()
+        
+        log = {
+            "id": f"log_{m['id']}",
+            "marca_id": m['id'],
+            "marca": m['marca'],
+            "email": m.get('email'),
+            "edicao": edicao,
+            "opcao_participacao": opcao,
+            "zona": zona,
+            "espaco_atribuido": f"A definir - {zona}",
+            "necessita_mesa": mesa,
+            "necessita_cadeira": cadeira,
+            "necessita_eletricidade": False,
+            "hora_montagem": "08:00",
+            "hora_desmontagem": "20:00",
+            "material_proprio": not mesa and not cadeira,
+            "necessidades_especiais": "",
+            "notas_montagem": "",
+            "estado": "Pendente",
+            "check_in": False,
+            "check_out": False,
+            "estado_pagamento": m.get('estado_pagamento', 'Por Pagar'),
+            "valor_final": m.get('valor_final', 0),
+            "valor_pago": m.get('valor_pago', 0)
+        }
+        logistica_records.append(log)
+    
+    if logistica_records:
+        await db.logistica.insert_many(logistica_records)
+    
+    return {"message": f"Logística sincronizada: {len(logistica_records)} registos", "total": len(logistica_records)}
 
 @api_router.post("/logistica", response_model=Logistica)
 async def create_logistica(data: Logistica, user: User = Depends(require_admin)):
@@ -1053,12 +1187,60 @@ class RegistarPagamentoRequest(BaseModel):
     metodo: Optional[str] = "Transferência"
     notas: Optional[str] = None
 
+class ResetPagamentoRequest(BaseModel):
+    valor_pago: float = 0
+
 class DadosFaturacaoRequest(BaseModel):
     nome_fiscal: str
     nif: str
     morada_fiscal: Optional[str] = None
     localidade: Optional[str] = None
     codigo_postal: Optional[str] = None
+
+@api_router.put("/candidaturas/{id}/reset-pagamento")
+async def reset_pagamento(id: str, data: ResetPagamentoRequest, user: User = Depends(require_admin)):
+    """Reset or set payment value for a candidatura"""
+    doc = await db.candidaturas.find_one({"id": id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+    
+    novo_valor_pago = data.valor_pago
+    valor_total = doc.get("valor_final", 0) or 0
+    valor_em_falta = max(0, valor_total - novo_valor_pago)
+    
+    # Determine payment status
+    if novo_valor_pago >= valor_total and valor_total > 0:
+        novo_status = "Pago"
+    elif novo_valor_pago > 0:
+        novo_status = "Pago Parcialmente"
+    else:
+        novo_status = "Por Pagar"
+    
+    await db.candidaturas.update_one(
+        {"id": id},
+        {"$set": {
+            "valor_pago": novo_valor_pago,
+            "valor_em_falta": valor_em_falta,
+            "pagamento": novo_status
+        }}
+    )
+    
+    # Sync to marcas_aprovadas
+    await db.marcas_aprovadas.update_one(
+        {"candidatura_id": id},
+        {"$set": {
+            "valor_pago": novo_valor_pago,
+            "estado_pagamento": novo_status
+        }}
+    )
+    
+    return {
+        "success": True,
+        "message": f"Valor pago atualizado para {novo_valor_pago}€",
+        "valor_pago": novo_valor_pago,
+        "valor_em_falta": valor_em_falta,
+        "estado": novo_status
+    }
 
 @api_router.post("/candidaturas/{id}/pagamento")
 async def registar_pagamento(id: str, data: RegistarPagamentoRequest, user: User = Depends(require_admin)):
@@ -1352,6 +1534,269 @@ async def seed_precos(user: User = Depends(require_admin)):
     
     await db.tabela_precos.insert_many(precos)
     return {"message": "Tabela de preços criada", "count": len(precos)}
+
+# ============== EXCEL IMPORT ==============
+def get_price_for_option(opcao: str) -> float:
+    """Calculate price based on participation option"""
+    if not opcao:
+        return 467.40
+    
+    opcao_lower = opcao.lower()
+    both = '12' in opcao and '13' in opcao
+    interior = 'interior' in opcao_lower
+    has_mesa = 'mesa' in opcao_lower
+    has_cadeira = 'cadeira' in opcao_lower
+    
+    if both:
+        if interior:
+            if has_mesa and has_cadeira: return 920.65
+            elif has_mesa: return 908.35
+            elif has_cadeira: return 865.30
+            else: return 853.00
+        else:
+            if has_mesa and has_cadeira: return 955.71
+            elif has_mesa: return 943.41
+            elif has_cadeira: return 900.36
+            else: return 888.06
+    elif '13' in opcao:
+        if interior:
+            if has_mesa and has_cadeira: return 498.15
+            elif has_mesa: return 485.85
+            elif has_cadeira: return 442.80
+            else: return 430.50
+        else:
+            if has_mesa and has_cadeira: return 535.05
+            elif has_mesa: return 522.75
+            elif has_cadeira: return 479.70
+            else: return 467.40
+    else:
+        if has_mesa and has_cadeira: return 535.05
+        elif has_mesa: return 522.75
+        elif has_cadeira: return 479.70
+        else: return 467.40
+
+@api_router.post("/import/preview")
+async def preview_import(file: UploadFile = File(...), user: User = Depends(require_admin)):
+    """Preview Excel import - returns matched and unmatched records"""
+    if not file.filename.endswith(('.xlsx', '.xls')):
+        raise HTTPException(status_code=400, detail="Apenas ficheiros Excel (.xlsx, .xls) são suportados")
+    
+    contents = await file.read()
+    df = pd.read_excel(io.BytesIO(contents), sheet_name=0)
+    df.columns = [str(col).strip() for col in df.columns]
+    
+    # Find email column
+    email_col = None
+    for col in df.columns:
+        if 'email' in col.lower():
+            email_col = col
+            break
+    
+    if not email_col:
+        raise HTTPException(status_code=400, detail="Coluna de email não encontrada no ficheiro")
+    
+    # Get existing candidaturas
+    candidaturas = await db.candidaturas.find({}, {"_id": 0}).to_list(1000)
+    cand_by_email = {c['email'].lower(): c for c in candidaturas if c.get('email')}
+    
+    matched = []
+    unmatched = []
+    
+    for idx, row in df.iterrows():
+        email = str(row.get(email_col, '')).strip().lower()
+        if not email or '@' not in email:
+            continue
+        
+        record = {
+            'row': idx + 2,  # Excel row (1-indexed + header)
+            'email': email,
+            'nome_marca': str(row.get('Nome comercial da marca:', row.get('Marca', ''))).strip(),
+        }
+        
+        # Extract available fields
+        for col in df.columns:
+            col_lower = col.lower()
+            if 'nif' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    record['nif'] = str(int(val)) if isinstance(val, float) else str(val)
+            elif 'nome fiscal' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    record['nome_fiscal'] = str(val).strip()
+            elif 'morada' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    record['morada_fiscal'] = str(val).strip()
+            elif 'localidade' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    record['localidade'] = str(val).strip()
+            elif 'código postal' in col_lower or 'codigo postal' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    record['codigo_postal'] = str(val).strip()
+            elif 'pagamento' in col_lower or 'pago' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    val_str = str(val).strip().lower()
+                    if 'pago' in val_str and 'por' not in val_str:
+                        record['pagamento'] = 'Pago'
+                    elif 'parcial' in val_str:
+                        record['pagamento'] = 'Pago Parcialmente'
+                    else:
+                        record['pagamento'] = 'Por Pagar'
+            elif 'total' in col_lower and 'valor' in col_lower:
+                val = row.get(col)
+                if pd.notna(val):
+                    try:
+                        record['valor_final'] = float(val)
+                    except:
+                        pass
+        
+        if email in cand_by_email:
+            record['matched'] = True
+            record['candidatura_id'] = cand_by_email[email]['id']
+            record['current_nome'] = cand_by_email[email].get('nome_marca', '')
+            matched.append(record)
+        else:
+            record['matched'] = False
+            unmatched.append(record)
+    
+    return {
+        "total_rows": len(df),
+        "matched": len(matched),
+        "unmatched": len(unmatched),
+        "matched_records": matched,
+        "unmatched_records": unmatched[:20],  # Limit unmatched to 20
+        "columns_found": list(df.columns)
+    }
+
+@api_router.post("/import/apply")
+async def apply_import(file: UploadFile = File(...), user: User = Depends(require_admin)):
+    """Apply Excel import - updates matched records"""
+    if not file.filename.endswith(('.xlsx', '.xls')):
+        raise HTTPException(status_code=400, detail="Apenas ficheiros Excel são suportados")
+    
+    contents = await file.read()
+    df = pd.read_excel(io.BytesIO(contents), sheet_name=0)
+    df.columns = [str(col).strip() for col in df.columns]
+    
+    # Find email column
+    email_col = None
+    for col in df.columns:
+        if 'email' in col.lower():
+            email_col = col
+            break
+    
+    if not email_col:
+        raise HTTPException(status_code=400, detail="Coluna de email não encontrada")
+    
+    # Get existing candidaturas
+    candidaturas = await db.candidaturas.find({}, {"_id": 0}).to_list(1000)
+    cand_by_email = {c['email'].lower(): c for c in candidaturas if c.get('email')}
+    
+    updated = 0
+    errors = []
+    
+    for idx, row in df.iterrows():
+        email = str(row.get(email_col, '')).strip().lower()
+        if not email or '@' not in email or email not in cand_by_email:
+            continue
+        
+        cand = cand_by_email[email]
+        update_data = {}
+        
+        for col in df.columns:
+            col_lower = col.lower()
+            val = row.get(col)
+            if pd.isna(val):
+                continue
+                
+            if 'nif' in col_lower:
+                update_data['nif'] = str(int(val)) if isinstance(val, float) else str(val)
+            elif 'nome fiscal' in col_lower:
+                update_data['nome_fiscal'] = str(val).strip()
+            elif 'morada' in col_lower:
+                update_data['morada_fiscal'] = str(val).strip()
+            elif 'localidade' in col_lower:
+                update_data['localidade'] = str(val).strip()
+            elif 'código postal' in col_lower or 'codigo postal' in col_lower:
+                update_data['codigo_postal'] = str(val).strip()
+            elif col_lower == 'total' or 'valor total' in col_lower:
+                try:
+                    update_data['valor_final'] = float(val)
+                except:
+                    pass
+        
+        # Calculate valor_final if not in Excel
+        if 'valor_final' not in update_data:
+            opcao = cand.get('opcao_participacao', '')
+            update_data['valor_final'] = get_price_for_option(opcao)
+        
+        if update_data:
+            try:
+                await db.candidaturas.update_one({'id': cand['id']}, {'$set': update_data})
+                # Also update marcas_aprovadas
+                await db.marcas_aprovadas.update_one(
+                    {'candidatura_id': cand['id']},
+                    {'$set': update_data}
+                )
+                updated += 1
+            except Exception as e:
+                errors.append(f"Erro ao atualizar {email}: {str(e)}")
+    
+    # Sync logistica
+    await sync_logistica_internal()
+    
+    return {
+        "success": True,
+        "updated": updated,
+        "errors": errors[:10] if errors else [],
+        "message": f"{updated} registos atualizados com sucesso"
+    }
+
+async def sync_logistica_internal():
+    """Internal function to sync logistics from marcas"""
+    await db.logistica.delete_many({})
+    marcas = await db.marcas_aprovadas.find({}).to_list(500)
+    
+    records = []
+    for m in marcas:
+        opcao = m.get('opcao_participacao', '')
+        zona = 'Interior' if 'interior' in opcao.lower() else 'Exterior'
+        
+        if '12' in opcao and '13' in opcao:
+            edicao = '12ª + 13ª Edição'
+        elif '13' in opcao:
+            edicao = '13ª Edição'
+        else:
+            edicao = '12ª Edição'
+        
+        records.append({
+            "id": f"log_{m.get('candidatura_id', m['id'])}",
+            "marca_id": m['id'],
+            "candidatura_id": m.get('candidatura_id'),
+            "marca": m['marca'],
+            "email": m.get('email'),
+            "edicao": edicao,
+            "opcao_participacao": opcao,
+            "zona": zona,
+            "espaco_atribuido": f"A definir - {zona}",
+            "necessita_mesa": 'mesa' in opcao.lower(),
+            "necessita_cadeira": 'cadeira' in opcao.lower(),
+            "necessita_eletricidade": False,
+            "hora_montagem": "08:00",
+            "hora_desmontagem": "20:00",
+            "material_proprio": 'mesa' not in opcao.lower() and 'cadeira' not in opcao.lower(),
+            "estado": "Confirmado" if m.get('estado_pagamento') == 'Pago' else "Pendente Pagamento",
+            "estado_pagamento": m.get('estado_pagamento', 'Por Pagar'),
+            "valor_final": m.get('valor_final', 0),
+            "valor_pago": m.get('valor_pago', 0)
+        })
+    
+    if records:
+        await db.logistica.insert_many(records)
 
 # ============== FILE UPLOADS ==============
 @api_router.post("/upload/comprovativo/{candidatura_id}")
