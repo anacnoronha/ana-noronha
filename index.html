@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana Noronha — PROJECT, PROGRAMME & OPERATIONS MANAGER</title>
+<meta name="description" content="Project, Programme & Operations Manager. Programmes, operations and cultural platforms across public and international contexts. Braga, Portugal.">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #F0EDE6; --ink: #1A1814; --rust: #B5451B; --mid: #6B6560; --line: rgba(26,24,20,0.12); }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'IBM Plex Mono', monospace; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ink); background: rgba(240,237,230,0.97); backdrop-filter: blur(12px); }
+  .nav-name { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 16px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+  .nav-links a { font-size: 11px; letter-spacing: 0.1em; color: var(--mid); text-decoration: none; text-transform: uppercase; cursor: pointer; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cv { background: var(--rust) !important; color: #F0EDE6 !important; padding: 7px 14px; transition: background 0.2s !important; }
+  .nav-cv:hover { background: var(--ink) !important; }
+
+  /* HERO */
+  .hero { display: grid; grid-template-columns: 1fr 2fr; min-height: 100vh; border-bottom: 2px solid var(--ink); padding-top: 62px; }
+  .hero-left { padding: 56px 40px; border-right: 2px solid var(--ink); display: flex; flex-direction: column; justify-content: space-between; }
+  .hero-tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rust); line-height: 2.2; }
+  .hero-stats { display: flex; flex-direction: column; }
+  .hero-stat { border-top: 1px solid var(--line); padding-top: 18px; margin-bottom: 6px; }
+  .hero-stat-num { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 46px; letter-spacing: -0.02em; line-height: 1; color: var(--ink); }
+  .hero-stat-label { font-size: 10px; color: var(--mid); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px; opacity: 0.7; }
+  .hero-right { padding: 56px 48px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .hero-name { font-family: 'Raleway', sans-serif; font-size: clamp(60px, 10vw, 110px); line-height: 0.9; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 28px; }
+  .hero-name .first { display: block; font-weight: 200; color: rgba(26,24,20,0.3); }
+  .hero-name .last { display: block; font-weight: 300; color: var(--ink); }
+  .hero-title { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rust); margin-bottom: 24px; font-weight: 400; }
+  .hero-line { font-size: 16px; font-weight: 300; line-height: 1.6; color: var(--ink); max-width: 480px; margin-bottom: 32px; border-left: 2px solid var(--rust); padding-left: 20px; }
+  .hero-proof { list-style: none; margin-bottom: 40px; display: flex; flex-direction: column; gap: 8px; }
+  .hero-proof li { font-size: 13px; font-weight: 300; color: var(--mid); padding-left: 14px; position: relative; line-height: 1.6; }
+  .hero-proof li::before { content: '·'; position: absolute; left: 0; color: var(--rust); }
+  .hero-bottom { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding-top: 32px; border-top: 1px solid var(--line); }
+  .btn-p { background: var(--ink); color: var(--bg); padding: 13px 26px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.2s; text-decoration: none; display: inline-block; }
+  .btn-p:hover { background: var(--rust); }
+  .btn-s { background: transparent; color: var(--ink); padding: 13px 26px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--ink); cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block; }
+  .btn-s:hover { border-color: var(--rust); color: var(--rust); }
+  .avail { font-size: 11px; color: var(--mid); display: flex; align-items: center; gap: 8px; margin-left: 4px; }
+  .dot { width: 6px; height: 6px; background: #3DAB6E; border-radius: 50%; animation: blink 2s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* INTRO */
+  .intro { padding: 48px 40px; border-bottom: 1px solid var(--line); max-width: 640px; }
+  .intro p { font-size: 15px; font-weight: 300; line-height: 1.8; color: var(--ink); }
+  .intro p + p { margin-top: 8px; }
+
+  /* SECTION HEADER */
+  .sec-hdr { display: flex; align-items: baseline; gap: 16px; padding: 20px 40px; border-bottom: 1px solid var(--line); border-top: 1px solid var(--line); }
+  .sec-num { font-size: 11px; color: var(--mid); }
+  .sec-title { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+  /* EXPERIENCE */
+  .contexts { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 2px solid var(--ink); }
+  .ctx { padding: 44px 40px; border-right: 1px solid var(--line); }
+  .ctx:last-child { border-right: none; }
+  .ctx-num { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 48px; color: rgba(181,69,27,0.2); line-height: 1; margin-bottom: 16px; }
+  .ctx-role { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
+  .ctx-org { font-family: 'Raleway', sans-serif; font-weight: 300; font-size: 19px; letter-spacing: 0.04em; margin-bottom: 12px; }
+  .ctx-desc { font-size: 13px; font-weight: 300; line-height: 1.7; color: var(--mid); margin-bottom: 20px; }
+  .ctx-bullets { list-style: none; padding: 0; border-top: 1px solid var(--line); padding-top: 16px; }
+  .ctx-bullets li { font-size: 12px; color: var(--ink); line-height: 1.8; padding-left: 12px; position: relative; }
+  .ctx-bullets li::before { content: '·'; position: absolute; left: 0; color: var(--rust); }
+  .ctx-link { font-size: 11px; color: var(--mid); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 1px; margin-top: 12px; display: inline-block; transition: color 0.2s; }
+  .ctx-link:hover { color: var(--rust); }
+
+  /* STRENGTHS */
+  .strengths { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 2px solid var(--ink); }
+  .str { padding: 40px; border-right: 1px solid var(--line); }
+  .str:last-child { border-right: none; }
+  .str-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rust); margin-bottom: 16px; }
+  .str-tags { display: flex; flex-direction: column; gap: 8px; }
+  .str-tag { font-size: 13px; font-weight: 300; color: var(--ink); }
+
+  /* STRIP */
+  .strip { padding: 32px 40px; background: var(--ink); }
+  .strip p { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: clamp(18px, 2.5vw, 26px); letter-spacing: 0.04em; color: #F0EDE6; }
+
+  /* CONTACT */
+  .contact { display: grid; grid-template-columns: 1fr 1fr; }
+  .contact-left { padding: 56px 40px; border-right: 1px solid var(--line); }
+  .contact-label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mid); margin-bottom: 32px; }
+  .contact-sub { font-size: 14px; font-weight: 300; line-height: 1.8; color: var(--mid); max-width: 300px; margin-top: 24px; }
+  .contact-right { padding: 56px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .clink { display: flex; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--ink); text-decoration: none; transition: color 0.2s; }
+  .clink:first-child { border-top: 1px solid var(--line); }
+  .clink:hover { color: var(--rust); }
+  .ci { font-size: 11px; color: var(--mid); width: 20px; flex-shrink: 0; }
+  .btn-cv { margin-top: 20px; background: var(--rust); color: #F0EDE6; padding: 15px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; width: 100%; text-align: center; display: block; text-decoration: none; transition: background 0.2s; }
+  .btn-cv:hover { background: var(--ink); }
+
+  /* FOOTER */
+  .footer { display: flex; justify-content: space-between; padding: 16px 40px; border-top: 1px solid var(--line); }
+  .footer span { font-size: 11px; color: var(--mid); letter-spacing: 0.06em; }
+
+  /* ── TABLET (iPad) ── */
+  @media (max-width: 1024px) {
+    nav { padding: 16px 28px; }
+    .hero { grid-template-columns: 1fr 1.6fr; }
+    .hero-left { padding: 40px 28px; }
+    .hero-right { padding: 40px 32px; }
+    .hero-stat-num { font-size: 38px; }
+    .contexts { grid-template-columns: 1fr 1fr; }
+    .ctx:nth-child(2) { border-right: none; }
+    .ctx:nth-child(3) { border-top: 1px solid var(--line); grid-column: 1 / -1; border-right: none; }
+    .strengths { grid-template-columns: repeat(2, 1fr); }
+    .str:nth-child(2) { border-right: none; }
+    .str:nth-child(3) { border-top: 1px solid var(--line); }
+    .contact { grid-template-columns: 1fr 1fr; }
+    .contact-left { padding: 40px 28px; }
+    .contact-right { padding: 40px 32px; }
+    .sec-hdr { padding: 18px 28px; }
+    .intro { padding: 40px 28px; }
+    .strip { padding: 28px 28px; }
+    .footer { padding: 16px 28px; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 680px) {
+    /* NAV — wrap so Download CV stays visible */
+    nav { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+    .nav-name { font-size: 13px; letter-spacing: 0.15em; flex: 1; }
+    .nav-links { gap: 10px; flex-wrap: wrap; }
+    .nav-links a { font-size: 10px; }
+    .nav-cv { padding: 6px 10px; font-size: 9px; }
+
+    /* HERO */
+    .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 56px; }
+
+    /* LEFT — tag + 2x2 stats grid */
+    .hero-left { padding: 24px 16px 20px; border-right: none; border-bottom: 2px solid var(--ink); flex-direction: column; }
+    .hero-tag { font-size: 10px; margin-bottom: 16px; }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0; width: 100%; }
+    .hero-stat { border-top: 1px solid var(--line); border-left: none; padding: 12px 0 8px; margin-bottom: 0; }
+    .hero-stat:nth-child(2) { padding-left: 16px; border-left: 1px solid var(--line); }
+    .hero-stat:nth-child(4) { padding-left: 16px; border-left: 1px solid var(--line); }
+    .hero-stat-num { font-size: 30px; }
+    .hero-stat-label { font-size: 9px; }
+
+    /* RIGHT */
+    .hero-right { padding: 28px 16px 36px; justify-content: flex-start; }
+    .hero-name { font-size: clamp(48px, 13vw, 76px); margin-bottom: 16px; }
+    .hero-line { font-size: 14px; }
+    .hero-proof li { font-size: 12px; }
+    .hero-bottom { flex-wrap: wrap; gap: 10px; padding-top: 24px; }
+    .btn-p, .btn-s { padding: 11px 18px; font-size: 10px; }
+    .avail { margin-left: 0; width: 100%; margin-top: 2px; font-size: 10px; }
+
+    /* SECTIONS */
+    .sec-hdr { padding: 14px 16px; }
+    .intro { padding: 28px 16px; }
+    .strip { padding: 22px 16px; }
+
+    /* EXPERIENCE */
+    .contexts { grid-template-columns: 1fr; }
+    .ctx { padding: 28px 16px; border-right: none; border-bottom: 1px solid var(--line); }
+    .ctx:last-child { border-bottom: none; }
+
+    /* STRENGTHS */
+    .strengths { grid-template-columns: 1fr 1fr; }
+    .str { padding: 20px 16px; }
+    .str:nth-child(2) { border-right: none; }
+    .str:nth-child(3) { border-top: 1px solid var(--line); }
+
+    /* CONTACT */
+    .contact { grid-template-columns: 1fr; }
+    .contact-left { padding: 32px 16px 20px; border-right: none; border-bottom: 1px solid var(--line); }
+    .contact-right { padding: 24px 16px 36px; }
+    .clink { font-size: 13px; }
+
+    .footer { padding: 12px 16px; flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-name">Ana Noronha</div>
+  <ul class="nav-links">
+    <li><a onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">About</a></li>
+    <li><a onclick="document.getElementById('experience').scrollIntoView({behavior:'smooth'})">Experience</a></li>
+    <li><a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact</a></li>
+    <li><a href="index_pt.html" style="border:1px solid var(--line);padding:5px 10px;">PT</a></li>
+    <li><a class="nav-cv" href="CV_Ana_Noronha_2026_Eng.pdf" download>&#8595; Download CV</a></li>
+  </ul>
+</nav>
+
+<div class="hero" id="about">
+  <div class="hero-left">
+    <div>
+      <div class="hero-tag">PROGRAMMES · OPERATIONS · CULTURAL PLATFORMS<br><br>Braga, Portugal</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">60K+</div><div class="hero-stat-label">Audience Reached</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">11</div><div class="hero-stat-label">Editions Built</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">350+</div><div class="hero-stat-label">Brands Curated</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">132%</div><div class="hero-stat-label">Targets Delivered</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-name"><span class="first">ANA</span><span class="last">NORONHA</span></div>
+    <div class="hero-title">Project, Programme &amp; Operations Manager</div>
+    <div class="hero-line">Delivering funded programmes, cross-functional operations and cultural platforms from strategy to execution.</div>
+    <ul class="hero-proof">
+      <li>Built from zero into a recurring cultural platform</li>
+      <li>Public programmes delivered above target</li>
+      <li>Cross-border operations across 3 markets</li>
+    </ul>
+    <div class="hero-bottom">
+      <a class="btn-p" href="CV_Ana_Noronha_2026_Eng.pdf" download>&#8595; Download CV</a>
+      <a class="btn-s" href="mailto:anacnoronha@gmail.com">Email</a>
+      <a class="btn-s" href="https://linkedin.com/in/ana-noronha" target="_blank">LinkedIn</a>
+      <div class="avail"><div class="dot"></div>Available · Remote & International</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="sec-hdr"><span class="sec-num">01</span><span class="sec-title">Experience</span></div>
+
+<div class="contexts" id="experience">
+  <div class="ctx">
+    <div class="ctx-num">01</div>
+    <div class="ctx-role">Co-Founder &amp; Project / Operations Manager</div>
+    <div class="ctx-org">Mercado no Castelo</div>
+    <div class="ctx-desc">Conception, curation and execution of a cultural platform connecting independent brands, audiences and spaces of heritage value.</div>
+    <a href="https://www.mercadonocastelo.pt" target="_blank" class="ctx-link">&#8599; mercadonocastelo.pt</a>
+  </div>
+  <div class="ctx">
+    <div class="ctx-num">02</div>
+    <div class="ctx-role">Project Coordinator</div>
+    <div class="ctx-org">CLDS4G</div>
+    <div class="ctx-desc">Coordination of a funded programme across employment, social inclusion and territorial development.</div>
+  </div>
+  <div class="ctx">
+    <div class="ctx-num">03</div>
+    <div class="ctx-role">Director of Operations</div>
+    <div class="ctx-org">Sabert</div>
+    <div class="ctx-desc">Coordination of digital and commercial operations in an international context.</div>
+    <a href="https://www.casamat.eu" target="_blank" class="ctx-link">&#8599; casamat.eu</a>
+  </div>
+</div>
+
+
+<div class="strengths">
+  <div class="str">
+    <div class="str-title">Programmes</div>
+    <div class="str-tags">
+      <span class="str-tag">Programme Design</span>
+      <span class="str-tag">Stakeholder Coordination</span>
+      <span class="str-tag">Cultural Platforms</span>
+      <span class="str-tag">Event Production</span>
+    </div>
+  </div>
+  <div class="str">
+    <div class="str-title">Operations</div>
+    <div class="str-tags">
+      <span class="str-tag">Process Management</span>
+      <span class="str-tag">Cross-border Operations</span>
+      <span class="str-tag">Team Coordination</span>
+      <span class="str-tag">Budget Control</span>
+    </div>
+  </div>
+  <div class="str">
+    <div class="str-title">Public & Funded Programmes</div>
+    <div class="str-tags">
+      <span class="str-tag">ESF-funded Projects</span>
+      <span class="str-tag">Portugal 2020</span>
+      <span class="str-tag">Reporting & Compliance</span>
+      <span class="str-tag">Multi-stakeholder Management</span>
+    </div>
+  </div>
+  <div class="str">
+    <div class="str-title">Digital Platforms</div>
+    <div class="str-tags">
+      <span class="str-tag">E-commerce</span>
+      <span class="str-tag">Platform Launch</span>
+      <span class="str-tag">Digital Strategy</span>
+      <span class="str-tag">International Markets</span>
+    </div>
+    <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;">
+      <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);margin-bottom:8px;">Client sites</div>
+      <a href="https://www.northgamefishing.com" target="_blank" class="ctx-link" style="display:block;margin-bottom:4px;">&#8599; northgamefishing.com</a>
+      <a href="https://www.amabelia.com" target="_blank" class="ctx-link" style="display:block;">&#8599; amabelia.com</a>
+    </div>
+  </div>
+</div>
+
+
+<div style="padding:40px;border-bottom:2px solid var(--ink);display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;">
+  <p style="font-size:13px;font-weight:300;color:var(--mid);">See the full detail of projects, responsibilities and results.</p>
+  <a href="CV_Ana_Noronha_2026_Eng.pdf" download style="background:var(--rust);color:#F0EDE6;padding:14px 36px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;">↓ Download Full CV</a>
+</div>
+<div class="strip">
+  <p>Operating at the intersection of programmes, operations and cultural markets.</p>
+</div>
+
+<div class="sec-hdr"><span class="sec-num">02</span><span class="sec-title">Contact</span></div>
+
+<div class="contact" id="contact">
+  <div class="contact-left">
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style="display:block;">
+      <rect x="1" y="1" width="70" height="70" stroke="#B5451B" stroke-width="1" fill="none"/>
+      <rect x="12" y="12" width="48" height="48" stroke="#B5451B" stroke-width="0.5" fill="none" transform="rotate(45 36 36)"/>
+      <circle cx="36" cy="36" r="3" fill="#B5451B"/>
+    </svg>
+    <p class="contact-sub">Available for programme, operations and cross-sector roles across Portugal and international contexts.<br><br>Braga, Portugal · PT · EN · ES</p>
+    <a href="mailto:anacnoronha@gmail.com" style="display:inline-block;margin-top:20px;padding:11px 26px;background:transparent;color:var(--ink);border:1px solid var(--ink);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;font-family:inherit;">Get in Touch</a>
+    <a href="/cdn-cgi/l/email-protection#c7a6a9a6a4a9a8b5a8a9afa687a0aaa6aeabe9a4a8aa" style="display:inline-block;margin-top:20px;padding:11px 24px;background:transparent;color:var(--ink);border:1px solid var(--ink);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;font-family:inherit;">Get in Touch</a>
+  </div>
+  <div class="contact-right">
+    <a class="clink" href="mailto:anacnoronha@gmail.com"><span class="ci">@</span>anacnoronha@gmail.com</a>
+    <a class="clink" href="https://linkedin.com/in/ana-noronha" target="_blank"><span class="ci">in</span>linkedin.com/in/ana-noronha</a>
+    <a class="clink" href="tel:+351917209881"><span class="ci">&#9743;</span>+351 917 209 881</a>
+    <a class="btn-cv" href="CV_Ana_Noronha_2026_Eng.pdf" download>&#8595; Download CV</a>
+  </div>
+</div>
+
+</body>
+</html>
