@@ -60,7 +60,8 @@
   /* EXPERIENCE */
   .contexts { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 2px solid var(--ink); }
   .ctx { padding: 44px 40px; border-right: 1px solid var(--line); }
-  .ctx:last-child { border-right: none; }
+  .ctx:nth-child(3n) { border-right: none; }
+  .ctx:nth-child(n+4) { border-top: 1px solid var(--line); }
   .ctx-num { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 48px; color: rgba(181,69,27,0.2); line-height: 1; margin-bottom: 16px; }
   .ctx-role { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
   .ctx-org { font-family: 'Raleway', sans-serif; font-weight: 300; font-size: 19px; letter-spacing: 0.04em; margin-bottom: 12px; }
@@ -70,6 +71,17 @@
   .ctx-bullets li::before { content: '·'; position: absolute; left: 0; color: var(--rust); }
   .ctx-link { font-size: 11px; color: var(--mid); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 1px; margin-top: 12px; display: inline-block; transition: color 0.2s; }
   .ctx-link:hover { color: var(--rust); }
+
+
+  /* EDUCATION */
+  .education { border-bottom: 2px solid var(--ink); }
+  .edu-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .edu { padding: 40px; border-right: 1px solid var(--line); }
+  .edu:nth-child(3n) { border-right: none; }
+  .edu-year { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rust); margin-bottom: 12px; }
+  .edu-degree { font-family: 'Raleway', sans-serif; font-weight: 300; font-size: 18px; line-height: 1.35; margin-bottom: 7px; }
+  .edu-org { font-size: 11px; line-height: 1.6; color: var(--mid); margin-bottom: 12px; }
+  .edu-detail { font-size: 12px; font-weight: 300; line-height: 1.65; color: var(--mid); }
 
   /* STRENGTHS */
   .strengths { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 2px solid var(--ink); }
@@ -100,7 +112,7 @@
   .footer { display: flex; justify-content: space-between; padding: 16px 40px; border-top: 1px solid var(--line); }
   .footer span { font-size: 11px; color: var(--mid); letter-spacing: 0.06em; }
 
-  /* ── TABLET (iPad) ── */
+  /* TABLET */
   @media (max-width: 1024px) {
     nav { padding: 16px 28px; }
     .hero { grid-template-columns: 1fr 1.6fr; }
@@ -108,8 +120,13 @@
     .hero-right { padding: 40px 32px; }
     .hero-stat-num { font-size: 38px; }
     .contexts { grid-template-columns: 1fr 1fr; }
-    .ctx:nth-child(2) { border-right: none; }
-    .ctx:nth-child(3) { border-top: 1px solid var(--line); grid-column: 1 / -1; border-right: none; }
+    .ctx:nth-child(3n) { border-right: 1px solid var(--line); }
+    .ctx:nth-child(even) { border-right: none; }
+    .ctx:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .edu-grid { grid-template-columns: 1fr 1fr; }
+    .edu:nth-child(3n) { border-right: 1px solid var(--line); }
+    .edu:nth-child(even) { border-right: none; }
+    .edu:nth-child(n+3) { border-top: 1px solid var(--line); }
     .strengths { grid-template-columns: repeat(2, 1fr); }
     .str:nth-child(2) { border-right: none; }
     .str:nth-child(3) { border-top: 1px solid var(--line); }
@@ -122,19 +139,14 @@
     .footer { padding: 16px 28px; }
   }
 
-  /* ── MOBILE ── */
+  /* MOBILE */
   @media (max-width: 680px) {
-    /* NAV — wrap so Download CV stays visible */
     nav { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
     .nav-name { font-size: 13px; letter-spacing: 0.15em; flex: 1; }
     .nav-links { gap: 10px; flex-wrap: wrap; }
     .nav-links a { font-size: 10px; }
     .nav-cv { padding: 6px 10px; font-size: 9px; }
-
-    /* HERO */
     .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 56px; }
-
-    /* LEFT — tag + 2x2 stats grid */
     .hero-left { padding: 24px 16px 20px; border-right: none; border-bottom: 2px solid var(--ink); flex-direction: column; }
     .hero-tag { font-size: 10px; margin-bottom: 16px; }
     .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0; width: 100%; }
@@ -143,8 +155,6 @@
     .hero-stat:nth-child(4) { padding-left: 16px; border-left: 1px solid var(--line); }
     .hero-stat-num { font-size: 30px; }
     .hero-stat-label { font-size: 9px; }
-
-    /* RIGHT */
     .hero-right { padding: 28px 16px 36px; justify-content: flex-start; }
     .hero-name { font-size: clamp(48px, 13vw, 76px); margin-bottom: 16px; }
     .hero-line { font-size: 14px; }
@@ -152,29 +162,22 @@
     .hero-bottom { flex-wrap: wrap; gap: 10px; padding-top: 24px; }
     .btn-p, .btn-s { padding: 11px 18px; font-size: 10px; }
     .avail { margin-left: 0; width: 100%; margin-top: 2px; font-size: 10px; }
-
-    /* SECTIONS */
     .sec-hdr { padding: 14px 16px; }
     .intro { padding: 28px 16px; }
     .strip { padding: 22px 16px; }
-
-    /* EXPERIENCE */
     .contexts { grid-template-columns: 1fr; }
+    .ctx { border-right: none !important; border-top: 1px solid var(--line); }
+    .ctx:first-child { border-top: none; }
     .ctx { padding: 28px 16px; border-right: none; border-bottom: 1px solid var(--line); }
     .ctx:last-child { border-bottom: none; }
-
-    /* STRENGTHS */
     .strengths { grid-template-columns: 1fr 1fr; }
     .str { padding: 20px 16px; }
     .str:nth-child(2) { border-right: none; }
     .str:nth-child(3) { border-top: 1px solid var(--line); }
-
-    /* CONTACT */
     .contact { grid-template-columns: 1fr; }
     .contact-left { padding: 32px 16px 20px; border-right: none; border-bottom: 1px solid var(--line); }
     .contact-right { padding: 24px 16px 36px; }
     .clink { font-size: 13px; }
-
     .footer { padding: 12px 16px; flex-direction: column; gap: 4px; }
   }
 </style>
@@ -186,20 +189,21 @@
   <ul class="nav-links">
     <li><a onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">About</a></li>
     <li><a onclick="document.getElementById('experience').scrollIntoView({behavior:'smooth'})">Experience</a></li>
+    <li><a onclick="document.getElementById('education').scrollIntoView({behavior:'smooth'})">Education</a></li>
     <li><a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact</a></li>
     <li><a href="index_pt.html" style="border:1px solid var(--line);padding:5px 10px;">PT</a></li>
-    <li><a class="nav-cv" href="CV_Ana_Noronha_2026_Eng.pdf" download>&#8595; Download CV</a></li>
+    <li><a class="nav-cv" href="CV_Ana_Noronha_2026_Eng_FINAL.pdf" download>&#8595; Download CV</a></li>
   </ul>
 </nav>
 
 <div class="hero" id="about">
   <div class="hero-left">
     <div>
-      <div class="hero-tag">PROGRAMMES · OPERATIONS · CULTURAL PLATFORMS<br><br>Braga, Portugal</div>
+      <div class="hero-tag">PROGRAMME MANAGEMENT · OPERATIONS · STRATEGY EXECUTION<br><br>Braga, Portugal</div>
     </div>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-num">60K+</div><div class="hero-stat-label">Audience Reached</div></div>
-      <div class="hero-stat"><div class="hero-stat-num">11</div><div class="hero-stat-label">Editions Built</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">13</div><div class="hero-stat-label">Editions Built</div></div>
       <div class="hero-stat"><div class="hero-stat-num">350+</div><div class="hero-stat-label">Brands Curated</div></div>
       <div class="hero-stat"><div class="hero-stat-num">132%</div><div class="hero-stat-label">Targets Delivered</div></div>
     </div>
@@ -207,99 +211,141 @@
   <div class="hero-right">
     <div class="hero-name"><span class="first">ANA</span><span class="last">NORONHA</span></div>
     <div class="hero-title">Project, Programme &amp; Operations Manager</div>
-    <div class="hero-line">Delivering funded programmes, cross-functional operations and cultural platforms from strategy to execution.</div>
+    <div class="hero-line">I build the structure, systems and operating rhythm that help organisations deliver complex programmes, improve operations and turn strategy into execution.</div>
     <ul class="hero-proof">
-      <li>Built from zero into a recurring cultural platform</li>
-      <li>Public programmes delivered above target</li>
-      <li>Cross-border operations across 3 markets</li>
+      <li>End-to-end programme and project management, from strategic planning to delivery</li>
+      <li>Publicly funded programme delivered at 132% of target, with governance, M&amp;E and risk management</li>
+      <li>Cross-border operations across Portugal, Spain and China</li>
     </ul>
     <div class="hero-bottom">
-      <a class="btn-p" href="CV_Ana_Noronha_2026_Eng.pdf" download>&#8595; Download CV</a>
+      <a class="btn-p" href="CV_Ana_Noronha_2026_Eng_FINAL.pdf" download>&#8595; Download CV</a>
       <a class="btn-s" href="mailto:anacnoronha@gmail.com">Email</a>
       <a class="btn-s" href="https://linkedin.com/in/ana-noronha" target="_blank">LinkedIn</a>
-      <div class="avail"><div class="dot"></div>Available · Remote & International</div>
+      <div class="avail"><div class="dot"></div>Available · Remote &amp; International</div>
     </div>
   </div>
 </div>
-
 
 <div class="sec-hdr"><span class="sec-num">01</span><span class="sec-title">Experience</span></div>
 
 <div class="contexts" id="experience">
   <div class="ctx">
     <div class="ctx-num">01</div>
-    <div class="ctx-role">Co-Founder &amp; Project / Operations Manager</div>
+    <div class="ctx-role">Co-Founder · Project &amp; Operations Manager</div>
     <div class="ctx-org">Mercado no Castelo</div>
-    <div class="ctx-desc">Conception, curation and execution of a cultural platform connecting independent brands, audiences and spaces of heritage value.</div>
+    <div class="ctx-desc">Lead end-to-end project and operations management for a recurring cultural platform, including strategy execution, governance, financial planning, risk management, stakeholder management, process optimisation and digital systems.</div>
     <a href="https://www.mercadonocastelo.pt" target="_blank" class="ctx-link">&#8599; mercadonocastelo.pt</a>
   </div>
   <div class="ctx">
     <div class="ctx-num">02</div>
     <div class="ctx-role">Project Coordinator</div>
     <div class="ctx-org">CLDS4G</div>
-    <div class="ctx-desc">Coordination of a funded programme across employment, social inclusion and territorial development.</div>
+    <div class="ctx-desc">Led a 37-month publicly funded programme with €445.5K eligible programme budget, 851 participants and 132% target achievement, covering M&amp;E, governance, risk &amp; issue management, compliance, stakeholder coordination and multidisciplinary team leadership.</div>
   </div>
   <div class="ctx">
     <div class="ctx-num">03</div>
     <div class="ctx-role">Director of Operations</div>
     <div class="ctx-org">Sabert</div>
-    <div class="ctx-desc">Coordination of digital and commercial operations in an international context.</div>
+    <div class="ctx-desc">Led international operations across Portugal, Spain and China, including B2B, e-commerce, digital platforms, market entry, commercial partnerships, external developers, process improvement and risk management.</div>
     <a href="https://www.casamat.eu" target="_blank" class="ctx-link">&#8599; casamat.eu</a>
   </div>
 </div>
+  <div class="ctx">
+    <div class="ctx-num">04</div>
+    <div class="ctx-role">Technical Director · Feb 2024 – Dec 2025</div>
+    <div class="ctx-org">O Salto</div>
+    <div class="ctx-desc">Strategic Management and Operational Management, team leadership, governance, budget management, financial control, risk, compliance, stakeholder management, partnerships, digital systems and organisational processes.</div>
+  </div>
+  <div class="ctx">
+    <div class="ctx-num">05</div>
+    <div class="ctx-role">Co-Founder · 2013–2020</div>
+    <div class="ctx-org">Muito+ Inovação, Arte &amp; Criatividade</div>
+    <div class="ctx-desc">Production coordination, partnerships, financial management and communication strategy across cultural events and urban markets.</div>
+  </div>
+</div>
 
+<section id="education" class="education">
+  <div class="sec-hdr"><span>02</span><span>EDUCATION</span></div>
+  <div class="edu-grid">
+    <article class="edu">
+      <div class="edu-year">2012–2013</div>
+      <div class="edu-degree">Doctoral Programme in Social Economy, incomplete</div>
+      <div class="edu-org">IUDESCOOP, Universitat de València</div>
+      <div class="edu-detail">Doctoral research on organisational innovation, management and operating models in nonprofit organisations in Portugal, with a focus on Social Solidarity Institutions (IPSS).</div>
+    </article>
+    <article class="edu">
+      <div class="edu-year">2011</div>
+      <div class="edu-degree">Master’s Degree in Social Work</div>
+      <div class="edu-org">Universidade Católica Portuguesa</div>
+      <div class="edu-detail">Thesis: “Práticas de Gestão no Agir do Assistente Social: uma análise exploratória”.</div>
+    </article>
+    <article class="edu">
+      <div class="edu-year">2006</div>
+      <div class="edu-degree">Bachelor’s Degree in Social Work</div>
+      <div class="edu-org">Universidade Católica Portuguesa</div>
+      <div class="edu-detail">Thesis on the social needs of the elderly population in S. Vicente, Braga.</div>
+    </article>
+  </div>
+</section>
 
 <div class="strengths">
   <div class="str">
-    <div class="str-title">Programmes</div>
+    <div class="str-title">Programme Management</div>
     <div class="str-tags">
-      <span class="str-tag">Programme Design</span>
-      <span class="str-tag">Stakeholder Coordination</span>
-      <span class="str-tag">Cultural Platforms</span>
-      <span class="str-tag">Event Production</span>
+      <span class="str-tag">Programme Design &amp; Delivery</span>
+      <span class="str-tag">Project Governance &amp; KPI Management</span>
+      <span class="str-tag">Risk &amp; Issue Management</span>
+      <span class="str-tag">Stakeholder Management</span>
+      <span class="str-tag">Reporting &amp; Compliance</span>
     </div>
   </div>
   <div class="str">
     <div class="str-title">Operations</div>
     <div class="str-tags">
-      <span class="str-tag">Process Management</span>
-      <span class="str-tag">Cross-border Operations</span>
-      <span class="str-tag">Team Coordination</span>
-      <span class="str-tag">Budget Control</span>
+      <span class="str-tag">Operational Management</span>
+      <span class="str-tag">Process Improvement</span>
+      <span class="str-tag">Operational Excellence</span>
+      <span class="str-tag">Resource &amp; Budget Planning</span>
+      <span class="str-tag">Cross-functional Leadership</span>
+      <span class="str-tag">Continuous Improvement</span>
     </div>
   </div>
   <div class="str">
-    <div class="str-title">Public & Funded Programmes</div>
+    <div class="str-title">Strategy &amp; Business Operations</div>
     <div class="str-tags">
-      <span class="str-tag">ESF-funded Projects</span>
-      <span class="str-tag">Portugal 2020</span>
-      <span class="str-tag">Reporting & Compliance</span>
-      <span class="str-tag">Multi-stakeholder Management</span>
+      <span class="str-tag">Strategic Planning</span>
+      <span class="str-tag">Partnership Development</span>
+      <span class="str-tag">Business Operations</span>
+      <span class="str-tag">Business Transformation</span>
+      <span class="str-tag">Strategy Execution</span>
+      <span class="str-tag">Cross-border Delivery</span>
     </div>
   </div>
   <div class="str">
-    <div class="str-title">Digital Platforms</div>
+    <div class="str-title">Digital Systems</div>
     <div class="str-tags">
+      <span class="str-tag">Digital Platforms</span>
       <span class="str-tag">E-commerce</span>
-      <span class="str-tag">Platform Launch</span>
-      <span class="str-tag">Digital Strategy</span>
-      <span class="str-tag">International Markets</span>
+      <span class="str-tag">Operational Workflows</span>
+      <span class="str-tag">Digital Transformation</span>
+      <span class="str-tag">AI Enablement</span>
+      <span class="str-tag">Data &amp; Reporting</span>
     </div>
     <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;">
-      <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);margin-bottom:8px;">Client sites</div>
+      <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);margin-bottom:8px;">Selected digital projects</div>
       <a href="https://www.northgamefishing.com" target="_blank" class="ctx-link" style="display:block;margin-bottom:4px;">&#8599; northgamefishing.com</a>
       <a href="https://www.amabelia.com" target="_blank" class="ctx-link" style="display:block;">&#8599; amabelia.com</a>
     </div>
   </div>
 </div>
 
-
 <div style="padding:40px;border-bottom:2px solid var(--ink);display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;">
   <p style="font-size:13px;font-weight:300;color:var(--mid);">See the full detail of projects, responsibilities and results.</p>
-  <a href="CV_Ana_Noronha_2026_Eng.pdf" download style="background:var(--rust);color:#F0EDE6;padding:14px 36px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;">↓ Download Full CV</a>
+  <a href="CV_Ana_Noronha_2026_Eng_FINAL.pdf" download style="background:var(--rust);color:#F0EDE6;padding:14px 36px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;">&#8595; Download Full CV</a>
 </div>
+
 <div class="strip">
-  <p>Operating at the intersection of programmes, operations and cultural markets.</p>
+  <p>Project Management · Programme Management · Operations · PMO · Strategy Execution · Governance · Risk · Stakeholder Management · Digital Transformation</p>
 </div>
 
 <div class="sec-hdr"><span class="sec-num">02</span><span class="sec-title">Contact</span></div>
@@ -313,13 +359,12 @@
     </svg>
     <p class="contact-sub">Available for programme, operations and cross-sector roles across Portugal and international contexts.<br><br>Braga, Portugal · PT · EN · ES</p>
     <a href="mailto:anacnoronha@gmail.com" style="display:inline-block;margin-top:20px;padding:11px 26px;background:transparent;color:var(--ink);border:1px solid var(--ink);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;font-family:inherit;">Get in Touch</a>
-    <a href="/cdn-cgi/l/email-protection#c7a6a9a6a4a9a8b5a8a9afa687a0aaa6aeabe9a4a8aa" style="display:inline-block;margin-top:20px;padding:11px 24px;background:transparent;color:var(--ink);border:1px solid var(--ink);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;font-family:inherit;">Get in Touch</a>
   </div>
   <div class="contact-right">
     <a class="clink" href="mailto:anacnoronha@gmail.com"><span class="ci">@</span>anacnoronha@gmail.com</a>
     <a class="clink" href="https://linkedin.com/in/ana-noronha" target="_blank"><span class="ci">in</span>linkedin.com/in/ana-noronha</a>
     <a class="clink" href="tel:+351917209881"><span class="ci">&#9743;</span>+351 917 209 881</a>
-    <a class="btn-cv" href="CV_Ana_Noronha_2026_Eng.pdf" download>&#8595; Download CV</a>
+    <a class="btn-cv" href="CV_Ana_Noronha_2026_Eng_FINAL.pdf" download>&#8595; Download CV</a>
   </div>
 </div>
 
