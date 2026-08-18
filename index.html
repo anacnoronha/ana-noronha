@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana Noronha — Gestora de Projetos, Programas e Operações</title>
+<meta name="description" content="Gestora de Projetos, Programas e Operações. Gestão de programas, projetos, operações, PMO e execução estratégica em contextos públicos, empresariais e culturais. Braga, Portugal.">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F0EDE6;--ink:#1A1814;--rust:#B5451B;--mid:#6B6560;--line:rgba(26,24,20,.12)}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--ink);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink);background:rgba(240,237,230,.97);backdrop-filter:blur(12px)}
+.nav-name{font-family:'Raleway',sans-serif;font-weight:200;font-size:16px;letter-spacing:.2em;text-transform:uppercase}
+.nav-links{display:flex;gap:24px;list-style:none;align-items:center}
+.nav-links a{font-size:11px;letter-spacing:.1em;color:var(--mid);text-decoration:none;text-transform:uppercase;cursor:pointer}
+.nav-links a:hover{color:var(--ink)}
+.nav-cv{background:var(--rust)!important;color:#F0EDE6!important;padding:7px 14px}
+.hero{display:grid;grid-template-columns:1fr 2fr;min-height:100vh;border-bottom:2px solid var(--ink);padding-top:62px}
+.hero-left{padding:56px 40px;border-right:2px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between}
+.hero-tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--rust);line-height:2.2}
+.hero-stats{display:flex;flex-direction:column}
+.hero-stat{border-top:1px solid var(--line);padding-top:18px;margin-bottom:6px}
+.hero-stat-num{font-family:'Raleway',sans-serif;font-weight:200;font-size:46px;letter-spacing:-.02em;line-height:1}
+.hero-stat-label{font-size:10px;color:var(--mid);letter-spacing:.12em;text-transform:uppercase;margin-top:6px;opacity:.7}
+.hero-right{padding:56px 48px;display:flex;flex-direction:column;justify-content:flex-end}
+.hero-name{font-family:'Raleway',sans-serif;font-size:clamp(60px,10vw,110px);line-height:.9;letter-spacing:.06em;text-transform:uppercase;margin-bottom:28px}
+.hero-name .first{display:block;font-weight:200;color:rgba(26,24,20,.3)}
+.hero-name .last{display:block;font-weight:300;color:var(--ink)}
+.hero-title{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin-bottom:24px;font-weight:400}
+.hero-line{font-size:16px;font-weight:300;line-height:1.6;max-width:620px;margin-bottom:32px;border-left:2px solid var(--rust);padding-left:20px}
+.hero-proof{list-style:none;margin-bottom:40px;display:flex;flex-direction:column;gap:8px}
+.hero-proof li{font-size:13px;font-weight:300;color:var(--mid);padding-left:14px;position:relative;line-height:1.6}
+.hero-proof li::before{content:'·';position:absolute;left:0;color:var(--rust)}
+.hero-bottom{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:32px;border-top:1px solid var(--line)}
+.btn-p,.btn-s{padding:13px 26px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;display:inline-block}
+.btn-p{background:var(--ink);color:var(--bg)}
+.btn-s{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.avail{font-size:11px;color:var(--mid);display:flex;align-items:center;gap:8px;margin-left:4px}
+.dot{width:6px;height:6px;background:#3DAB6E;border-radius:50%;flex-shrink:0}
+.intro{padding:42px 40px;border-bottom:1px solid var(--line);max-width:900px}
+.intro p{font-size:15px;font-weight:300;line-height:1.8}
+.sec-hdr{display:flex;align-items:baseline;gap:16px;padding:20px 40px;border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.sec-num{font-size:11px;color:var(--mid)}
+.sec-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.contexts{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid var(--ink)}
+.ctx{padding:44px 40px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ctx:nth-child(3n){border-right:none}
+.ctx-num{font-family:'Raleway',sans-serif;font-weight:200;font-size:48px;color:rgba(181,69,27,.2);line-height:1;margin-bottom:16px}
+.ctx-role{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:6px}
+.ctx-org{font-family:'Raleway',sans-serif;font-weight:300;font-size:19px;letter-spacing:.04em;margin-bottom:12px}
+.ctx-sub{font-size:10px;letter-spacing:.06em;color:var(--mid);margin-bottom:12px}
+.ctx-desc{font-size:13px;font-weight:300;line-height:1.7;color:var(--mid);margin-bottom:20px}
+.ctx-bullets{list-style:none;padding:16px 0 0;border-top:1px solid var(--line)}
+.ctx-bullets li{font-size:12px;line-height:1.8;padding-left:12px;position:relative}
+.ctx-bullets li::before{content:'·';position:absolute;left:0;color:var(--rust)}
+.ctx-link{font-size:11px;color:var(--mid);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:1px;margin-top:12px;display:inline-block}
+.education{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid var(--ink)}
+.edu{padding:40px;border-right:1px solid var(--line)}
+.edu:last-child{border-right:none}
+.edu-year{font-size:11px;color:var(--rust);letter-spacing:.08em;margin-bottom:14px}
+.edu-title{font-family:'Raleway',sans-serif;font-weight:300;font-size:18px;line-height:1.25;margin-bottom:8px}
+.edu-inst{font-size:10px;color:var(--mid);margin-bottom:14px}
+.edu-desc{font-size:12px;line-height:1.7;color:var(--mid)}
+.strengths{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--ink)}
+.str{padding:40px;border-right:1px solid var(--line)}
+.str:last-child{border-right:none}
+.str-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--rust);margin-bottom:16px}
+.str-tags{display:flex;flex-direction:column;gap:8px}
+.str-tag{font-size:13px;font-weight:300}
+.strip{padding:32px 40px;background:var(--ink)}
+.strip p{font-family:'Raleway',sans-serif;font-weight:200;font-size:clamp(18px,2.5vw,26px);letter-spacing:.04em;color:#F0EDE6}
+.contact{display:grid;grid-template-columns:1fr 1fr}
+.contact-left{padding:56px 40px;border-right:1px solid var(--line)}
+.contact-sub{font-size:14px;font-weight:300;line-height:1.8;color:var(--mid);max-width:380px;margin-top:24px}
+.contact-right{padding:56px 48px;display:flex;flex-direction:column;justify-content:center}
+.clink{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink);text-decoration:none}
+.clink:first-child{border-top:1px solid var(--line)}
+.ci{font-size:11px;color:var(--mid);width:20px;flex-shrink:0}
+.btn-cv{margin-top:20px;background:var(--rust);color:#F0EDE6;padding:15px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;width:100%;text-align:center;display:block;text-decoration:none}
+.footer{display:flex;justify-content:space-between;padding:16px 40px;border-top:1px solid var(--line)}
+.footer span{font-size:11px;color:var(--mid);letter-spacing:.06em}
+@media(max-width:1024px){
+nav{padding:16px 28px}.hero{grid-template-columns:1fr 1.6fr}.hero-left{padding:40px 28px}.hero-right{padding:40px 32px}
+.contexts{grid-template-columns:1fr 1fr}.ctx:nth-child(3n){border-right:1px solid var(--line)}.ctx:nth-child(2n){border-right:none}
+.education{grid-template-columns:1fr 1fr}.edu:nth-child(2){border-right:none}.edu:nth-child(3){grid-column:1/-1;border-top:1px solid var(--line);border-right:none}
+.strengths{grid-template-columns:repeat(2,1fr)}.str:nth-child(2){border-right:none}.str:nth-child(3){border-top:1px solid var(--line)}
+.sec-hdr{padding:18px 28px}.intro{padding:36px 28px}.strip{padding:28px}.footer{padding:16px 28px}
+}
+@media(max-width:680px){
+nav{padding:12px 16px;flex-wrap:wrap;gap:8px}.nav-name{font-size:13px;letter-spacing:.15em;flex:1}.nav-links{gap:10px;flex-wrap:wrap}.nav-links a{font-size:10px}.nav-cv{padding:6px 10px;font-size:9px}
+.hero{grid-template-columns:1fr;min-height:auto;padding-top:56px}.hero-left{padding:24px 16px 20px;border-right:none;border-bottom:2px solid var(--ink)}
+.hero-tag{font-size:10px;margin-bottom:16px}.hero-stats{display:grid;grid-template-columns:1fr 1fr}.hero-stat{padding:12px 0 8px;margin:0}.hero-stat:nth-child(even){padding-left:16px;border-left:1px solid var(--line)}.hero-stat-num{font-size:30px}.hero-stat-label{font-size:9px}
+.hero-right{padding:28px 16px 36px;justify-content:flex-start}.hero-name{font-size:clamp(48px,13vw,76px);margin-bottom:16px}.hero-line{font-size:14px}.hero-proof li{font-size:12px}.hero-bottom{padding-top:24px}.btn-p,.btn-s{padding:11px 18px;font-size:10px}.avail{margin-left:0;width:100%;margin-top:2px;font-size:10px}
+.sec-hdr{padding:14px 16px}.intro{padding:28px 16px}.contexts,.education{grid-template-columns:1fr}.ctx{padding:28px 16px;border-right:none!important}.edu{padding:28px 16px;border-right:none;border-top:1px solid var(--line)}.edu:first-child{border-top:none}
+.strengths{grid-template-columns:1fr 1fr}.str{padding:20px 16px}.str:nth-child(2){border-right:none}.str:nth-child(3){border-top:1px solid var(--line)}
+.contact{grid-template-columns:1fr}.contact-left{padding:32px 16px 20px;border-right:none;border-bottom:1px solid var(--line)}.contact-right{padding:24px 16px 36px}.clink{font-size:13px}
+.footer{padding:12px 16px;flex-direction:column;gap:4px}
+}
+</style>
+</head>
+<body>
+<nav><div class="nav-name">Ana Noronha</div><ul class="nav-links"><li><a onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Sobre</a></li><li><a onclick="document.getElementById('experience').scrollIntoView({behavior:'smooth'})">Experiência</a></li><li><a onclick="document.getElementById('education').scrollIntoView({behavior:'smooth'})">Formação</a></li><li><a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contacto</a></li><li><a href="index.html">EN</a></li><li><a class="nav-cv" href="CV_Ana_Noronha_2026_PT_FINAL.pdf" download>↓ Download CV</a></li></ul></nav>
+<div class="hero" id="about">
+  <div class="hero-left">
+    <div><div class="hero-tag">GESTÃO DE PROGRAMAS · OPERAÇÕES · EXECUÇÃO DA ESTRATÉGIA<br><br>Braga, Portugal</div></div>
+    <div class="hero-stats"><div class="hero-stat"><div class="hero-stat-num">60K+</div><div class="hero-stat-label">Visitantes</div></div><div class="hero-stat"><div class="hero-stat-num">13</div><div class="hero-stat-label">Edições Realizadas</div></div><div class="hero-stat"><div class="hero-stat-num">350+</div><div class="hero-stat-label">Marcas Curadas</div></div><div class="hero-stat"><div class="hero-stat-num">132%</div><div class="hero-stat-label">Execução face às Metas</div></div></div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-name"><span class="first">ANA</span><span class="last">NORONHA</span></div>
+    <div class="hero-title">GESTORA DE PROJETOS, PROGRAMAS E OPERAÇÕES</div>
+    <div class="hero-line">Construo a estrutura, os sistemas e o ritmo operacional que permitem às organizações executar programas complexos, melhorar operações e transformar estratégia em execução.</div>
+    <ul class="hero-proof"><li>Gestão end-to-end de programas e projetos, do planeamento à execução</li><li>Programa público de 37 meses, €445,5K de custo total elegível e 132% das metas executadas</li><li>Operações transfronteiriças em Portugal, Espanha e China</li></ul>
+    <div class="hero-bottom">
+      <a class="btn-p" href="CV_Ana_Noronha_2026_PT_FINAL.pdf" download>↓ Download CV</a>
+      <a class="btn-s" href="https://linkedin.com/in/ana-noronha" target="_blank">LinkedIn</a>
+      <div class="avail"><div class="dot"></div>Disponível · Remoto e Internacional</div>
+    </div>
+  </div>
+</div>
+<div class="intro"><p>Experiência na conceção, implementação e escala de projetos e programas multidisciplinares, com foco na execução, coordenação operacional e entrega de resultados mensuráveis.</p></div>
+<div class="sec-hdr"><span class="sec-num">01</span><span class="sec-title">Experiência</span></div>
+<div class="contexts" id="experience"><div class="ctx"><div class="ctx-num">01</div><div class="ctx-role">Co-Fundadora · Gestora de Projeto &amp; Operações</div><div class="ctx-org">Mercado no Castelo</div><div class="ctx-desc">Gestão end-to-end de uma plataforma cultural recorrente, com foco em estratégia, governação, operações, planeamento financeiro, gestão de risco, stakeholders, produção e optimização de processos e sistemas digitais.</div><ul class="ctx-bullets"><li>13 edições realizadas</li><li>350+ marcas independentes curadas</li><li>60.000+ visitantes</li><li>11.000+ seguidores digitais orgânicos</li></ul><a href="https://www.mercadonocastelo.pt" target="_blank" class="ctx-link">↗ mercadonocastelo.pt</a></div><div class="ctx"><div class="ctx-num">02</div><div class="ctx-role">Coordenadora de Projeto · Gestão de Programa</div><div class="ctx-org">Programa de Desenvolvimento Social CLDS4G</div><div class="ctx-sub">Santa Casa da Misericórdia da Póvoa de Lanhoso</div><div class="ctx-desc">Coordenação estratégica e operacional de um programa de desenvolvimento social financiado pelo CLDS4G e pelo Fundo Social Europeu.</div><ul class="ctx-bullets"><li>37 meses de execução</li><li>€445,5K de custo total elegível</li><li>851 participantes</li><li>132% das metas executadas</li><li>69 integrações no mercado de trabalho</li><li>22 colocações em formação profissional</li><li>19 organizações e instituições públicas parceiras</li></ul></div><div class="ctx"><div class="ctx-num">03</div><div class="ctx-role">Diretora de Operações · 2016–2020</div><div class="ctx-org">Sabert Lda</div><div class="ctx-desc">Coordenação operacional de iniciativas empresariais internacionais que integravam plataformas digitais, operações comerciais e parceiros em Portugal, Espanha e China.</div><ul class="ctx-bullets"><li>Lançamento e operacionalização da plataforma de e-commerce Casamat</li><li>Plataformas digitais corporativas</li><li>Iniciativas comerciais entre parceiros europeus e asiáticos</li><li>Apoio a candidaturas Portugal 2020</li></ul><a href="https://www.casamat.eu" target="_blank" class="ctx-link">↗ casamat.eu</a></div><div class="ctx"><div class="ctx-num">04</div><div class="ctx-role">Diretora Técnica · Fev 2024 – Dez 2024</div><div class="ctx-org">Associação de Apoio à Saúde Mental · O Salto</div><div class="ctx-desc">Gestão estratégica e operacional, liderança de equipa técnica, governação, gestão orçamental, controlo financeiro, risco, compliance, stakeholders, parcerias, sistemas digitais e processos organizacionais.</div></div><div class="ctx"><div class="ctx-num">05</div><div class="ctx-role">Co-Fundadora · 2013–2020</div><div class="ctx-org">Muito+ Inovação, Arte &amp; Criatividade</div><div class="ctx-desc">Produção e curadoria de eventos culturais e mercados urbanos. Coordenação de produção, curadoria de marcas, parcerias, gestão financeira e comunicação.</div></div><div class="ctx"><div class="ctx-num">06</div><div class="ctx-role">Professora Assistente · 2007–2013</div><div class="ctx-org">Universidade Católica Portuguesa</div><div class="ctx-desc">Docência e tutoria em Serviço Social, nos 1.º e 2.º ciclos. Planeamento pedagógico, acompanhamento de alunos, organização de eventos académicos e ligação entre a universidade e organizações sociais.</div></div></div>
+<div class="sec-hdr" id="education"><span class="sec-num">02</span><span class="sec-title">Formação Académica</span></div>
+<div class="education"><div class="edu"><div class="edu-year">2012–2013</div><div class="edu-title">Programa de Doutoramento em Economia Social</div><div class="edu-inst">IUDESCOOP, Universitat de València</div><div class="edu-desc">Trabalho de investigação concluído: “La Innovación de las Organizaciones Sin Fin de Lucro em Portugal: El Caso de las Instituciones Particulares de Solidaridad Social”.</div></div><div class="edu"><div class="edu-year">2011</div><div class="edu-title">Mestrado em Serviço Social</div><div class="edu-inst">Universidade Católica Portuguesa</div><div class="edu-desc">Dissertação: “Práticas de Gestão no Agir do Assistente Social: uma análise exploratória”.</div></div><div class="edu"><div class="edu-year">2006</div><div class="edu-title">Licenciatura em Serviço Social</div><div class="edu-inst">Universidade Católica Portuguesa</div><div class="edu-desc">Dissertação: “As necessidades sociais da população idosa da Freguesia de S. Vicente, Braga”.</div></div></div>
+<div class="sec-hdr"><span class="sec-num">03</span><span class="sec-title">Competências</span></div>
+<div class="strengths"><div class="str"><div class="str-title">Gestão de Programas</div><div class="str-tags"><span class="str-tag">Estruturação e Execução</span><span class="str-tag">Governação e KPIs</span><span class="str-tag">Risk &amp; Issue Management</span><span class="str-tag">Stakeholder Management</span><span class="str-tag">Reporting e Compliance</span></div></div><div class="str"><div class="str-title">Operações</div><div class="str-tags"><span class="str-tag">Gestão Operacional</span><span class="str-tag">Melhoria de Processos</span><span class="str-tag">Excelência Operacional</span><span class="str-tag">Planeamento de Recursos e Orçamento</span><span class="str-tag">Coordenação Transversal</span></div></div><div class="str"><div class="str-title">Estratégia e Business Operations</div><div class="str-tags"><span class="str-tag">Planeamento Estratégico</span><span class="str-tag">Strategy Execution</span><span class="str-tag">Desenvolvimento de Parcerias</span><span class="str-tag">Business Operations</span><span class="str-tag">Operações Transfronteiriças</span></div></div><div class="str"><div class="str-title">Sistemas Digitais</div><div class="str-tags"><span class="str-tag">Plataformas Digitais</span><span class="str-tag">E-commerce</span><span class="str-tag">Workflows Operacionais</span><span class="str-tag">Transformação Digital</span><span class="str-tag">Dados e Reporting</span></div></div></div>
+<div class="strip"><p>Gestão de Projetos · Gestão de Programas · Operações · PMO · Execução Estratégica · Governação · Risco · Stakeholders · Transformação Digital</p></div>
+<div class="sec-hdr"><span class="sec-num">04</span><span class="sec-title">Contacto</span></div>
+<div class="contact" id="contact">
+  <div class="contact-left">
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+      <rect x="1" y="1" width="70" height="70" stroke="#B5451B" stroke-width="1"/>
+      <rect x="12" y="12" width="48" height="48" stroke="#B5451B" stroke-width=".5" transform="rotate(45 36 36)"/>
+      <circle cx="36" cy="36" r="3" fill="#B5451B"/>
+    </svg>
+    <p class="contact-sub">Braga, Portugal · PT · EN · ES</p>
+  </div>
+  <div class="contact-right">
+    <a class="clink" href="mailto:anacnoronha@gmail.com"><span class="ci">@</span>anacnoronha@gmail.com</a>
+    <a class="clink" href="https://linkedin.com/in/ana-noronha" target="_blank"><span class="ci">in</span>linkedin.com/in/ana-noronha</a>
+    <a class="clink" href="tel:+351917209881"><span class="ci">☎</span>+351 917 209 881</a>
+    <a class="btn-cv" href="CV_Ana_Noronha_2026_PT_FINAL.pdf" download>↓ Download CV</a>
+  </div>
+</div>
+<div class="footer"><span>© 2026 Ana Noronha</span><span>PT · EN · ES</span></div>
+</body>
+</html>
