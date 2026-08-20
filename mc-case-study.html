@@ -1,0 +1,739 @@
+<title>Mercado no Castelo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@300;400;600&family=DM+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #F8F8F1;
+    --surface: #F0EFE8;
+    --border: #DDD9D0;
+    --text: #363436;
+    --text-secondary: #7A7177;
+    --accent: #C27369;
+    --accent-light: #F2EAE8;
+    --teal: #3F4E3D;
+    --header-bg: #1C3C4B;
+    --header-text: #F6F6F6;
+    --metric-bg: #F0EFE8;
+    --tag-bg: #E4E1D8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1A1A18;
+      --surface: #252420;
+      --border: #3A3730;
+      --text: #EDE9E3;
+      --text-secondary: #8A8785;
+      --accent: #D4897F;
+      --accent-light: #2A1F1E;
+      --teal: #5F7A5E;
+      --header-bg: #0F2230;
+      --header-text: #EDE9E3;
+      --metric-bg: #252420;
+      --tag-bg: #302E28;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1A1A18;
+    --surface: #252420;
+    --border: #3A3730;
+    --text: #EDE9E3;
+    --text-secondary: #8A8785;
+    --accent: #D4897F;
+    --accent-light: #2A1F1E;
+    --teal: #5F7A5E;
+    --header-bg: #0F2230;
+    --header-text: #EDE9E3;
+    --metric-bg: #252420;
+    --tag-bg: #302E28;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .document {
+    width: 100%;
+    max-width: 780px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--header-bg);
+    padding: 40px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .label-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--header-text);
+    opacity: 0.45;
+    white-space: nowrap;
+  }
+
+  .author-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--header-text);
+    opacity: 0.5;
+    text-align: right;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 54px);
+    font-weight: 500;
+    color: var(--header-text);
+    line-height: 1.05;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .header-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--header-text);
+    opacity: 0.4;
+  }
+
+  .meta-value {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--header-text);
+    opacity: 0.85;
+  }
+
+  /* BODY */
+  .body {
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  /* SUMMARY */
+  .summary {
+    padding: 36px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary p {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text);
+    max-width: 620px;
+    text-wrap: balance;
+  }
+
+  /* METRICS */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .metric {
+    padding: 28px 32px;
+    border-right: 1px solid var(--border);
+    background: var(--metric-bg);
+  }
+
+  .metric:last-child { border-right: none; }
+
+  .metric-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .metric-desc {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+
+  /* SECONDARY METRICS */
+  .secondary-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-metric {
+    padding: 20px 32px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sec-metric:last-child { border-right: none; }
+
+  .sec-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--teal);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sec-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* TWO COLUMNS */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .col {
+    padding: 32px 32px 32px 48px;
+  }
+
+  .col:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .col:last-child {
+    padding-left: 32px;
+  }
+
+  .col-heading {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .col ul li {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text);
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .col ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--border);
+    font-size: 11px;
+  }
+
+  /* CONTEXT STRIP */
+  .context-strip {
+    padding: 20px 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .context-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .context-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .context-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .dot {
+    width: 3px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .footer-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .footer-link:hover { color: var(--accent); }
+
+
+  .footer-logo {
+    height: 28px;
+    width: auto;
+    opacity: 0.7;
+  }
+  .footer-logo:hover { opacity: 1; }
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 48px 32px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: var(--tag-bg);
+    padding: 4px 10px;
+  }
+
+
+  /* DIGITAL MODEL SECTION */
+  .digital-model {
+    padding: 28px 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .model-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .model-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .model-item:first-child {
+    border-left: 3px solid var(--teal);
+  }
+
+  .model-item:last-child {
+    border-left: 3px solid var(--accent);
+  }
+
+  .model-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .model-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  @media (max-width: 600px) {
+    .model-grid { grid-template-columns: 1fr; }
+    .digital-model { padding: 24px; }
+  }
+
+  /* PERFORMANCE SECTION */
+  .perf-section {
+    padding: 32px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .perf-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .perf-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .perf-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .perf-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .perf-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--teal);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .perf-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .perf-bench {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .perf-note {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-style: italic;
+    border-left: 2px solid var(--border);
+    padding-left: 14px;
+  }
+
+  .perf-insight {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+  }
+
+  .perf-insight p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 0; }
+    .header { padding: 28px 24px; }
+    .summary { padding: 28px 24px; }
+    .metrics { grid-template-columns: 1fr 1fr; }
+    .secondary-metrics { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .col { padding: 24px; border-right: none !important; border-bottom: 1px solid var(--border); }
+    .context-strip { padding: 20px 24px; }
+    .footer { padding: 20px 24px; }
+  
+  .footer-logo {
+    height: 28px;
+    width: auto;
+    opacity: 0.7;
+  }
+  .footer-logo:hover { opacity: 1; }
+  .tags { padding: 0 24px 24px; }
+    .metric { padding: 20px; }
+    .perf-section { padding: 24px; }
+    .perf-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<div class="document">
+
+  <div class="header">
+    <div class="header-top">
+      <span class="label-tag">Case Study · 2022–2026</span>
+      <span class="author-tag">Ana Noronha</span>
+    </div>
+    <h1 class="header-title">Mercado<br><em>no Castelo</em></h1>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-label">Role</span>
+        <span class="meta-value">Co-Founder &amp; Operations Manager</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Editions delivered</span>
+        <span class="meta-value">13</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Geography</span>
+        <span class="meta-value">Norte de Portugal</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Type</span>
+        <span class="meta-value">Recurring programme · multi-stakeholder</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <div class="summary">
+      <p>Founded Mercado no Castelo in 2022 and managed end-to-end programme and operations across 13 editions — from concept to delivery. Responsible for the full operational model: brand curation, venue logistics, stakeholder management, digital strategy, budget oversight and edition-by-edition planning across premium historic venues in Northern Portugal.</p>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-number">+60K</div>
+        <div class="metric-desc">Cumulative visitors</div>
+      </div>
+      <div class="metric">
+        <div class="metric-number">+350</div>
+        <div class="metric-desc">Brands curated &amp; managed</div>
+      </div>
+      <div class="metric">
+        <div class="metric-number">13</div>
+        <div class="metric-desc">Editions · 2022–2026</div>
+      </div>
+    </div>
+
+    <div class="secondary-metrics">
+      <div class="sec-metric">
+        <span class="sec-number">+1.8M</span>
+        <span class="sec-desc">Accumulated digital reach</span>
+      </div>
+      <div class="sec-metric">
+        <span class="sec-number">1,052K</span>
+        <span class="sec-desc">Content views</span>
+      </div>
+      <div class="sec-metric">
+        <span class="sec-number">+8.8K</span>
+        <span class="sec-desc">Digital interactions / edition</span>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="col">
+        <p class="col-heading">What I managed</p>
+        <ul>
+          <li>Full programme lifecycle per edition: brand selection, logistics planning, execution, close-out</li>
+          <li>Curated 350+ brands through a structured selection and onboarding process</li>
+          <li>Coordinated external service providers: venues, technical, photography, communication, logistics</li>
+          <li>Advance revenue model: exhibitor fees structured before the event to ensure positive cash flow</li>
+          <li>Stakeholder management across partners, sponsors, venues and local authorities</li>
+          <li>Digital strategy: content operations, Reels, Meta Ads campaigns, GA4 cross-analysis</li>
+          <li>Produced edition-by-edition performance reports with recommendations for the next cycle</li>
+          <li>Authored 2026–2028 strategic plan covering model evolution, growth levers and fiscal options</li>
+        </ul>
+      </div>
+      <div class="col">
+        <p class="col-heading">Outcomes &amp; impact</p>
+        <ul>
+          <li>Built a self-sustaining programme from zero — 13 editions across 4 years with consistent positive results</li>
+          <li>Scaled to 60K+ cumulative visitors maintaining quality across different venues and formats</li>
+          <li>Consolidated a curated network of 350+ independent brands and creators</li>
+          <li>Grew organic digital community to 11K+ followers; 1.8M accumulated reach</li>
+          <li>Expanded geographic footprint across 6 cities in Northern Portugal</li>
+          <li>Achieved operational maturity: documented processes, tested logistics model, repeatable across contexts</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="context-strip">
+      <div class="context-item">
+        <span class="context-key">Founded</span>
+        <span class="context-val">2022</span>
+      </div>
+      <div class="dot"></div>
+      <div class="context-item">
+        <span class="context-key">Audience</span>
+        <span class="context-val">76.8% female · 88.9% aged 35–54</span>
+      </div>
+      <div class="dot"></div>
+      <div class="context-item">
+        <span class="context-key">Locations</span>
+        <span class="context-val">Braga · Porto · Guimarães · Famalicão · Lisboa · Vila do Conde</span>
+      </div>
+      <div class="dot"></div>
+      <div class="context-item">
+        <span class="context-key">Website</span>
+        <span class="context-val">mercadonocastelo.pt</span>
+      </div>
+    </div>
+
+
+    <div class="digital-model">
+      <span class="col-heading">Digital model</span>
+      <div class="model-grid">
+        <div class="model-item">
+          <span class="model-label">Organic</span>
+          <p class="model-text">Structural and continuous between editions — built through consistent content operations since 2022. The community exists and grows independently of paid media.</p>
+        </div>
+        <div class="model-item">
+          <span class="model-label">Paid</span>
+          <p class="model-text">Short-window amplification around each event only. Not a structural dependency — the programme exists digitally without advertising.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="perf-section">
+      <div class="perf-heading">
+        <span class="col-heading">Digital performance — MC13 campaign (June 2026)</span>
+        <span class="perf-sub">Meta Ads + Google Analytics 4 cross-analysis</span>
+      </div>
+      <div class="perf-grid">
+        <div class="perf-item">
+          <span class="perf-num">5.2%</span>
+          <span class="perf-label">CTR <span class="perf-bench">vs. 1–3% benchmark</span></span>
+        </div>
+        <div class="perf-item">
+          <span class="perf-num">€2.34</span>
+          <span class="perf-label">CPM <span class="perf-bench">below PT market avg.</span></span>
+        </div>
+        <div class="perf-item">
+          <span class="perf-num">20K+</span>
+          <span class="perf-label">Unique reach</span>
+        </div>
+        <div class="perf-item">
+          <span class="perf-num">+1,125%</span>
+          <span class="perf-label">Site traffic during campaign</span>
+        </div>
+        <div class="perf-item">
+          <span class="perf-num">&lt;€0.55</span>
+          <span class="perf-label">Cost per confirmed visit (GA4)</span>
+        </div>
+        <div class="perf-item">
+          <span class="perf-num">+430%</span>
+          <span class="perf-label">Organic search uplift <span class="perf-bench">halo effect</span></span>
+        </div>
+      </div>
+      <p class="perf-note">Campaign analysis cross-referenced Meta Ads Manager with GA4 data, identifying attribution discrepancies and organic halo effects. Included structured recommendations for MC14 covering pixel configuration, budget sequencing and audience segmentation.</p>
+
+    </div>
+
+    <div class="tags">
+      <span class="tag">Programme Management</span>
+      <span class="tag">Operations</span>
+      <span class="tag">Stakeholder Management</span>
+      <span class="tag">Digital Strategy</span>
+      <span class="tag">Meta Ads</span>
+      <span class="tag">Google Analytics 4</span>
+      <span class="tag">Budget Management</span>
+      <span class="tag">Vendor Management</span>
+      <span class="tag">Event Delivery</span>
+      <span class="tag">Cross-functional Leadership</span>
+      <span class="tag">Data Analysis</span>
+    </div>
+
+    <div class="footer">
+      <img src="data:image/png;base64,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" alt="Mercado no Castelo" class="footer-logo">
+      <span class="footer-name">Ana Noronha</span>
+      <div class="footer-links">
+        <a href="https://anacnoronha.github.io/ana-noronha/" class="footer-link">anacnoronha.github.io/ana-noronha</a>
+        <a href="https://linkedin.com/in/ana-noronha" class="footer-link">linkedin.com/in/ana-noronha</a>
+      </div>
+    </div>
+
+  </div>
+</div>
