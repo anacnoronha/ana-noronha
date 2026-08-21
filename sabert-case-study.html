@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sabert | Internationalisation Programme | Ana Noronha</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#F6F8F5;--surface:#EDF0EB;--border:#D4DAD0;--text:#2A342E;--muted:#6B7A6E;--accent:#4E89A2;--teal:#2D6B4A;--dark:#183829}
+*{box-sizing:border-box;margin:0;padding:0} body{background:var(--bg);color:var(--text);font-family:'Josefin Sans',sans-serif;font-size:14px;line-height:1.6;padding:32px 16px} .doc{max-width:820px;margin:auto;background:#fff;box-shadow:0 8px 30px rgba(24,56,41,.06)} header{background:var(--dark);color:#F4F6F3;padding:42px 48px 38px} .eyebrow,.label,small{font:500 11px 'DM Mono',monospace;letter-spacing:.13em;text-transform:uppercase} .eyebrow{opacity:.55} h1{font:500 clamp(36px,6vw,54px) 'Playfair Display',serif;line-height:1.04;margin:20px 0 10px} h1 em{color:#6BA5BE;font-style:italic} .subtitle{opacity:.78;max-width:650px} .meta{display:flex;gap:28px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px} .meta div{display:flex;flex-direction:column;gap:3px} header small{opacity:.45} section{padding:34px 48px;border-bottom:1px solid var(--border)} .lead{font:400 20px/1.55 'Playfair Display',serif;max-width:720px} .label{display:block;color:var(--accent);margin-bottom:15px} .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:0} .metric{padding:20px 14px;background:var(--surface);border-right:1px solid var(--border)} .metric:last-child{border:0} .metric strong{display:block;font:500 24px 'DM Mono',monospace;color:var(--accent);margin-bottom:8px} .metric span,.metric small{display:block;color:var(--muted)} .metric span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;line-height:1.3} .metric small{font-size:9px;margin-top:3px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:38px} h2{font:500 24px 'Playfair Display',serif;margin-bottom:15px} ul{list-style:none;display:flex;flex-direction:column;gap:10px} li{padding-left:15px;font-size:13px;position:relative} li:before{content:'—';position:absolute;left:0;color:#B8C1B8} .results{background:var(--surface)} .cards{display:flex;justify-content:center;gap:8px;margin-top:20px}.card{width:210px} .card{background:#fff;border:1px solid var(--border);padding:18px} .card strong{display:block;font:500 22px 'DM Mono',monospace;color:var(--teal);margin-bottom:6px} .card span{font-size:12px;color:var(--muted)} .markets{display:grid;grid-template-columns:1fr 1fr;gap:14px} .market{border:1px solid var(--border);padding:20px;background:var(--surface)} .market h3{font:500 19px 'Playfair Display',serif;margin-bottom:8px} .market p{font-size:13px} .callout{border-left:3px solid var(--accent);padding-left:17px;font-size:14px} .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px} .tags span{background:#DDE3DA;padding:6px 10px;font:400 11px 'DM Mono',monospace;letter-spacing:.04em;color:var(--muted)} footer{padding:22px 48px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap} @media(max-width:650px){body{padding:0}header,section,footer{padding-left:24px;padding-right:24px}.metrics{grid-template-columns:1fr 1fr}.grid,.markets,.cards{grid-template-columns:1fr}}
+
+.lang-switch{position:fixed;top:18px;right:18px;z-index:1000;display:flex;background:#fff;border:1px solid #D4DAD0;border-radius:999px;padding:3px;box-shadow:0 4px 16px rgba(24,56,41,.10)}
+.lang-switch button{border:0;background:transparent;color:#6B7A6E;font:500 10px 'DM Mono',monospace;letter-spacing:.08em;padding:7px 11px;border-radius:999px;cursor:pointer}
+.lang-switch button.active{background:#183829;color:#fff}
+.lang-panel{display:none}.lang-panel.active{display:block}
+@media print{.lang-switch{display:none}}
+
+/* Mobile layout refinement */
+@media (max-width: 760px) {
+  body {
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .doc {
+    width: 100%;
+    max-width: none;
+    overflow: hidden;
+  }
+
+  header, section, footer {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  header {
+    padding-top: 78px !important;
+    padding-bottom: 32px !important;
+  }
+
+  .lang-switch {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+
+  .grid,
+  .markets {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  /* Results: 2 x 2 on mobile, never four narrow columns. */
+  .cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    width: 100%;
+  }
+
+  .card {
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 18px 14px !important;
+  }
+
+  .card strong {
+    font-size: 21px !important;
+    line-height: 1.15 !important;
+    white-space: nowrap;
+  }
+
+  .card span,
+  .market p,
+  .callout,
+  li {
+    text-align: justify !important;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+
+  .card span {
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+  }
+
+  .lead {
+    text-align: justify !important;
+    text-justify: inter-word;
+    hyphens: auto;
+    font-size: 20px !important;
+    line-height: 1.55 !important;
+  }
+
+  ul {
+    padding-left: 0 !important;
+  }
+
+  li {
+    margin-bottom: 8px !important;
+    padding-left: 15px !important;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .cards,
+  .metrics {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* Texto justificado */
+.doc p,
+.doc li,
+.doc .callout,
+.doc .market p,
+.doc .card p,
+.doc .result-card p {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+@media (max-width: 760px) {
+  .doc p,
+  .doc li,
+  .doc .callout,
+  .doc .market p,
+  .doc .card p,
+  .doc .result-card p {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+}
+
+
+/* Título da secção de resultados justificado */
+.resultados-title,
+.results-title,
+section h2 {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+
+/* Mobile typography */
+@media (max-width: 760px) {
+  .doc { overflow-x: hidden; }
+
+  .doc p,
+  .doc li,
+  .doc .callout,
+  .doc .market p,
+  .doc .card p,
+  .doc .result-card p {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .doc h1,
+  .doc h2,
+  .doc h3,
+  .doc .col-heading,
+  .doc .eyebrow,
+  .doc .label {
+    text-align: left !important;
+    hyphens: none;
+  }
+
+  .doc h2 { line-height: 1.25; }
+  .doc .context-val,
+  .doc .result-card strong,
+  .doc .metric .number,
+  .doc .metric .label {
+    text-align: left !important;
+  }
+}
+
+
+/* Métricas responsivas para ecrãs pequenos e intermédios */
+@media (max-width: 900px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .metric {
+    padding: 22px 18px !important;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .metric:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .metric:nth-child(n+3) {
+    border-bottom: 0;
+  }
+
+  .metric strong {
+    font-size: 23px !important;
+    line-height: 1.15 !important;
+    white-space: nowrap;
+  }
+
+  .metric span {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  .metric small {
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .metrics {
+    grid-template-columns: 1fr !important;
+  }
+
+  .metric {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .metric:last-child {
+    border-bottom: 0;
+  }
+}
+
+
+/* Alinhamento das métricas com a grelha de conteúdo */
+.metrics {
+  margin-left: 48px;
+  margin-right: 48px;
+}
+
+@media (max-width: 760px) {
+  .metrics {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch" aria-label="Language selector">
+  <button id="ptBtn" class="active" type="button" onclick="setLanguage('pt')">PT</button>
+  <button id="enBtn" type="button" onclick="setLanguage('en')">EN</button>
+</div>
+<div id="pt" class="lang-panel active"><div class="doc">
+<header><div class="eyebrow">Estudo de Caso · Gestão de Operações e Programas · 2017–2020</div><h1>Sabert<br><em>Programa de Internacionalização</em></h1><p class="subtitle">Gestão de operações, expansão internacional e execução de programa cofinanciado por fundos europeus.</p><div class="meta"><div><small>Função</small><span>Diretora de Operações</span></div><div><small>Duração</small><span>36 meses</span></div><div><small>Mercados</small><span>China · Espanha</span></div><div><small>Programa</small><span>COMPETE 2020 · Portugal 2020</span></div></div></header>
+<section><span class="label">Visão geral</span><p class="lead">Enquanto Diretora de Operações da Sabert Lda, fui responsável pela execução de um programa de internacionalização de 36 meses, desde o planeamento das ações de mercado até ao acompanhamento operacional, financeiro e documental. O programa incidiu na China e em Espanha e cumpriu o resultado de exportação contratualizado, com as exportações a atingirem 32,3% do volume de negócios, face a uma meta de pelo menos 30%.</p></section>
+<div class="metrics"><div class="metric"><strong>32,3%</strong><span>Exportações / volume de negócios</span><small>Meta ≥ 30%</small></div><div class="metric"><strong>122.885 €</strong><span>Orçamento aprovado</span><small>Programa</small></div><div class="metric"><strong>74.697,88 €</strong><span>Despesa certificada</span><small>Execução</small></div><div class="metric"><strong>0</strong><span>Correções</span><small>4 pedidos de reembolso</small></div></div>
+<section><div class="grid"><div><span class="label">Responsabilidade</span><h2>Da estratégia à execução</h2><ul><li>Conceção e implementação do plano de internacionalização para a China e Espanha.</li><li>Coordenação de estudos de mercado, prospeção comercial e missões internacionais.</li><li>Gestão de relações com parceiros externos, distribuidores, agências e entidades institucionais.</li><li>Coordenação do registo internacional da marca e do desenvolvimento do website internacional e materiais promocionais.</li><li>Gestão do orçamento aprovado por rubrica, em articulação com a contabilidade e entidades de certificação.</li><li>Preparação da documentação de encerramento e do relatório final de execução para a AICEP.</li></ul></div><div><span class="label">Âmbito do programa</span><h2>Execução transversal</h2><ul><li>Planeamento e execução das ações de internacionalização nos mercados definidos.</li><li>Desenvolvimento comercial e de parceiros.</li><li>Marca e infraestrutura digital para mercados internacionais.</li><li>Acompanhamento orçamental e elegibilidade da despesa.</li><li>Coordenação da empresa com fornecedores, contabilidade e entidades envolvidas no programa.</li><li>Governança, documentação, relatórios e conformidade.</li></ul></div></div></section>
+<section class="results"><span class="label">Resultados</span><h2>Resultados face ao objetivo contratualizado</h2><div class="cards"><div class="card"><strong>32,3%</strong><span>Exportações como percentagem do volume de negócios em 2021, acima da meta contratual de ≥30%.</span></div><div class="card"><strong>+25 pp</strong><span>Aumento da percentagem de exportações, de 7,03% antes do programa para 32,3%.</span></div><div class="card"><strong>4/4</strong><span>Pedidos de reembolso submetidos sem correções.</span></div><div class="card"><strong>5/5</strong><span>Categorias do mapa de observações do TOC sem anomalias reportadas.</span></div></div></section>
+<section><span class="label">Estratégia por mercado</span><div class="markets"><div class="market"><h3>China · Foco</h3><p>Prospecção de distribuição e desenvolvimento de relações com clientes e parceiros existentes, apoiados por ações comerciais, marketing digital e desenvolvimento de mercado.</p></div><div class="market"><h3>Espanha · Consolidação</h3><p>Desenvolvimento de relações comerciais e prospeção de novos parceiros no mercado espanhol.</p></div></div></section>
+<section><span class="label">Governança e gestão financeira</span><p class="callout">Orçamento aprovado de 122.885 €, com 74.697,88 € de despesa certificada. A documentação final do projeto e o processo de pedidos de reembolso foram concluídos sem correções nos quatro pedidos submetidos.</p><div class="tags"><span>Gestão de Programas</span><span>Gestão de Operações</span><span>Gestão Orçamental</span><span>Gestão de Partes Interessadas</span><span>Internacionalização</span><span>Governança</span><span>Conformidade</span><span>Entrada em Mercados</span><span>Execução Estratégica</span></div></section>
+
+<footer><span>Ana Noronha · Project, Programme & Operations Manager</span><span>Portfólio · LinkedIn</span></footer>
+</div></div>
+<div id="en" class="lang-panel"><div class="doc">
+<header><div class="eyebrow">Case Study · Operations & Programme Delivery · 2017–2020</div><h1>Sabert<br><em>Internationalisation Programme</em></h1><p class="subtitle">Operations leadership, international market expansion and delivery of an EU co-funded programme.</p><div class="meta"><div><small>Role</small><span>Director of Operations</span></div><div><small>Duration</small><span>36 months</span></div><div><small>Markets</small><span>China · Spain</span></div><div><small>Programme</small><span>COMPETE 2020 · Portugal 2020</span></div></div></header>
+<section><span class="label">Executive Overview</span><p class="lead">As Director of Operations at Sabert Lda, I was responsible for delivering a 36-month internationalisation programme, from market planning through operational, financial and project documentation. The programme covered China and Spain and achieved the contracted export result, with exports reaching 32.3% of turnover against a target of at least 30%.</p></section>
+<div class="metrics"><div class="metric"><strong>32.3%</strong><span>Exports / turnover</span><small>Target ≥ 30%</small></div><div class="metric"><strong>€122,885</strong><span>Approved budget</span><small>Programme</small></div><div class="metric"><strong>€74,697.88</strong><span>Certified expenditure</span><small>Execution</small></div><div class="metric"><strong>0</strong><span>Corrections</span><small>4 reimbursement claims</small></div></div>
+<section><div class="grid"><div><span class="label">My Role</span><h2>From Strategy to Execution</h2><ul><li>Designed and implemented the internationalisation plan for China and Spain.</li><li>Coordinated market research, commercial prospecting and international missions.</li><li>Managed relationships with external partners, distributors, agencies and institutional stakeholders.</li><li>Coordinated international trademark registration and the development of the international website and promotional materials.</li><li>Managed the approved budget by cost category, in coordination with accounting and certification stakeholders.</li><li>Prepared project closure documentation and the final execution report for AICEP.</li></ul></div><div><span class="label">Programme Scope</span><h2>Cross-functional Delivery</h2><ul><li>Planning and delivery of the internationalisation activities across the defined markets.</li><li>Commercial and partner development.</li><li>Brand and digital infrastructure for international markets.</li><li>Budget tracking and expenditure eligibility.</li><li>Coordination across the business, suppliers, accounting and programme stakeholders.</li><li>Governance, documentation, reporting and compliance.</li></ul></div></div></section>
+<section class="results"><span class="label">Business Results</span><h2>Results Against the Contracted Objective</h2><div class="cards"><div class="card"><strong>32.3%</strong><span>Exports as a share of total turnover in 2021, above the contractual target of ≥30%.</span></div><div class="card"><strong>+25 pp</strong><span>Increase in export share, from 7.03% before the programme to 32.3%.</span></div><div class="card"><strong>4/4</strong><span>Reimbursement claims submitted without corrections.</span></div><div class="card"><strong>5/5</strong><span>TOC observation categories with no reported anomalies.</span></div></div></section>
+<section><span class="label">Market Strategy</span><div class="markets"><div class="market"><h3>China · Focus</h3><p>Prospecting for distribution and developing relationships with existing customers and partners, supported by commercial activity, digital marketing and market development.</p></div><div class="market"><h3>Spain · Consolidation</h3><p>Developing commercial relationships and prospecting for new partners in the Spanish market.</p></div></div></section>
+<section><span class="label">Governance & Financial Management</span><p class="callout">Approved budget of €122,885, with €74,697.88 in certified expenditure. Final project documentation and the reimbursement process were completed without corrections across the four claims submitted.</p><div class="tags"><span>Programme Management</span><span>Operations Management</span><span>Budget Management</span><span>Stakeholder Management</span><span>Internationalisation</span><span>Governance</span><span>Compliance</span><span>Market Entry</span><span>Strategic Execution</span></div></section>
+
+<footer><span>Ana Noronha · Project, Programme & Operations Manager</span><span>Portfolio · LinkedIn</span></footer>
+</div></div>
+<script>
+function setLanguage(lang) {
+  document.getElementById('pt').classList.toggle('active', lang === 'pt');
+  document.getElementById('en').classList.toggle('active', lang === 'en');
+  document.getElementById('ptBtn').classList.toggle('active', lang === 'pt');
+  document.getElementById('enBtn').classList.toggle('active', lang === 'en');
+  document.documentElement.lang = lang === 'pt' ? 'pt-PT' : 'en';
+  localStorage.setItem('sabertLanguage', lang);
+}
+(function() {
+  const saved = localStorage.getItem('sabertLanguage');
+  if (saved === 'en') setLanguage('en');
+})();
+</script>
+</body>
+</html>
