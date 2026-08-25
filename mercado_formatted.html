@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="pt-PT">
+<head>
+<title>Mercado no Castelo | Case Study | Ana Noronha</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<meta content="Project and operations management of Mercado no Castelo, a recurring curated markets and events project delivered across Northern Portugal since 2022." name="description"/>
+<meta content="website" property="og:type"/>
+<meta content="Mercado no Castelo | Ana Noronha" property="og:title"/>
+<meta content="Project and operations management of Mercado no Castelo, a recurring curated markets and events project delivered across Northern Portugal since 2022." property="og:description"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Mercado no Castelo | Ana Noronha" name="twitter:title"/>
+<meta content="Project and operations management of Mercado no Castelo, a recurring curated markets and events project delivered across Northern Portugal since 2022." name="twitter:description"/>
+
+<style>
+/* ================================================================
+   MERCADO NO CASTELO — Case Study
+   Stylesheet consolidado (Agosto 2026)
+   ================================================================ */
+
+/* --- Tokens ---------------------------------------------------- */
+:root {
+  --bg:          #F8F8F1;
+  --surface:     #F0EFE8;
+  --border:      #DDD9D0;
+  --text:        #363436;
+  --muted:       #7A7177;
+  --accent:      #C27369;
+  --gold:        #AB865F;
+  --header-bg:   #1C3C4B;
+  --header-text: #F6F6F6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #1A1A18;
+    --surface:     #252420;
+    --border:      #3A3730;
+    --text:        #EDE9E3;
+    --muted:       #8A8785;
+    --accent:      #D4897F;
+    --gold:        #C09A72;
+    --header-bg:   #1C3C4B;
+    --header-text: #EDE9E3;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:          #1A1A18;
+  --surface:     #252420;
+  --border:      #3A3730;
+  --text:        #EDE9E3;
+  --muted:       #8A8785;
+  --accent:      #D4897F;
+  --gold:        #C09A72;
+  --header-bg:   #1C3C4B;
+  --header-text: #EDE9E3;
+}
+
+/* --- Reset ----------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+img, svg, video { max-width: 100%; height: auto; }
+
+/* --- Base ------------------------------------------------------ */
+html { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.65;
+  margin: 0;
+  padding: 0 0 40px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+p, li, span {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* ================================================================
+   LANGUAGE SWITCHER
+   ================================================================ */
+
+.lang-radio {
+  display: none !important;
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  border: 0 !important;
+}
+
+.language-bar {
+  width: min(780px, 100%);
+  height: 64px;
+  margin: 0 auto;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: transparent;
+  position: relative;
+  z-index: 20;
+}
+
+.language-bar .lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255,255,255,.96);
+  border: 1px solid #D4DAD0;
+  border-radius: 999px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+
+.language-bar .lang-switch label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #6B7A6E;
+  background: transparent;
+  font: 500 11px/1 'Josefin Sans', sans-serif;
+  letter-spacing: .08em;
+}
+
+/* Estado linguístico via radio CSS-only */
+body:has(#langPT:checked) .lang-panel#pt,
+body:has(#langEN:checked) .lang-panel#en  { display: block !important; }
+body:has(#langPT:checked) .lang-panel#en,
+body:has(#langEN:checked) .lang-panel#pt  { display: none !important; }
+
+body:has(#langPT:checked) .language-bar label[for="langPT"],
+body:has(#langEN:checked) .language-bar label[for="langEN"] {
+  background: var(--header-bg) !important;
+  color: #fff !important;
+}
+body:has(#langPT:checked) .language-bar label[for="langEN"],
+body:has(#langEN:checked) .language-bar label[for="langPT"] {
+  background: transparent !important;
+  color: #6B7A6E !important;
+}
+
+/* ================================================================
+   PAINÉIS DE LÍNGUA E DOCUMENTO
+   ================================================================ */
+
+.language-content { width: 100%; }
+
+.lang-panel        { display: none; width: 100%; }
+.lang-panel.active { display: block; }
+
+.lang-panel .document {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
+
+.header {
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.label-tag {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--header-text);
+  opacity: .45;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+}
+
+.author-tag {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--header-text);
+  opacity: .5;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 6vw, 54px);
+  font-weight: 500;
+  color: var(--header-text);
+  line-height: 1.05;
+  letter-spacing: -.01em;
+}
+
+.header-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.project-descriptor {
+  font-size: 11px;
+  line-height: 1.65;
+  letter-spacing: .075em;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: rgba(246,246,246,.68);
+  margin-top: -2px;
+}
+
+.header-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  border-top: 1px solid rgba(255,255,255,.12);
+  padding-top: 18px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.meta-label {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--header-text);
+  opacity: .45;
+}
+
+.meta-value {
+  color: var(--header-text);
+  opacity: .85;
+}
+
+/* ================================================================
+   DESAFIO DE EXECUÇÃO
+   ================================================================ */
+
+.recruiter-challenge {
+  padding: 20px 48px 22px 46px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.recruiter-challenge .challenge-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.recruiter-challenge p {
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 72ch;
+  color: var(--text);
+}
+
+/* ================================================================
+   WRAPPER PRINCIPAL
+   ================================================================ */
+
+.body {
+  border: 1px solid var(--border);
+  border-top: none;
+}
+
+/* ================================================================
+   RESUMO
+   ================================================================ */
+
+.summary {
+  padding: 36px 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary p {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 68ch;
+}
+
+/* ================================================================
+   MÉTRICAS PRIMÁRIAS
+   ================================================================ */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.metric {
+  padding: 28px 32px;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  min-width: 0;
+}
+.metric:last-child { border-right: none; }
+
+.metric-number {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+.metric-desc {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ================================================================
+   MÉTRICAS SECUNDÁRIAS
+   ================================================================ */
+
+.secondary-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.sec-metric {
+  padding: 20px 32px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.sec-metric:last-child { border-right: none; }
+
+.sec-number {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sec-desc {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ================================================================
+   DUAS COLUNAS
+   ================================================================ */
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  border-bottom: 1px solid var(--border);
+}
+
+.col { padding: 32px 40px; }
+.col:first-child { border-right: 1px solid var(--border); }
+
+.col-heading {
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.col ul li {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  padding-left: 16px;
+  position: relative;
+}
+
+.col ul li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--border);
+  font-size: 12px;
+  top: .05em;
+}
+
+/* ================================================================
+   EDIÇÃO ESPECIAL
+   ================================================================ */
+
+.special-edition {
+  padding: 28px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.special-edition .label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.special-edition h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.special-edition p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 68ch;
+}
+
+/* ================================================================
+   CONTEXTO
+   ================================================================ */
+
+.context-strip {
+  padding: 24px 48px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 48px;
+}
+
+.dot { display: none; }
+
+.context-item {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 12px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.context-key {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.context-val {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* ================================================================
+   MODELO DIGITAL
+   ================================================================ */
+
+.digital-model {
+  padding: 28px 48px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.model-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.model-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.model-item:first-child { border-left: 3px solid var(--gold); }
+.model-item:last-child  { border-left: 3px solid var(--accent); }
+
+.model-label {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.model-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* ================================================================
+   DESEMPENHO
+   ================================================================ */
+
+.perf-section {
+  padding: 32px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.perf-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.perf-sub {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.perf-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.perf-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.perf-num {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.perf-label {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.perf-bench {
+  display: block;
+  font-size: 9px;
+  letter-spacing: .06em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.perf-note {
+  line-height: 1.65;
+  color: var(--muted);
+  font-style: italic;
+  border-left: 2px solid var(--border);
+  padding-left: 14px;
+}
+
+/* ================================================================
+   TAGS
+   ================================================================ */
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 24px 48px 32px;
+}
+
+.tag {
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+
+.footer {
+  padding: 22px 48px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.footer-link {
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--muted);
+  text-decoration: none;
+}
+.footer-link:hover { color: var(--accent); }
+
+/* ================================================================
+   RESPONSIVE — 760px
+   ================================================================ */
+
+@media (max-width: 760px) {
+  body { padding: 0 0 28px; }
+
+  .language-bar {
+    width: 100%;
+    height: 56px;
+    padding: 10px 16px;
+  }
+
+  .lang-panel .document { max-width: 100%; }
+
+  .header { padding: 30px 24px 32px; }
+  .header-top { gap: 10px; }
+  .header-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+  }
+  .project-descriptor { font-size: 10px; letter-spacing: .05em; }
+
+  .summary { padding: 28px 24px; }
+  .summary p { font-size: 16px; max-width: none; }
+
+  .metrics,
+  .secondary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .metric, .sec-metric { padding: 18px; }
+  .metric-number { font-size: 24px; }
+  .metric-desc, .sec-desc { font-size: 10px; }
+  .sec-number { font-size: 16px; }
+
+  .two-col { grid-template-columns: 1fr; }
+  .col {
+    padding: 24px 24px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+  }
+  .col:last-child { border-bottom: none; }
+
+  .recruiter-challenge { padding: 18px 24px 20px 22px; }
+  .special-edition { padding: 24px; }
+
+  .context-strip {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 20px 24px;
+  }
+  .context-item {
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .digital-model { padding: 24px; }
+  .model-grid { grid-template-columns: 1fr; }
+
+  .perf-section { padding: 24px; }
+  .perf-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .tags { padding: 20px 24px 28px; }
+  .footer { padding: 20px 24px; }
+}
+
+@media (max-width: 420px) {
+  .header-meta { grid-template-columns: 1fr; }
+  .metrics,
+  .secondary-metrics,
+  .perf-grid { grid-template-columns: 1fr; }
+  .metric, .sec-metric { border-right: none; }
+}
+
+/* ================================================================
+   JUSTIFICAÇÃO COM HIFENAÇÃO
+   ================================================================ */
+
+.summary p,
+.recruiter-challenge p,
+.col ul li,
+.special-edition p,
+.model-text,
+.perf-note {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+@media print {
+  .language-bar { display: none !important; }
+  .lang-panel { display: block !important; }
+}
+</style>
+</head>
+<body>
+<input checked="" class="lang-radio" id="langPT" name="language" type="radio"/>
+<input class="lang-radio" id="langEN" name="language" type="radio"/>
+
+<div class="language-bar">
+  <div class="lang-switch">
+    <label for="langPT" id="ptBtn">PT</label>
+    <label for="langEN" id="enBtn">EN</label>
+  </div>
+</div>
+
+<div class="language-content">
+
+<!-- ============================================================
+     PORTUGUÊS
+     ============================================================ -->
+<div class="lang-panel active" id="pt">
+<div class="document">
+
+<div class="header">
+  <div class="header-top">
+    <span class="label-tag">Estudo de Caso · 2022-2026</span>
+    <span class="author-tag">Ana Noronha</span>
+  </div>
+  <h1 class="header-title">Mercado<br/><em>no Castelo</em></h1>
+  <div class="project-descriptor">PROJETO DE MERCADOS URBANOS E EVENTOS DE CURADORIA INDEPENDENTE · CRIAÇÃO, PRODUÇÃO E GESTÃO OPERACIONAL · NORTE DE PORTUGAL · 2022-PRESENTE</div>
+  <div class="header-meta">
+    <div class="meta-item">
+      <span class="meta-label">Função</span>
+      <span class="meta-value">Co-Fundadora e Gestora de Operações</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Edições realizadas</span>
+      <span class="meta-value">13</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Geografia</span>
+      <span class="meta-value">Norte de Portugal</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Tipo</span>
+      <span class="meta-value">Projeto recorrente · múltiplas partes interessadas</span>
+    </div>
+  </div>
+</div>
+
+<section class="recruiter-challenge">
+  <span class="challenge-label">Desafio de execução</span>
+  <p>Construir um modelo operacional repetível para edições recorrentes, adaptável a diferentes espaços, fornecedores, marcas e stakeholders.</p>
+</section>
+
+<div class="body">
+
+  <div class="summary">
+    <p>O Mercado no Castelo é um projeto de mercados urbanos e eventos de curadoria independente, criado em 2022, que reúne marcas, criadores e público em diferentes espaços do Norte de Portugal. Co-fundei e desenvolvi o projeto, estruturando o modelo operacional, a curadoria, a produção, a comunicação e a experiência de cada edição, ao longo de 13 edições desde 2022.</p>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-number">+60K</div>
+      <div class="metric-desc">Visitantes acumulados</div>
+    </div>
+    <div class="metric">
+      <div class="metric-number">+350</div>
+      <div class="metric-desc">Marcas selecionadas e geridas</div>
+    </div>
+    <div class="metric">
+      <div class="metric-number">13</div>
+      <div class="metric-desc">Edições · 2022-2026</div>
+    </div>
+  </div>
+
+  <div class="secondary-metrics">
+    <div class="sec-metric">
+      <span class="sec-number">+1.8M</span>
+      <span class="sec-desc">Alcance digital acumulado</span>
+    </div>
+    <div class="sec-metric">
+      <span class="sec-number">1,052K</span>
+      <span class="sec-desc">Visualizações de conteúdo</span>
+    </div>
+    <div class="sec-metric">
+      <span class="sec-number">+8.8K</span>
+      <span class="sec-desc">Interações digitais / edição</span>
+    </div>
+    <div class="sec-metric">
+      <span class="sec-number">+11K</span>
+      <span class="sec-desc">Seguidores orgânicos acumulados</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <p class="col-heading">Responsabilidade e execução</p>
+      <ul>
+        <li><strong>Website do projeto</strong>: contribuição para a sua realização e gestão contínua do site.</li>
+        <li><strong>Curadoria de mais de 350 marcas</strong>, através de um processo estruturado de seleção e integração.</li>
+        <li><strong>Gestão do ciclo completo de cada edição</strong>, incluindo seleção de marcas, planeamento logístico, execução e encerramento.</li>
+        <li><strong>Coordenação de fornecedores externos</strong>, incluindo espaços, equipas técnicas, fotografia, comunicação e logística.</li>
+        <li><strong>Estruturação do modelo de receitas antecipadas</strong>, com pagamentos dos expositores antes do evento para assegurar saldo de tesouraria positivo.</li>
+        <li><strong>Gestão de parceiros, patrocinadores, espaços e entidades locais.</strong></li>
+        <li><strong>Desenvolvimento da estratégia digital</strong>, operações de conteúdo, Reels, campanhas Meta Ads e análise cruzada com GA4.</li>
+        <li><strong>Elaboração de relatórios de desempenho por edição</strong>, com recomendações para o ciclo seguinte.</li>
+        <li><strong>Desenvolvimento do plano estratégico 2026-2028</strong>, abrangendo evolução do modelo, opções de crescimento e de estrutura fiscal.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <p class="col-heading">Resultados e impacto</p>
+      <ul>
+        <li><strong>Consolidação de um modelo operacional sustentável</strong>, adaptável a diferentes espaços, formatos e contextos.</li>
+        <li><strong>Estruturação de processos documentados e replicáveis</strong>, permitindo maior consistência entre edições.</li>
+        <li><strong>Desenvolvimento de uma rede curada de marcas e criadores independentes</strong>, fortalecendo a identidade e a proposta do projeto.</li>
+        <li><strong>Consolidação da presença do projeto em diferentes localizações</strong>, nomeadamente Braga, Porto e Vila do Conde.</li>
+        <li><strong>Desenvolvimento de uma comunidade digital orgânica e de uma presença de marca consistente</strong> entre edições.</li>
+        <li><strong>Edição especial em Serralves</strong>, adaptando o modelo operacional a um contexto institucional com requisitos distintos de produção, logística, parceiros e experiência de público.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="context-strip">
+    <div class="context-item">
+      <span class="context-key">Fundado</span>
+      <span class="context-val">2022</span>
+    </div>
+    <div class="context-item">
+      <span class="context-key">Público</span>
+      <span class="context-val">76.8% mulheres · 88,9% entre 35-54</span>
+    </div>
+    <div class="context-item">
+      <span class="context-key">Localizações</span>
+      <span class="context-val">Braga · Porto · Vila do Conde</span>
+    </div>
+    <div class="context-item">
+      <span class="context-key">Site</span>
+      <span class="context-val">mercadonocastelo.pt</span>
+    </div>
+  </div>
+
+  <div class="digital-model">
+    <span class="col-heading">Modelo digital</span>
+    <div class="model-grid">
+      <div class="model-item">
+        <span class="model-label">Orgânico</span>
+        <p class="model-text">Estrutural e contínuo entre edições, desenvolvido através de operações de conteúdo consistentes desde 2022. A comunidade existe e cresce independentemente dos meios pagos.</p>
+      </div>
+      <div class="model-item">
+        <span class="model-label">Pago</span>
+        <p class="model-text">Amplificação de curta duração em torno de cada evento. Não existe dependência estrutural de publicidade, o programa mantém presença digital sem investimento pago.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="perf-section">
+    <div class="perf-heading">
+      <span class="col-heading">Desempenho digital, campanha MC13 (Junho de 2026)</span>
+      <span class="perf-sub">Análise cruzada Meta Ads + Google Analytics 4</span>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-item">
+        <span class="perf-num">5.2%</span>
+        <span class="perf-label">CTR</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">€2.34</span>
+        <span class="perf-label">CPM</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">20K+</span>
+        <span class="perf-label">Alcance único</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">+1,125%</span>
+        <span class="perf-label">Tráfego do site durante a campanha</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">&lt;€0.55</span>
+        <span class="perf-label">Custo por visita confirmada (GA4)</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">+430%</span>
+        <span class="perf-label">Aumento da pesquisa orgânica <span class="perf-bench">efeito halo</span></span>
+      </div>
+    </div>
+    <p class="perf-note">A análise cruzada dos dados do Meta Ads Manager com o GA4 permitiu identificar discrepâncias de atribuição e efeito halo orgânico. Incluiu recomendações estruturadas para a MC14, cobrindo configuração de pixel, sequência orçamental e segmentação de audiências.</p>
+  </div>
+
+</div><!-- .body -->
+
+<div class="tags">
+  <span class="tag">Gestão de Programas</span>
+  <span class="tag">Operações</span>
+  <span class="tag">Gestão de Partes Interessadas</span>
+  <span class="tag">Estratégia Digital</span>
+  <span class="tag">Meta Ads</span>
+  <span class="tag">Google Analytics 4</span>
+  <span class="tag">Gestão Orçamental</span>
+  <span class="tag">Gestão de Fornecedores</span>
+  <span class="tag">Execução de Eventos</span>
+  <span class="tag">Liderança Transversal</span>
+  <span class="tag">Análise de Dados</span>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a class="footer-link" href="https://linkedin.com/in/ana-noronha">linkedin.com/in/ana-noronha</a>
+  </div>
+</div>
+
+</div><!-- .document -->
+</div><!-- #pt -->
+
+<!-- ============================================================
+     ENGLISH
+     ============================================================ -->
+<div class="lang-panel" id="en">
+<div class="document">
+
+<div class="header">
+  <div class="header-top">
+    <span class="label-tag">Case Study · 2022-2026</span>
+    <span class="author-tag">Ana Noronha</span>
+  </div>
+  <h1 class="header-title">Mercado<br/><em>no Castelo</em></h1>
+  <div class="project-descriptor">INDEPENDENT CURATED MARKETS &amp; EVENTS PROJECT · CREATION, PRODUCTION &amp; OPERATIONS MANAGEMENT · NORTHERN PORTUGAL · 2022-PRESENT</div>
+  <div class="header-meta">
+    <div class="meta-item">
+      <span class="meta-label">Role</span>
+      <span class="meta-value">Co-Founder &amp; Operations Manager</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Editions delivered</span>
+      <span class="meta-value">13</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Geography</span>
+      <span class="meta-value">Northern Portugal</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Type</span>
+      <span class="meta-value">Recurring project · multi-stakeholder</span>
+    </div>
+  </div>
+</div>
+
+<section class="recruiter-challenge">
+  <span class="challenge-label">Delivery challenge</span>
+  <p>Build a repeatable operating model for recurring editions, adaptable to different venues, suppliers, brands and stakeholders.</p>
+</section>
+
+<div class="body">
+
+  <div class="summary">
+    <p>Mercado no Castelo is a recurring curated markets and events project, created in 2022, bringing independent brands, creators and audiences together across different venues in Northern Portugal. I co-founded and developed the project from the ground up, structuring its operating model, curation, production, communications and audience experience across 13 editions since 2022.</p>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-number">+60K</div>
+      <div class="metric-desc">Cumulative visitors</div>
+    </div>
+    <div class="metric">
+      <div class="metric-number">+350</div>
+      <div class="metric-desc">Brands selected and managed</div>
+    </div>
+    <div class="metric">
+      <div class="metric-number">13</div>
+      <div class="metric-desc">Editions · 2022-2026</div>
+    </div>
+  </div>
+
+  <div class="secondary-metrics">
+    <div class="sec-metric">
+      <span class="sec-number">+1.8M</span>
+      <span class="sec-desc">Accumulated digital reach</span>
+    </div>
+    <div class="sec-metric">
+      <span class="sec-number">1,052K</span>
+      <span class="sec-desc">Content views</span>
+    </div>
+    <div class="sec-metric">
+      <span class="sec-number">+8.8K</span>
+      <span class="sec-desc">Digital interactions / edition</span>
+    </div>
+    <div class="sec-metric">
+      <span class="sec-number">+11K</span>
+      <span class="sec-desc">Organic followers accumulated</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <p class="col-heading">Responsibility &amp; Delivery</p>
+      <ul>
+        <li><strong>Delivered the project website</strong> and manage it on an ongoing basis.</li>
+        <li><strong>Full programme lifecycle per edition</strong>: brand selection, logistics planning, execution, close-out</li>
+        <li><strong>Curated 350+ brands</strong> through a structured selection and onboarding process</li>
+        <li><strong>Coordinated external service providers</strong>: venues, technical, photography, communication, logistics</li>
+        <li><strong>Pre-event revenue model</strong>: exhibitor fees structured before each event to ensure positive cash flow</li>
+        <li><strong>Stakeholder management</strong> across partners, sponsors, venues and local authorities</li>
+        <li><strong>Digital strategy</strong>: content operations, Reels, Meta Ads campaigns, GA4 cross-analysis</li>
+        <li><strong>Produced edition-by-edition performance reports</strong> with recommendations for the next cycle</li>
+        <li><strong>Authored 2026-2028 strategic plan</strong> covering model evolution, growth levers and fiscal options</li>
+      </ul>
+    </div>
+    <div class="col">
+      <p class="col-heading">Outcomes &amp; impact</p>
+      <ul>
+        <li>Built the project from the ground up, delivering 13 editions since 2022 with consistent positive results</li>
+        <li>Scaled to 60K+ cumulative visitors maintaining quality across different venues and formats</li>
+        <li>Consolidated a curated network of 350+ independent brands and creators</li>
+        <li>Built an organic digital community of 11K+ followers and 1.8M accumulated reach</li>
+        <li>Expanded geographic footprint across 3 cities in Northern Portugal</li>
+        <li>Established documented processes and a tested logistics model, repeatable across different contexts</li>
+        <li><strong>Special edition at Serralves</strong>, adapting the operating model to an institutional context with distinct production, logistics, partner and audience-experience requirements.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="context-strip">
+    <div class="context-item">
+      <span class="context-key">Founded</span>
+      <span class="context-val">2022</span>
+    </div>
+    <div class="context-item">
+      <span class="context-key">Audience</span>
+      <span class="context-val">76.8% women · 88.9% aged 35-54</span>
+    </div>
+    <div class="context-item">
+      <span class="context-key">Locations</span>
+      <span class="context-val">Braga · Porto · Vila do Conde</span>
+    </div>
+    <div class="context-item">
+      <span class="context-key">Site</span>
+      <span class="context-val">mercadonocastelo.pt</span>
+    </div>
+  </div>
+
+  <div class="digital-model">
+    <span class="col-heading">Digital model</span>
+    <div class="model-grid">
+      <div class="model-item">
+        <span class="model-label">Organic</span>
+        <p class="model-text">Structural and continuous between editions, built through consistent content operations since 2022. The community exists and grows independently of paid media.</p>
+      </div>
+      <div class="model-item">
+        <span class="model-label">Paid</span>
+        <p class="model-text">Short-window amplification around each event only. Not a structural dependency, the project has an established digital presence without advertising.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="perf-section">
+    <div class="perf-heading">
+      <span class="col-heading">Digital performance, MC13 campaign (June 2026)</span>
+      <span class="perf-sub">Cross-analysis of Meta Ads and Google Analytics 4 data</span>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-item">
+        <span class="perf-num">5.2%</span>
+        <span class="perf-label">CTR</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">€2.34</span>
+        <span class="perf-label">CPM</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">20K+</span>
+        <span class="perf-label">Unique reach</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">+1,125%</span>
+        <span class="perf-label">Site traffic during campaign</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">&lt;€0.55</span>
+        <span class="perf-label">Cost per confirmed visit (GA4)</span>
+      </div>
+      <div class="perf-item">
+        <span class="perf-num">+430%</span>
+        <span class="perf-label">Increase in organic search <span class="perf-bench">halo effect</span></span>
+      </div>
+    </div>
+    <p class="perf-note">Campaign analysis cross-referenced Meta Ads Manager with GA4 data, identifying attribution discrepancies and organic halo effects. Included structured recommendations for MC14 covering pixel configuration, budget sequencing and audience segmentation.</p>
+  </div>
+
+</div><!-- .body -->
+
+<div class="tags">
+  <span class="tag">Programme Management</span>
+  <span class="tag">Operations</span>
+  <span class="tag">Stakeholder Management</span>
+  <span class="tag">Digital Strategy</span>
+  <span class="tag">Meta Ads</span>
+  <span class="tag">Google Analytics 4</span>
+  <span class="tag">Budget Management</span>
+  <span class="tag">Vendor Management</span>
+  <span class="tag">Event Delivery</span>
+  <span class="tag">Cross-functional Leadership</span>
+  <span class="tag">Data Analysis</span>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a class="footer-link" href="https://linkedin.com/in/ana-noronha">linkedin.com/in/ana-noronha</a>
+  </div>
+</div>
+
+</div><!-- .document -->
+</div><!-- #en -->
+
+</div><!-- .language-content -->
+</body>
+</html>
