@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana Noronha CV - PT</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+    font-size: 9pt;
+    line-height: 1.35;
+    color: #1a1a1a;
+    background: #fff;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+  }
+
+  /* HEADER */
+  .header {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 16px 24px 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .header-left h1 {
+    font-size: 32pt;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .header-left .title {
+    color: #B5451B;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .header-left .subtitle {
+    color: #ccc;
+    font-size: 8.5pt;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 8pt;
+    color: #ccc;
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+
+  /* BODY */
+  .body {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 190px;
+    min-width: 190px;
+    background: #f4f4f0;
+    padding: 12px 10px 12px 12px;
+    border-right: 1px solid #e0e0e0;
+  }
+  .sidebar-section {
+    margin-bottom: 12px;
+  }
+  .sidebar-label {
+    color: #B5451B;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #B5451B;
+    padding-bottom: 2px;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 22pt;
+    font-weight: 700;
+    line-height: 1;
+    color: #1a1a1a;
+  }
+  .metric-label {
+    font-size: 7.5pt;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .sidebar p, .sidebar li {
+    font-size: 8pt;
+    color: #333;
+    line-height: 1.5;
+  }
+  .sidebar ul { list-style: none; }
+  .sidebar ul li { margin-bottom: 2px; }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    padding: 12px 18px 12px 14px;
+  }
+  .section {
+    margin-bottom: 6px;
+  }
+  .section-title {
+    color: #B5451B;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #B5451B;
+    padding-bottom: 2px;
+    margin-bottom: 6px;
+  }
+
+  .job {
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+  }
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1px;
+  }
+  .job-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #B5451B;
+  }
+  .job-dates {
+    font-size: 8pt;
+    color: #555;
+    white-space: nowrap;
+  }
+  .job-org {
+    font-size: 8.5pt;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .job-desc {
+    font-size: 8pt;
+    color: #444;
+    margin-bottom: 3px;
+  }
+  .sub-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 3px;
+    margin-bottom: 2px;
+    color: #1a1a1a;
+  }
+  ul.bullets {
+    list-style: none;
+    padding-left: 0;
+  }
+  ul.bullets li {
+    font-size: 8pt;
+    line-height: 1.35;
+    padding-left: 12px;
+    position: relative;
+    margin-bottom: 1px;
+    color: #222;
+  }
+  ul.bullets li::before {
+    content: "·";
+    position: absolute;
+    left: 2px;
+  }
+
+  .add-exp {
+    margin-bottom: 6px;
+  }
+  .add-exp .job-header { margin-bottom: 0; }
+  .add-exp p {
+    font-size: 8pt;
+    color: #333;
+    margin-top: 2px;
+    line-height: 1.35;
+  }
+
+  .edu-item {
+    margin-bottom: 8px;
+  }
+  .edu-item strong {
+    font-size: 8.5pt;
+    font-weight: 700;
+  }
+  .edu-item .edu-inst {
+    font-size: 8pt;
+    color: #444;
+  }
+  .edu-item .edu-diss {
+    font-size: 7.5pt;
+    color: #555;
+    font-style: italic;
+  }
+
+  .capabilities-text {
+    font-size: 8pt;
+    color: #222;
+    line-height: 1.6;
+  }
+
+  .tools-text {
+    font-size: 8pt;
+    color: #222;
+    line-height: 1.6;
+  }
+
+  .digital-proj {
+    margin-bottom: 4px;
+  }
+  .digital-proj p {
+    font-size: 8pt;
+    color: #222;
+    line-height: 1.35;
+  }
+
+  .footer {
+    background: #1a1a1a;
+    color: #aaa;
+    text-align: center;
+    font-size: 7pt;
+    padding: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* Page 2 */
+  .page-break { page-break-before: always; }
+
+  @media print {
+    body { margin: 0; }
+    .page { width: 100%; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PÁGINA 1 -->
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <h1>ANA NORONHA</h1>
+      <div class="title">GESTORA DE PROJETOS, PROGRAMAS E OPERAÇÕES</div>
+      <div class="subtitle">Projetos, Operações e Contextos Internacionais</div>
+    </div>
+    <div class="header-right">
+      Braga, Portugal<br>
+      +351 917 209 881<br>
+      anacnoronha@gmail.com<br>
+      linkedin.com/in/ana-noronha
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="sidebar">
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Impacto</div>
+        <div class="metric-value">60K+</div>
+        <div class="metric-label">Visitantes em eventos</div>
+        <div class="metric-value">350+</div>
+        <div class="metric-label">Marcas curadas</div>
+        <div class="metric-value">13</div>
+        <div class="metric-label">Edições entregues</div>
+        <div class="metric-value">132%</div>
+        <div class="metric-label">Metas CLDS4G atingidas</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Perfil</div>
+        <p>Constrói a estrutura, os sistemas e o ritmo operacional que permitem às organizações entregar programas complexos, melhorar operações e converter estratégia em execução.</p>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Áreas de Foco</div>
+        <ul>
+          <li>Gestão de Programas</li>
+          <li>Gestão de Projetos</li>
+          <li>Gestão de Operações</li>
+          <li>PMO / Governação</li>
+          <li>Execução Estratégica</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Línguas</div>
+        <ul>
+          <li>Português (Nativo)</li>
+          <li>Inglês (Avançado)</li>
+          <li>Espanhol (Intermédio)</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Disponibilidade</div>
+        <p>Disponível para deslocações. Aberta a funções em programas, operações e contextos multissectoriais, nacionais e internacionais.</p>
+      </div>
+
+    </div>
+
+    <div class="main">
+      <div class="section">
+        <div class="section-title">Experiência Profissional</div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Co-Fundadora</span>
+            <span class="job-dates">2022 – Presente</span>
+          </div>
+          <div class="job-org">Mercado no Castelo - Plataforma de Design Curado e Marcas Independentes</div>
+          <div class="job-desc">Plataforma independente dedicada à curadoria de marcas e à produção de eventos, que liga marcas independentes, parceiros e visitantes em múltiplas cidades.</div>
+          <div class="sub-label">Resultados</div>
+          <ul class="bullets">
+            <li>60.000+ visitantes · 350+ marcas independentes · 13 edições de eventos curados</li>
+            <li>11.000+ seguidores orgânicos nas redes sociais</li>
+          </ul>
+          <div class="sub-label">Responsabilidades</div>
+          <ul class="bullets">
+            <li>Gestão integral de projeto, da concepção à entrega, estratégia e posicionamento da plataforma</li>
+            <li>Gestão de operações, planeamento estratégico, entrega e optimização de processos</li>
+            <li>Parcerias, gestão de stakeholders e expositores</li>
+            <li>Curadoria de marcas e coordenação de fornecedores</li>
+            <li>Produção de eventos, logística e controlo de entrega</li>
+            <li>Planeamento orçamental, gestão financeira e revisão de desempenho</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Coordenadora de Projetos</span>
+            <span class="job-dates">2020 – 2023</span>
+          </div>
+          <div class="job-org">Programa CLDS4G - SCM Póvoa de Lanhoso</div>
+          <div class="job-desc">Coordenação estratégica e operacional de um programa de desenvolvimento social regional financiado no âmbito do CLDS4G e do Fundo Social Europeu.</div>
+          <div class="sub-label">Resultados</div>
+          <ul class="bullets">
+            <li>Programa de 37 meses entregue · orçamento elegível de €445.500 · 132% dos indicadores de output do programa atingidos</li>
+            <li>851 participantes mobilizados · 69 integrações no mercado de trabalho · 22 formações profissionais</li>
+            <li>Coordenação de parcerias com 19 organizações e instituições públicas</li>
+            <li>"Devagar se Vai ao Longe" - 90 crianças e famílias · melhoria de competências socioemocionais em 54 crianças · 150% do indicador de execução</li>
+          </ul>
+          <div class="sub-label">Responsabilidades</div>
+          <ul class="bullets">
+            <li>Planeamento, governação e coordenação operacional do programa</li>
+            <li>Monitorização e Avaliação (M&amp;E), acompanhamento de KPIs e relatórios técnicos e financeiros</li>
+            <li>Gestão de riscos e imprevistos, conformidade e coordenação de stakeholders</li>
+            <li>Liderança de equipa multidisciplinar e coordenação de entrega</li>
+            <li>Desenvolvimento da plataforma digital de empregabilidade PóvoAtiva</li>
+            <li>Implementação de "Devagar se Vai ao Longe" em 4 turmas do 1.º ciclo</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Diretora de Operações</span>
+            <span class="job-dates">2016 – 2020</span>
+          </div>
+          <div class="job-org">Sabert Lda</div>
+          <div class="job-desc">Coordenação operacional de iniciativas empresariais internacionais integrando plataformas digitais, operações comerciais e parceiros em Portugal, Espanha e China.</div>
+          <div class="sub-label">Resultados</div>
+          <ul class="bullets">
+            <li>Construção e lançamento da plataforma e-commerce Casamat (casamat.eu): 542 produtos activos, 885 variantes SKU em 58 categorias no Shopify</li>
+            <li>Plataformas digitais corporativas lançadas em Portugal, Espanha e China</li>
+            <li>Parcerias comerciais e entrada em novos mercados estabelecidas com parceiros europeus e asiáticos</li>
+          </ul>
+          <div class="sub-label">Responsabilidades</div>
+          <ul class="bullets">
+            <li>Operações internacionais em Portugal, Espanha e China, incluindo B2B, e-commerce e expedição transfronteiriça</li>
+            <li>Coordenação de plataformas digitais e websites corporativos e de marca, incluindo Sabert e Shanghai Sabert</li>
+            <li>Gestão de catálogos de produto e comunicação institucional</li>
+            <li>Coordenação de programadores externos e parceiros digitais</li>
+            <li>Melhoria de processos, gestão de risco e iniciativas de marketing digital</li>
+            <li>Apoio ao planeamento operacional e candidaturas a financiamento Portugal 2020</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 ANA NORONHA &nbsp;&nbsp; PT · EN · ES</div>
+</div>
+
+<!-- PÁGINA 2 -->
+<div class="page page-break">
+  <div class="header">
+    <div class="header-left">
+      <h1>ANA NORONHA</h1>
+    </div>
+    <div class="header-right" style="margin-top:14px;"></div>
+  </div>
+
+  <div class="body">
+    <div class="sidebar" style="min-height:260mm;"></div>
+    <div class="main">
+
+      <div class="section">
+        <div class="section-title">Experiência Adicional</div>
+
+        <div class="add-exp">
+          <div class="job-header">
+            <span class="job-title">Diretora Técnica</span>
+            <span class="job-dates">Fev 2024 – Dez 2024 <span style="color:#888;font-size:7.5pt;">(simultâneo com MC, 2024)</span></span>
+          </div>
+          <div class="job-org">Associação de Apoio à Saúde Mental - O Salto</div>
+          <p>Direção estratégica e operacional. Liderança de equipa, governação, gestão orçamental e controlo financeiro. Gestão de risco, conformidade, gestão de stakeholders e parcerias. Sistemas digitais e processos organizacionais. Coordenação de projetos, acompanhamento de casos psicossociais, supervisão e mediação.</p>
+        </div>
+
+        <div class="add-exp">
+          <div class="job-header">
+            <span class="job-title">Co-Fundadora</span>
+            <span class="job-dates">2013 – 2020 <span style="color:#888;font-size:7.5pt;">(simultâneo com Sabert, 2016–2020)</span></span>
+          </div>
+          <div class="job-org">Muito+ Inovação, Arte &amp; Criatividade</div>
+          <p>Coordenação de produção, parcerias, gestão financeira e estratégia de comunicação em eventos e mercados urbanos.</p>
+        </div>
+
+        <div class="add-exp">
+          <div class="job-header">
+            <span class="job-title">Docente Convidada</span>
+            <span class="job-dates">2007 – 2013</span>
+          </div>
+          <div class="job-org">Universidade Católica Portuguesa</div>
+          <p>Docência e tutoria em Serviço Social (licenciatura e pós-graduação). Planeamento pedagógico, apoio a estudantes, organização de eventos académicos e ligação entre a universidade e organizações sociais.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Formação Académica</div>
+
+        <div class="edu-item">
+          <strong>Mestrado em Serviço Social</strong>
+          <div class="edu-inst">Universidade Católica Portuguesa | 2011</div>
+          <div class="edu-diss">Dissertação: "Práticas de Gestão no Agir do Assistente Social: uma análise exploratória"</div>
+        </div>
+
+        <div class="edu-item">
+          <strong>Licenciatura em Serviço Social</strong>
+          <div class="edu-inst">Universidade Católica Portuguesa | 2006</div>
+          <div class="edu-diss">Dissertação: "As necessidades sociais da população idosa da Freguesia de S. Vicente – Braga"</div>
+        </div>
+
+        <div class="edu-item">
+          <strong>Doutoramento em Economia Social (fase de investigação, sem conclusão)</strong>
+          <div class="edu-inst">IUDESCOOP, Universidade de Valência | 2012–2013</div>
+          <div class="edu-diss">Investigação sobre inovação organizacional, gestão e modelos de funcionamento em organizações sem fins lucrativos em Portugal, com foco nas IPSS.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Competências Centrais</div>
+        <p class="capabilities-text">Gestão de Programas · Gestão de Projetos · Gestão de Operações · PMO · Governação de Projetos · Execução Estratégica · Operações de Negócio · Gestão de Stakeholders · Gestão de Risco · Melhoria de Processos · Planeamento Estratégico · Entrega de Projectos Digitais · Liderança Interfuncional · Transformação Organizacional · Excelência Operacional · Melhoria Contínua</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Ferramentas Digitais e Plataformas</div>
+        <p class="tools-text"><strong>Ferramentas Operacionais:</strong> Airtable · Asana · Excel · Google Workspace · Softr · WordPress · Shopify · Wix · Analytics &amp; Search Console · Meta Business Suite · Canva</p>
+        <p class="tools-text" style="margin-top:4px;"><strong>Ferramentas de IA:</strong> Claude · ChatGPT · Emergent</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Projetos Digitais Selecionados</div>
+        <p class="tools-text" style="margin-bottom:6px;">Concepção, construção e gestão contínua de dois websites de clientes em Wix, incluindo estrutura, estratégia de conteúdo e posicionamento de marca:</p>
+        <div class="digital-proj">
+          <ul class="bullets">
+            <li>northgamefishing.com - website de serviços com posicionamento internacional | 2023 – Presente<br><span style="color:#555;font-size:7.5pt;">Concepção e desenvolvimento end-to-end em Wix; estratégia de conteúdo, estrutura e gestão contínua.</span></li>
+            <li>amabelia.com - website de marca e posicionamento visual | 2026 – Presente<br><span style="color:#555;font-size:7.5pt;">Concepção e desenvolvimento end-to-end em Wix; posicionamento de marca, arquitectura de conteúdo e manutenção contínua.</span></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">© 2026 ANA NORONHA &nbsp;&nbsp; PT · EN · ES</div>
+</div>
+
+</body>
+</html>
