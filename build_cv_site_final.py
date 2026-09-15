@@ -190,7 +190,7 @@ def build(lang):
             'Independent platform dedicated to brand curation and event production, connecting independent brands, partners and audiences across multiple cities.',
             'KEY RESULTS',
             ['60,000+ visitors | 350+ independent brands | 13 editions delivered',
-             '11,000+ organic followers across social media.'],
+             '11,000+ organic followers across social media'],
             'RESPONSIBILITIES',
             ['End-to-end project management, from conception to delivery, strategy and platform positioning',
              'Operations management, strategic planning, delivery and process optimisation',
@@ -333,7 +333,7 @@ def build(lang):
             parts = [x.strip() for x in desc.split('. ') if x.strip()]
             for part in parts:
                 t('·', False, main_x, p2y, MID)
-                p2y = wrap(part + ('.' if not part.endswith('.') else ''), False, main_x + 9, p2y, MID, main_w - 9)
+                p2y = wrap(part.rstrip('.'), False, main_x + 9, p2y, MID, main_w - 9)
         else:
             p2y = wrap(desc, False, main_x, p2y, MID, main_w)
         p2y += 10
