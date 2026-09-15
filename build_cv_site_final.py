@@ -521,3 +521,5 @@ def postprocess_pdf(fn, is_en):
 
 build('pt')
 build('en')
+
+# trigger: rebuild CVs
