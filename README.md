@@ -4,8 +4,7 @@
 Projects, Operations & International Delivery
 
 12+ years of experience across project management, programme delivery,
-operations, governance and digital transformation.
-
+operations, governance and digitaltransformation.
 [Portfolio](https://anacnoronha.github.io/ana-noronha/) \|
 [LinkedIn](https://www.linkedin.com/in/ana-noronha/)
 
@@ -57,7 +56,7 @@ study](https://anacnoronha.github.io/ana-noronha/mercado_case_study.html)
 the CLDS4G framework and European Social Fund.
 
 **Key results** - €445.5K eligible programme budget - 851 participants -
-132% target execution - 69 labour market integrations - 19 partner
+132% target execution - 69 labour market integrations - 37 partner
 organisations and public institutions
 
 **Core work** - Programme planning and governance - Operational
@@ -141,10 +140,10 @@ https://anacnoronha.github.io/ana-noronha/
 https://www.linkedin.com/in/ana-noronha/
 
 **English CV**\
-https://github.com/anacnoronha/ana-noronha/blob/main/CV_Ana_Noronha_2026_Eng_15_09_26.pdf
+https://github.com/anacnoronha/ana-noronha/blob/main/CV_Ana_Noronha_2026_EN_FINAL.pdf
 
 **Portuguese CV**\
-https://github.com/anacnoronha/ana-noronha/blob/main/CV_Ana_Noronha_2026_PT_15_09_26.pdf
+https://github.com/anacnoronha/ana-noronha/blob/main/CV_Ana_Noronha_2026_PT_FINAL.pdf
 
 ------------------------------------------------------------------------
 
