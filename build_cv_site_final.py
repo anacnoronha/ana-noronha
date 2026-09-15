@@ -36,6 +36,8 @@ def build(lang):
     out_dir = os.environ.get('CV_OUTPUT_DIR', '.')
     fn = os.path.join(out_dir, f'CV_Ana_Noronha_2026_{"EN" if is_en else "PT"}_FINAL.pdf')
     c = canvas.Canvas(fn, pagesize=(W, H))
+    # Semantic PDF tagging records. Each marked text span receives a unique
+    # MCID per page and is mapped to a real StructElem in post-processing.
     tag_records = [[], []]
     current_page = 0
     next_mcid = [0, 0]
@@ -91,6 +93,8 @@ def build(lang):
         c.line(x, H - top, x + w, H - top)
 
     def sec(title, x, top, lw, sz_title=9.5):
+        # Only increases the visual separation of section titles from their content.
+        # All typography, line spacing, content, positions and page structure remain unchanged.
         t(title, True, x, top, RUST, sz=sz_title, role='H2')
         hline(x, top + sz_title + 3, lw)
         return top + 19.5
@@ -132,10 +136,12 @@ def build(lang):
         t('Projetos, Operações e Execução Internacional', False, 24, 51.9, GRAY)
     t('Braga, Portugal',             False, 513.8, 15.9, GRAY)
     t('+351 917 209 881',            False, 509.3, 28.9, GRAY)
+    # email com link clicável
     _email = 'anacnoronha@gmail.com'
     _ew = c.stringWidth(_email, 'Mono', TS)
     t(_email, False, 486.8, 41.9, GRAY)
     c.linkURL('mailto:anacnoronha@gmail.com', (486.8, rl(41.9, TS), 486.8 + _ew, rl(41.9, TS) + TS))
+    # linkedin com link clicável
     _li = 'linkedin.com/in/ana-noronha'
     _lw = c.stringWidth(_li, 'Mono', TS)
     t(_li, False, 459.8, 54.9, GRAY)
@@ -143,6 +149,7 @@ def build(lang):
     t('© 2026 ANA NORONHA', False, 265.2, 830.0, GRAY, sz=6)
     tr('PT · EN · ES', W - 20, 830.0, GRAY, sz=6)
 
+    # SIDEBAR
     sy = 88.0
     t('IMPACTO' if not is_en else 'KEY IMPACT', True, SX, sy, RUST, sz=9.5)
     hline(SX, sy + 9 + 3, SMW)
@@ -166,6 +173,14 @@ def build(lang):
         sy = wrap('Gestora de Projetos, Programas e Operações com mais de 12 anos de experiência na coordenação de programas, projetos e iniciativas operacionais em contextos internacionais, públicos, sociais e empresariais. Experiência em governação de programas, planeamento estratégico, gestão operacional, gestão de stakeholders, risco, orçamento, monitorização de desempenho e execução digital. Combina gestão estruturada com execução operacional, melhoria de processos e coordenação de equipas, parceiros e fornecedores.', False, SX, sy, GRAY, SMW, 13.8)
     sy += 20.0
 
+    # FOCUS AREAS removed: keywords are retained in CORE CAPABILITIES on page 2.
+
+    # LANGUAGES moved to the end of page 2.
+
+    # AVAILABILITY removed from Master CV.
+
+
+    # MAIN
     my = 89.0
     my = main_sec('EXPERIÊNCIA PROFISSIONAL' if not is_en else 'PROFESSIONAL EXPERIENCE', my)
 
@@ -190,7 +205,7 @@ def build(lang):
             'Plataforma independente dedicada à curadoria de marcas e à produção de eventos, que liga marcas independentes, parceiros e visitantes em múltiplas cidades.',
             'RESULTADOS',
             ['60.000+ visitantes · 350+ marcas independentes · 13 edições entregues',
-             '11.000+ seguidores orgânicos nas redes sociais.'],
+             '11.000+ seguidores orgânicos nas redes sociais'],
             'RESPONSABILIDADES',
             ['Gestão integral de projeto, da conceção à entrega, estratégia e posicionamento da plataforma',
              'Gestão de operações, planeamento estratégico, entrega e otimização de processos',
@@ -211,14 +226,14 @@ def build(lang):
              '851 participants engaged · 132% target execution',
              '69 labour market integrations · 22 professional training placements',
              'Partnerships coordinated with 19 organisations and public institutions',
-             '“Devagar se Vai ao Longe” — 90 children and families · improved socio-emotional skills in 54 children · 150% execution indicator'],
+             '"Devagar se Vai ao Longe" — 90 children and families · improved socio-emotional skills in 54 children · 150% execution indicator'],
             'RESPONSIBILITIES',
             ['Programme planning, governance and operational coordination',
              'M&E, KPI monitoring, performance tracking and technical and financial reporting',
              'Risk & issue management, compliance and stakeholder coordination',
              'Multidisciplinary team leadership and delivery coordination',
              'Development of the PóvoAtiva digital employability platform',
-             'Implementation of “Devagar se Vai ao Longe” across 4 primary school classes'], my)
+             'Implementation of "Devagar se Vai ao Longe" across 4 primary school classes'], my)
     else:
         my = job('Coordenadora de Projeto', '2020 – 2023',
             'Programa de Desenvolvimento Social CLDS4G — SCM Póvoa de Lanhoso',
@@ -228,14 +243,14 @@ def build(lang):
              '851 participantes envolvidos · 132% das metas executadas',
              '69 integrações no mercado de trabalho · 22 colocações em formação profissional',
              'Parcerias coordenadas com 19 organizações e instituições públicas',
-             'Programa “Devagar se Vai ao Longe” — 90 crianças e famílias · melhoria socio-emocional em 54 crianças · indicador de execução de 150%'],
+             'Programa "Devagar se Vai ao Longe" — 90 crianças e famílias · melhoria socioemocional em 54 crianças · indicador de execução de 150%'],
             'RESPONSABILIDADES',
             ['Planeamento, governação e coordenação operacional do programa',
              'M&E, monitorização de KPIs, performance tracking e reporting técnico e financeiro',
              'Risk Management, issue management, Compliance e Stakeholder Management',
              'Liderança de equipa multidisciplinar de execução',
              'Desenvolvimento da plataforma digital de empregabilidade PóvoAtiva',
-             'Implementação do Programa “Devagar se Vai ao Longe” em 4 turmas do 1.º ciclo'], my)
+             'Implementação do Programa "Devagar se Vai ao Longe" em 4 turmas do 1.º ciclo'], my)
 
     hline(MX, my, MW, LINE, 0.4); my += (7 if not is_en else 13)
 
@@ -261,7 +276,7 @@ def build(lang):
              'Plataformas digitais corporativas lançadas em Portugal, Espanha e China',
              'Parcerias comerciais e entrada em novos mercados estabelecidas com parceiros europeus e asiáticos'],
             'RESPONSABILIDADES',
-            ['Operações internacionais em Portugal, Espanha e China, incluindo B2B, e-commerce e expedição transfrontei riça',
+            ['Operações internacionais em Portugal, Espanha e China, incluindo B2B, e-commerce e expedição transfronteiriça',
              'Coordenação de plataformas digitais e websites corporativos e de marca, incluindo Sabert e Shanghai Sabert',
              'Gestão de catálogos de produto e comunicação institucional',
              'Coordenação de programadores externos e parceiros digitais',
@@ -272,6 +287,7 @@ def build(lang):
     current_page = 1
 
     # PÁGINA 2
+    # Two-column continuation for visual balance: dark utility sidebar + cream main content.
     c.setFillColor(CREAM); c.rect(0, 0, W, H, fill=1, stroke=0)
     c.setFillColor(DARK);  c.rect(0, 0, SW, H, fill=1, stroke=0)
     c.setFillColor(DARK);  c.rect(0, H - 58, W, 58, fill=1, stroke=0)
@@ -287,6 +303,7 @@ def build(lang):
     t('© 2026 ANA NORONHA', False, 265.2, 830.0, GRAY, sz=6)
     tr('PT · EN · ES', W - 20, 830.0, GRAY, sz=6)
 
+    # MAIN CONTENT, page 2
     main_x = 208
     main_w = W - main_x - 24
     p2y = 70.0
@@ -347,6 +364,7 @@ def build(lang):
         p2y = wrap(inst, False, main_x, p2y, MID, main_w)
         p2y = wrap(diss, False, main_x, p2y, DISS, main_w); p2y += 9
 
+    # DIGITAL PROJECTS moved from sidebar to main content, after EDUCATION.
     p2y += 2
     p2y = main_sec('PROJETOS DIGITAIS' if not is_en else 'DIGITAL PROJECTS', p2y)
     if is_en:
@@ -358,6 +376,8 @@ def build(lang):
         p2y = wrap('· northgamefishing.com — website de serviços, posicionamento internacional | 2023 – Presente', False, main_x, p2y, MID, main_w, 13.5)
         p2y = wrap('· amabelia.com — website de marca e posicionamento visual | 2025 – Presente', False, main_x, p2y, MID, main_w, 13.5)
 
+
+    # SIDEBAR CONTENT, page 2
     sy = 84.0
     sy = sb_sec('COMPETÊNCIAS' if not is_en else 'CORE CAPABILITIES', sy)
     if is_en:
@@ -434,6 +454,7 @@ def postprocess_pdf(fn, is_en):
         '/Producer': 'ReportLab + pypdf',
     })
 
+    # Marcadores / TOC
     for label, page_idx in toc:
         writer.add_outline_item(label, page_idx)
 
@@ -441,6 +462,9 @@ def postprocess_pdf(fn, is_en):
     root[NameObject('/Lang')] = TextStringObject(lang)
     root[NameObject('/MarkInfo')] = DictionaryObject({NameObject('/Marked'): BooleanObject(True)})
 
+    # Build a genuine semantic structure tree from the marked text spans emitted
+    # by ReportLab. Each page gets its own StructParents index and ParentTree
+    # array mapping MCIDs to StructElems. The visual content is not repositioned.
     struct_root = DictionaryObject({NameObject('/Type'): NameObject('/StructTreeRoot')})
     document = DictionaryObject({
         NameObject('/Type'): NameObject('/StructElem'),
@@ -451,9 +475,14 @@ def postprocess_pdf(fn, is_en):
     parent_nums = ArrayObject()
     page_struct_arrays = []
 
+    # The page-level records are regenerated in the same order as the build.
+    # We infer their roles from the actual text objects and use one StructElem
+    # per marked span. This keeps headings, paragraphs and labels distinguishable.
     for page_index, page in enumerate(writer.pages):
         page[NameObject('/StructParents')] = NumberObject(page_index)
         page[NameObject('/Tabs')] = NameObject('/S')
+        # Retrieve the marked content already present in the page stream and
+        # create one structure element for every MCID found there.
         contents = page.get(NameObject('/Contents'))
         streams = []
         if contents is not None:
@@ -489,6 +518,7 @@ def postprocess_pdf(fn, is_en):
         parent_nums.extend([NumberObject(page_index), parent_array_ref])
         page_struct_arrays.append((page_index, kids))
 
+    # Make page structures children of Document.
     doc_kids = ArrayObject()
     for _, kids in page_struct_arrays:
         for ref in kids:
@@ -519,7 +549,6 @@ def postprocess_pdf(fn, is_en):
     print(f'Post-processed: {fn}')
 
 
+# Build first, then apply metadata/navigation/annotations and semantic tagging.
 build('pt')
 build('en')
-
-# trigger: rebuild CVs
